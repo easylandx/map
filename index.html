@@ -1725,7 +1725,7 @@ function parseHours(h,lang){
 function pageHTML(b,t){
   var c=copyFor(b),cat=catOf(b),br=brandOf(b)||{},photos=br.i||[],svcs=br.s||[],hero=photos[0]||'',gal=photos.slice(1,4);
   var wad=waDigits(b),bpx=bestPhone(b);
-  var waUrl=wad?'https://wa.me/'+wad+'?text='+encodeURIComponent(T('Hi! I would like more information about {0}.',b.name)):'';
+  var waUrl=wad?waLink(T('Hi! I would like more information about {0}.',b.name),wad):'';   // phones: WhatsApp app straight away; computers: WhatsApp Web (no wa.me page in between)
   var igH=igHandleOf(b),igUrl=igH?'https://www.instagram.com/'+igH+'/':'';
   var tel=igUrl||waUrl||(bpx?'tel:+'+bpx.d:'#visit');
   var map='https://www.openstreetmap.org/?mlat='+b.lat+'&mlon='+b.lon+'#map=19/'+b.lat+'/'+b.lon;
