@@ -1578,12 +1578,14 @@ $('vBack').onclick=function(){$('viewer').hidden=true;$('vFrame').src='about:bla
 
 /* ================= PREVIEW GENERATOR ================= */
 var THEMES=[
- {id:'sun',name:'Sunrise',c:'#e8542f',bg1:'#fff1de',bg2:'#ffd9c2',bg3:'#fff9ef',acc:'#e8542f',ink:'#3b2417'},
- {id:'fresh',name:'Fresh',c:'#0f9f7a',bg1:'#e3f8f0',bg2:'#c9efe2',bg3:'#f3fcf8',acc:'#0f9f7a',ink:'#12372d'},
- {id:'lagoon',name:'Lagoon',c:'#2563eb',bg1:'#e2f1ff',bg2:'#c8e0fb',bg3:'#f2f8ff',acc:'#2563eb',ink:'#14284b'},
- {id:'bloom',name:'Bloom',c:'#c2307a',bg1:'#ffe7f1',bg2:'#fbcfe2',bg3:'#fff5fa',acc:'#c2307a',ink:'#431433'},
- {id:'citrus',name:'Citrus',c:'#d97706',bg1:'#fff6cc',bg2:'#ffe98a',bg3:'#fffbe8',acc:'#c26a05',ink:'#3a2a05'}
+ {id:'sun',name:'Neon Orange',c:'#ff5a1f',bg1:'#ffe1d0',bg2:'#ffb088',bg3:'#fff3ec',acc:'#ff5a1f',ink:'#2a1000',on:'#1f0b00'},
+ {id:'fresh',name:'Neon Green',c:'#00e676',bg1:'#d6ffe9',bg2:'#7dffb8',bg3:'#effff6',acc:'#00e676',ink:'#00331a',on:'#00240f'},
+ {id:'lagoon',name:'Neon Blue',c:'#00b8ff',bg1:'#d4f1ff',bg2:'#7fd9ff',bg3:'#eefaff',acc:'#00b8ff',ink:'#00263a',on:'#001a29'},
+ {id:'bloom',name:'Neon Pink',c:'#ff2bd6',bg1:'#ffd6f7',bg2:'#ff8fe9',bg3:'#fff0fc',acc:'#ff2bd6',ink:'#3d0033',on:'#2a0023'},
+ {id:'citrus',name:'Neon Lime',c:'#c6ff00',bg1:'#f4ffc2',bg2:'#d9ff4d',bg3:'#fbffe6',acc:'#c6ff00',ink:'#243300',on:'#1a2400'},
+ {id:'brand',name:'Neon Yellow',c:'#ffea00',bg1:'#fffbb8',bg2:'#fff04d',bg3:'#fffde6',acc:'#ffea00',ink:'#332e00',on:'#262200'}
 ];
+(function(){var X={'Neon Orange':'Naranja neón','Neon Green':'Verde neón','Neon Blue':'Azul neón','Neon Pink':'Rosa neón','Neon Lime':'Lima neón','Neon Yellow':'Amarillo neón'};Object.keys(X).forEach(function(k){ES[k]=X[k];});})();
 var GROUP_THEME={beauty:'bloom',food:'sun',fitness:'fresh',mind:'lagoon',pro:'lagoon',creative:'citrus',pets:'citrus',events:'bloom',outdoor:'fresh',generic:'sun'};
 var COPY={
  beauty:{h:'Look and feel your best at {n}',s:'Services, prices and booking on one clean page.',cta:'Book now',f1:'Services & prices'},
@@ -1612,10 +1614,7 @@ function themeFromColor(hex){
   return{id:'brand',name:'Brand',c:acc,bg1:mixHex(acc,'#ffffff',0.88),bg2:mixHex(acc,'#ffffff',0.78),bg3:mixHex(acc,'#ffffff',0.95),acc:acc,ink:mixHex(acc,'#000000',0.75)};
 }
 function hasBrandTheme(){return THEMES.length>0&&THEMES[THEMES.length-1].id==='brand';}
-function setBrandTheme(br){
-  for(var i=THEMES.length-1;i>=0;i--)if(THEMES[i].id==='brand')THEMES.splice(i,1);
-  if(br&&br.k)THEMES.push(themeFromColor(br.k));
-}
+function setBrandTheme(br){}   // the 'brand' slot is now a fixed neon yellow
 // Dominant saturated colour of an image (logo / profile picture). The image goes through a CORS-friendly resizer so the canvas can be read.
 function sampleColor(url){
   return new Promise(function(res){
@@ -1742,15 +1741,15 @@ function pageHTML(b,t){
   '*{box-sizing:border-box}html,body{max-width:100%;overflow-x:hidden}h1,h2,h3,p,a,b,span,td,small{overflow-wrap:anywhere;word-break:break-word;min-width:0}.btn{max-width:100%;text-align:center}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;color:'+t.ink+';background:'+t.bg3+';line-height:1.5}'+
   '.ban{background:#fff;color:#555;font-size:11px;text-align:center;padding:6px 10px;border-bottom:1px solid #eee}'+
   'nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 22px;background:'+t.bg1+'}nav b{font-size:17px;display:flex;align-items:center;gap:10px;min-width:0}.lg{flex:none;width:34px;height:34px;border-radius:50%;background:#fff center/cover no-repeat;border:2px solid '+t.acc+'}'+
-  '.btn{display:inline-block;background:'+t.acc+';color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:999px;font-size:15px}.btn.o{background:#fff;color:'+t.acc+';border:2px solid '+t.acc+'}.btn.wa{background:#25d366;color:#fff}'+
+  '.btn{display:inline-block;background:'+t.acc+';color:'+t.on+';text-decoration:none;font-weight:800;padding:12px 20px;border-radius:999px;font-size:15px}.btn.o{background:#fff;color:'+t.ink+';border:2px solid '+t.acc+'}.btn.wa{background:#25d366;color:#fff}'+
   '.hero{background:linear-gradient(160deg,'+t.bg1+','+t.bg2+');padding:44px 22px 52px;text-align:center}.hero .em{font-size:54px}.hero h1{font-size:clamp(26px,5vw,44px);line-height:1.15;margin:10px auto 18px;max-width:760px;letter-spacing:-.02em}.hero p{font-size:clamp(15px,2.4vw,19px);margin:0 auto 22px;max-width:560px;opacity:.85}'+
   '.hero .ig{margin:0 auto 22px;font-weight:800;font-size:16px;opacity:1;max-width:100%}.hero .ig a{color:inherit;text-decoration:none;border-bottom:2px solid '+t.acc+'}'+
   '.hero.ph{color:#fff}.hero.ph p{opacity:.95}.hero.ph .btn.o{background:transparent;color:#fff;border-color:#fff}.hero .b{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}'+
   '.gal{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));padding:22px;max-width:980px;margin:0 auto}.gal div{aspect-ratio:1;border-radius:16px;background:'+t.bg2+' center/cover no-repeat}'+
   '.sh{max-width:980px;margin:0 auto;padding:30px 22px 0;font-size:24px}'+
-  '.feat{padding:18px 22px 40px;background:'+t.bg3+';display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));max-width:980px;margin:0 auto}.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 20px rgba(0,0,0,.06)}.card i{font-style:normal;font-size:28px;color:'+t.acc+'}.card h3{margin:8px 0 4px;font-size:16px}.card p{margin:0;font-size:14px;opacity:.75}'+
+  '.feat{padding:18px 22px 40px;background:'+t.bg3+';display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));max-width:980px;margin:0 auto}.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 20px rgba(0,0,0,.06)}.card i{font-style:normal;font-size:28px;color:'+t.ink+'}.card h3{margin:8px 0 4px;font-size:16px}.card p{margin:0;font-size:14px;opacity:.75}'+
   '.visit{background:'+t.bg2+';padding:38px 22px;text-align:center}.visit h2{margin:0 0 12px;font-size:24px}.visit p{margin:4px 0}.hrs{margin:8px auto;border-collapse:collapse;font-size:14px}.hrs td{padding:3px 12px;text-align:left}.hrs td:first-child{font-weight:700}'+
-  '.cta{background:'+t.acc+';color:#fff;text-align:center;padding:34px 22px}.cta h2{margin:0 0 14px;font-size:24px}.cta .btn{background:#fff;color:'+t.acc+'}'+
+  '.cta{background:'+t.acc+';color:'+t.on+';text-align:center;padding:34px 22px}.cta h2{margin:0 0 14px;font-size:24px}.cta .btn{background:#fff;color:'+t.ink+'}'+
   'footer{padding:16px 22px;font-size:12px;text-align:center;background:'+t.bg1+';opacity:.95}footer a{color:'+t.ink+'}'+
   '.fwa{position:fixed;right:16px;bottom:16px;width:56px;height:56px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;font-size:28px;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.3);z-index:5}'+
   '</style></head><body>'+
@@ -1831,9 +1830,10 @@ function updPvNav(){
 }
 function stepPreview(d){
   var r=pvIndex(),nb=r.vis[r.ix+d];if(r.ix<0||!nb)return;
-  var keep=pvPicked&&pvT&&pvT.id!=='brand'?pvT.id:undefined;
+  var ti=0;for(var k=0;k<THEMES.length;k++)if(pvT&&THEMES[k].id===pvT.id)ti=k;
+  var nt=THEMES[(ti+d+THEMES.length)%THEMES.length];   // next / previous colour as well
   select(nb.id,true);        // keeps the map and the detail panel in step with the preview
-  openPreview(nb,keep);
+  openPreview(nb,nt.id);pvPicked=true;buildThemes();
   track('map_preview_step',{dir:d});
 }
 $('pPrev').onclick=function(){stepPreview(-1);};
@@ -2029,13 +2029,13 @@ function screenCanvas(b,t){
   x.fillStyle=t.bg3;x.fillRect(0,0,W,H);
   x.fillStyle='#fff';x.fillRect(0,0,W,52);x.fillStyle='#666';x.textAlign='center';x.textBaseline='middle';x.fillText(fitLine(x,T('Concept preview by EasyLandX'),W-80,'500',22,14,F),W/2,27);
   x.fillStyle=t.bg1;x.fillRect(0,52,W,96);x.fillStyle=t.ink;x.textAlign='left';x.fillText(fitLine(x,b.name,W-34-230-20,'800',32,20,F),34,101);
-  x.fillStyle=t.acc;rr(x,W-230,76,196,50,25);x.fill();x.fillStyle='#fff';x.textAlign='center';x.fillText(fitLine(x,c.cta,196-28,'800',22,14,F),W-132,102);
+  x.fillStyle=t.acc;rr(x,W-230,76,196,50,25);x.fill();x.fillStyle=t.on;x.textAlign='center';x.fillText(fitLine(x,c.cta,196-28,'800',22,14,F),W-132,102);
   var g=x.createLinearGradient(0,148,W,620);g.addColorStop(0,t.bg1);g.addColorStop(1,t.bg2);x.fillStyle=g;x.fillRect(0,148,W,472);
   x.font='110px '+E;x.textAlign='center';x.fillStyle='#000';x.fillText(cat.emoji,W/2,245);
   x.fillStyle=t.ink;x.font='800 52px '+F;x.textAlign='center';
   var hh=wrapText(x,b.name,W/2,330,W-120,62,2);
   if(igH){x.fillStyle=t.ink;x.fillText(fitLine(x,'📸 @'+igH,W-120,'800',30,20,F),W/2,330+hh+14);}
-  x.fillStyle=t.acc;rr(x,W/2-190,520,380,66,33);x.fill();x.fillStyle='#fff';x.fillText(fitLine(x,c.cta,380-40,'800',28,18,F),W/2,553);
+  x.fillStyle=t.acc;rr(x,W/2-190,520,380,66,33);x.fill();x.fillStyle=t.on;x.fillText(fitLine(x,c.cta,380-40,'800',28,18,F),W/2,553);
   var cards=[['📋',c.f1],['📱',T('{0} in one tap',c.cta)],['📍',T('Find you fast')]];
   cards.forEach(function(k,i){var cx=34,cy=640+i*124,cw=W-68,tw=cw-100-24;x.fillStyle='#fff';rr(x,cx,cy,cw,112,24);x.fill();x.font='48px '+E;x.textAlign='left';x.fillStyle='#000';x.fillText(k[0],cx+24,cy+58);x.fillStyle=t.ink;x.fillText(fitLine(x,k[1],tw,'800',28,18,F),cx+100,cy+42);x.globalAlpha=.7;x.fillText(fitLine(x,T(['Everything you offer, easy to scan','A clear button that brings customers','Address, hours and directions'][i]),tw,'500',22,14,F),cx+100,cy+80);x.globalAlpha=1;});
   // Visit us: address, phone, website and the contact buttons (drawn only, not clickable in AR)
@@ -2045,9 +2045,9 @@ function screenCanvas(b,t){
   if(phs){x.fillStyle=t.ink;x.fillText(fitLine(x,'📞 '+phs,W-80,'800',26,16,F),W/2,ly);ly+=40;}
   if(webT){x.fillStyle=t.ink;x.fillText(fitLine(x,'🌐 '+webT,W-80,'800',26,14,F),W/2,ly);ly+=40;}
   var btns=[{l:'💬 WhatsApp',bg:'#25d366',fg:'#fff'}];
-  if(webU)btns.push({l:'🌐 '+T('Website'),bg:t.acc,fg:'#fff'});
-  btns.push({l:'🗺️ '+T('Open map'),bg:'#fff',fg:t.acc,line:t.acc});
-  if(igH)btns.push({l:'📸 @'+igH,bg:'#fff',fg:t.acc,line:t.acc});
+  if(webU)btns.push({l:'🌐 '+T('Website'),bg:t.acc,fg:t.on});
+  btns.push({l:'🗺️ '+T('Open map'),bg:'#fff',fg:t.ink,line:t.acc});
+  if(igH)btns.push({l:'📸 @'+igH,bg:'#fff',fg:t.ink,line:t.acc});
   var by=Math.max(ly+10,1290);
   btns.forEach(function(k,i){
     var bx=i%2?376:34,yy=by+Math.floor(i/2)*84;
