@@ -1180,7 +1180,7 @@ function trackNoteL(lang,isShort){return isShort?(lang==='es'?' El enlace solo c
 function sharedBiz(o){
   var br=null,k=hex6(o.k);
   if(k||o.l||(o.s&&o.s.length)||(o.i&&o.i.length))br={k:k,logo:safeUrl(o.l),s:(Array.isArray(o.s)?o.s:[]).slice(0,6).map(function(x){return String(x).slice(0,60);}),i:(Array.isArray(o.i)?o.i:[]).slice(0,3).map(safeUrl).filter(Boolean),h:''};
-  return{id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:'',status:'noweb',wa:String(o.w||'').slice(0,20),brand:br};
+  return{id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:/^[\w.]{1,30}$/.test(String(o.ig||''))?'https://www.instagram.com/'+o.ig+'/':'',status:'noweb',wa:String(o.w||'').slice(0,20),brand:br};
 }
 function openShortLink(raw){
   var id=String(raw||'').replace(/[^A-Za-z0-9]/g,'');
@@ -1702,7 +1702,8 @@ function pageHTML(b,t){
   var c=copyFor(b),cat=catOf(b),br=brandOf(b)||{},photos=br.i||[],svcs=br.s||[],hero=photos[0]||'',gal=photos.slice(1,4);
   var wad=waDigits(b),bpx=bestPhone(b);
   var waUrl=wad?'https://wa.me/'+wad+'?text='+encodeURIComponent(T('Hi! I would like more information about {0}.',b.name)):'';
-  var tel=waUrl||(bpx?'tel:+'+bpx.d:'#visit');
+  var igH=igHandleOf(b),igUrl=igH?'https://www.instagram.com/'+igH+'/':'';
+  var tel=igUrl||waUrl||(bpx?'tel:+'+bpx.d:'#visit');
   var map='https://www.openstreetmap.org/?mlat='+b.lat+'&mlon='+b.lon+'#map=19/'+b.lat+'/'+b.lon;
   var rows=parseHours(b.hours,LANG),hrs=b.hours||br.h||'';
   var hoursHTML=rows?'<table class="hrs">'+rows.map(function(r){return '<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>';}).join('')+'</table>':(hrs?'<p>🕒 '+esc(hrs)+'</p>':'');
@@ -1742,6 +1743,7 @@ function b64(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).rep
 function unb64(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return JSON.parse(decodeURIComponent(escape(atob(s))));}
 function previewLink(b,l){
   var o={g:(l==='es'||l==='en')?l:LANG,n:b.name,c:b.cat,a:b.addr,p:b.phone,h:b.hours,la:+b.lat.toFixed(6),lo:+b.lon.toFixed(6),t:(pvT&&pvB&&pvB.id===b.id)?pvT.id:undefined};
+  var igh=igHandleOf(b);if(igh)o.ig=igh.slice(0,30);
   var br=brandOf(b);
   if(br){
     if(br.k)o.k=br.k;if(safeUrl(br.logo))o.l=br.logo;
@@ -1827,7 +1829,7 @@ function fillTpl(t,b,lang){
 }
 function buildChannelMsg(b,ch,lang){return fillTpl(getTpl(ch,b.cat,lang),b,lang);}
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
-function igHandleOf(b){var m=String((b&&b.social)||'').match(/instagram\.com\/([\w.]+)/i);return m?m[1]:'';}
+function igHandleOf(b){var m=String((b&&b.social)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
 function splitMail(txt){var m=String(txt).match(/^\s*(?:Subject|Asunto)\s*:\s*(.*)\n+/i);return m?{subject:m[1].trim(),body:txt.slice(m[0].length)}:{subject:'',body:String(txt)};}
 var GO_LABEL={wa:'💬 Open WhatsApp with this message',ig:'📸 Copy message and open Instagram',mail:'✉️ Open email app',sms:'💬 Open SMS app'};
 function refreshSend(force){
