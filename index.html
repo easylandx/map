@@ -1757,7 +1757,7 @@ function pageHTML(b,t){
   '</style></head><body>'+
   '<div class="ban">'+esc(T('Concept preview by EasyLandX. Not the official website of {0}.',b.name))+'</div>'+
   '<nav><b>'+logo+'<span>'+esc(b.name)+'</span></b></nav>'+
-  '<section class="hero'+(hero?' ph':'')+'"'+heroStyle+'>'+(hero?'':'<div class="em">'+cat.emoji+'</div>')+'<h1>'+esc(b.name)+'</h1>'+(igUrl?'<p class="ig"><a href="'+esc(igUrl)+'">📸 @'+esc(igH)+'</a></p>':'')+'<div class="b"><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a><a class="btn o" href="#visit">'+esc(T('Find us'))+'</a></div></section>'+
+  '<section class="hero'+(hero?' ph':'')+'"'+heroStyle+'>'+(hero?'':'<div class="em">'+cat.emoji+'</div>')+'<h1>'+esc(b.name)+'</h1>'+(igUrl?'<p class="ig"><a href="'+esc(igUrl)+'">📸 @'+esc(igH)+'</a></p>':'')+'<div class="b"><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a><a class="btn o" href="'+esc(map)+'">'+esc(T('Find us'))+'</a></div></section>'+
   (gal.length?'<section class="gal">'+gal.map(function(u){return '<div style="background-image:url(\''+esc(px(u,500))+'\')"></div>';}).join('')+'</section>':'')+
   (svcs.length?'<h2 class="sh">'+esc(c.f1)+'</h2>':'')+
   '<section class="feat">'+featCards+'</section>'+
