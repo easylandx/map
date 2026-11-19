@@ -1728,12 +1728,12 @@ function pageHTML(b,t){
     '<div class="card"><i>📋</i><h3>'+esc(c.f1)+'</h3><p>'+esc(T('Everything you offer, easy to scan in seconds.'))+'</p></div><div class="card"><i>📱</i><h3>'+esc(T('{0} in one tap',c.cta))+'</h3><p>'+esc(T('A clear button that turns visitors into customers.'))+'</p></div><div class="card"><i>📍</i><h3>'+esc(T('Find you fast'))+'</h3><p>'+esc(T('Address, hours and directions, always up to date.'))+'</p></div>';
   var heroStyle=hero?' style="background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),url(\''+esc(px(hero,1100))+'\') center/cover,'+t.bg2+'"':'';
   return '<!doctype html><html lang="'+LANG+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><style>'+
-  '*{box-sizing:border-box}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;color:'+t.ink+';background:'+t.bg3+';line-height:1.5}'+
+  '*{box-sizing:border-box}html,body{max-width:100%;overflow-x:hidden}h1,h2,h3,p,a,b,span,td,small{overflow-wrap:anywhere;word-break:break-word;min-width:0}.btn{max-width:100%;text-align:center}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;color:'+t.ink+';background:'+t.bg3+';line-height:1.5}'+
   '.ban{background:#fff;color:#555;font-size:11px;text-align:center;padding:6px 10px;border-bottom:1px solid #eee}'+
   'nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 22px;background:'+t.bg1+'}nav b{font-size:17px;display:flex;align-items:center;gap:10px;min-width:0}.lg{flex:none;width:34px;height:34px;border-radius:50%;background:#fff center/cover no-repeat;border:2px solid '+t.acc+'}'+
   '.btn{display:inline-block;background:'+t.acc+';color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:999px;font-size:15px}.btn.o{background:#fff;color:'+t.acc+';border:2px solid '+t.acc+'}.btn.wa{background:#25d366;color:#fff}'+
-  '.hero{background:linear-gradient(160deg,'+t.bg1+','+t.bg2+');padding:44px 22px 52px;text-align:center}.hero .em{font-size:54px}.hero h1{font-size:clamp(26px,5vw,44px);line-height:1.15;margin:10px auto 12px;max-width:760px;letter-spacing:-.02em}.hero p{font-size:clamp(15px,2.4vw,19px);margin:0 auto 22px;max-width:560px;opacity:.85}'+
-  '.hero .ig{margin:-8px auto 18px;font-weight:800;font-size:16px;opacity:1}.hero .ig a{color:inherit;text-decoration:none;border-bottom:2px solid '+t.acc+'}'+
+  '.hero{background:linear-gradient(160deg,'+t.bg1+','+t.bg2+');padding:44px 22px 52px;text-align:center}.hero .em{font-size:54px}.hero h1{font-size:clamp(26px,5vw,44px);line-height:1.15;margin:10px auto 18px;max-width:760px;letter-spacing:-.02em}.hero p{font-size:clamp(15px,2.4vw,19px);margin:0 auto 22px;max-width:560px;opacity:.85}'+
+  '.hero .ig{margin:0 auto 22px;font-weight:800;font-size:16px;opacity:1;max-width:100%}.hero .ig a{color:inherit;text-decoration:none;border-bottom:2px solid '+t.acc+'}'+
   '.hero.ph{color:#fff}.hero.ph p{opacity:.95}.hero.ph .btn.o{background:transparent;color:#fff;border-color:#fff}.hero .b{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}'+
   '.gal{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));padding:22px;max-width:980px;margin:0 auto}.gal div{aspect-ratio:1;border-radius:16px;background:'+t.bg2+' center/cover no-repeat}'+
   '.sh{max-width:980px;margin:0 auto;padding:30px 22px 0;font-size:24px}'+
@@ -1745,7 +1745,7 @@ function pageHTML(b,t){
   '</style></head><body>'+
   '<div class="ban">'+esc(T('Concept preview by EasyLandX. Not the official website of {0}.',b.name))+'</div>'+
   '<nav><b>'+logo+'<span>'+esc(b.name)+'</span></b></nav>'+
-  '<section class="hero'+(hero?' ph':'')+'"'+heroStyle+'>'+(hero?'':'<div class="em">'+cat.emoji+'</div>')+'<h1>'+esc(c.h)+'</h1><p>'+esc(c.s)+'</p>'+(igUrl?'<p class="ig"><a href="'+esc(igUrl)+'">📸 @'+esc(igH)+'</a></p>':'')+'<div class="b"><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a><a class="btn o" href="#visit">'+esc(T('Find us'))+'</a></div></section>'+
+  '<section class="hero'+(hero?' ph':'')+'"'+heroStyle+'>'+(hero?'':'<div class="em">'+cat.emoji+'</div>')+'<h1>'+esc(b.name)+'</h1>'+(igUrl?'<p class="ig"><a href="'+esc(igUrl)+'">📸 @'+esc(igH)+'</a></p>':'')+'<div class="b"><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a><a class="btn o" href="#visit">'+esc(T('Find us'))+'</a></div></section>'+
   (gal.length?'<section class="gal">'+gal.map(function(u){return '<div style="background-image:url(\''+esc(px(u,500))+'\')"></div>';}).join('')+'</section>':'')+
   (svcs.length?'<h2 class="sh">'+esc(c.f1)+'</h2>':'')+
   '<section class="feat">'+featCards+'</section>'+
