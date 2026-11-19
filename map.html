@@ -284,6 +284,15 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
   .lfu input[type=date],.lnotes textarea{font-size:16px}
   .lseg button{padding:11px 2px 11px 2px}
 }
+
+.leadbar .lb.hot{background:var(--soft-teal);border-color:var(--teal2);color:var(--teal)}
+.leadbar .lb.trk{padding:6px 10px 6px 10px;opacity:.6}
+.leadbar .lb.trk.on{opacity:1;border-color:var(--teal2);background:var(--soft-teal)}
+.lt.s-hot{background:var(--soft-teal);color:var(--teal)}
+.ll .lo{flex:none;font-size:.74rem;font-weight:700;color:var(--teal)}
+.lopen{display:grid;gap:8px;background:var(--soft-teal);color:#0b5e57;border-radius:12px;padding:10px 12px 10px 12px;font-size:.84rem;font-weight:700;margin-bottom:10px}
+.lopen.idle{background:#f6f1e6;color:var(--mute);font-weight:600;font-size:.8rem}
+.lopen .btn{margin:0}
 </style>
 </head>
 <body>
@@ -402,6 +411,7 @@ var CONFIG={
   REVERSE:'https://nominatim.openstreetmap.org/reverse',
   GOOGLE_KEY:'',   // paste a Google Places API key here (restrict it to your site in Google Cloud) to complete phone, website, hours and rating
   WA:'34609204298',
+  TRACK:'https://elx-tracker.paniaguai.workers.dev',   // URL of your tracker Worker (see elx-tracker-worker.js). Empty = links stay long and untracked.
   SITE:'https://easylandx.github.io/',
   CENTER:[-3.7038,40.4168]                                  // Madrid, until the visitor searches
 };
@@ -899,6 +909,7 @@ function setLead(b,patch){
   if(l.st!=='new'&&!l.at)l.at=Date.now();
   if(l.st==='new')l.at=0;
   l.upd=Date.now();l.b=snap(b);l.b.id=k;
+  if(l.st!=='new')l.lids=idsFor(b,k,l.lids);
   if(l.st==='new'&&!String(l.notes||'').trim()&&!l.fu)delete LEADS[k];else LEADS[k]=l;
   saveLeads();renderLeadbar();pushData();
   return LEADS[k]||null;
@@ -910,6 +921,7 @@ function leadList(){
 function leadPass(b){
   if(leadFilter==='all')return true;
   var l=leadOf(b);if(leadFilter==='due')return isDue(l);
+  if(leadFilter==='opened')return hot(l);
   return (l?l.st:'new')===leadFilter;
 }
 // Pipeline order: follow-ups due first (oldest first), then replied, sent, new, sold
@@ -918,6 +930,7 @@ function leadSort(a,b){
   var dx=isDue(x),dy=isDue(y);
   if(dx!==dy)return dx?-1:1;
   if(dx&&dy&&x.fu!==y.fu)return x.fu<y.fu?-1:1;
+  if(hot(x)!==hot(y))return hot(x)?-1:1;   // opened but no reply yet: the right moment to follow up
   if(LORD[x.st]!==LORD[y.st])return LORD[x.st]-LORD[y.st];
   var fx=x.fu||'9999',fy=y.fu||'9999';if(fx!==fy)return fx<fy?-1:1;
   return (y.upd||0)-(x.upd||0);
@@ -925,15 +938,17 @@ function leadSort(a,b){
 function leadLine(b){
   var l=leadOf(b);if(!l)return '';
   var s='<small class="ll"><span class="lt s-'+l.st+'">'+esc(T(LLAB[l.st]))+'</span>';
+  if(l.opn)s+='<span class="lo">👀 '+l.opn+'</span>';
   if(l.fu)s+='<span class="lf'+(isDue(l)?' due':'')+'">📅 '+esc(fmtDate(l.fu))+'</span>';
   if(l.notes)s+='<span class="ln">'+esc(String(l.notes).replace(/\s+/g,' ').slice(0,70))+'</span>';
   return s+'</small>';
 }
 function leadHeader(rows){
-  var cnt={new:0,sent:0,replied:0,sold:0},due=0,k,h='<div class="lview">';
-  for(k in LEADS){cnt[LEADS[k].st]++;if(isDue(LEADS[k]))due++;}
+  var cnt={new:0,sent:0,replied:0,sold:0},due=0,hotN=0,k,h='<div class="lview">';
+  for(k in LEADS){cnt[LEADS[k].st]++;if(isDue(LEADS[k]))due++;if(hot(LEADS[k]))hotN++;}
   LSTAT.forEach(function(s){h+='<button type="button" class="lt s-'+s+(leadFilter===s?' on':'')+'" data-f="'+s+'">'+esc(T(LLAB[s]))+' '+cnt[s]+'</button>';});
   if(due)h+='<button type="button" class="lt s-due'+(leadFilter==='due'?' on':'')+'" data-f="due">📅 '+due+'</button>';
+  if(hotN)h+='<button type="button" class="lt s-hot'+(leadFilter==='opened'?' on':'')+'" data-f="opened">👀 '+hotN+'</button>';
   return h+'<button type="button" class="exp" id="leadExp">⬇ '+esc(T('Export CSV'))+' ('+rows.length+')</button></div>';
 }
 function wireLeadHeader(rows){
@@ -945,13 +960,18 @@ function wireLeadHeader(rows){
 function renderLeadbar(){
   var el=$('leadbar');if(!el)return;
   var n=Object.keys(LEADS).length,due=0;Object.keys(LEADS).forEach(function(k){if(isDue(LEADS[k]))due++;});
-  var opts=[['all','All statuses'],['new','Not contacted yet'],['sent','Sent'],['replied','Replied'],['sold','Sold'],['due','Follow-up due']];
+  var opts=[['all','All statuses'],['new','Not contacted yet'],['sent','Sent'],['replied','Replied'],['sold','Sold'],['due','Follow-up due'],['opened','Opened, no reply']],hotN=0;
+  Object.keys(LEADS).forEach(function(k){if(hot(LEADS[k]))hotN++;});
   var h='<button type="button" class="lb'+(showLeads?' on':'')+'" id="btnLeads">📋 '+esc(T('Leads'))+' ('+n+')</button>';
   if(due)h+='<button type="button" class="lb due" id="btnDue">📅 '+esc(T('{0} due',due))+'</button>';
+  if(hotN)h+='<button type="button" class="lb hot" id="btnHot">'+esc(T('{0} opened',hotN))+' 👀</button>';
+  if(CONFIG.TRACK)h+='<button type="button" class="lb trk'+(trackOn()?' on':'')+'" id="btnTrack" title="'+esc(T('Link tracking'))+'" aria-label="'+esc(T('Link tracking'))+'">🔔</button>';
   h+='<select id="fLead" aria-label="'+esc(T('Filter by status'))+'">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(leadFilter===o[0]?' selected':'')+'>'+esc(T(o[1]))+'</option>';}).join('')+'</select>';
   el.innerHTML=h;
   $('btnLeads').onclick=function(){openLeads();};
   if($('btnDue'))$('btnDue').onclick=function(){openLeads('due');};
+  if($('btnHot'))$('btnHot').onclick=function(){openLeads('opened');};
+  if($('btnTrack'))$('btnTrack').onclick=setupTracking;
   $('fLead').onchange=function(){leadFilter=this.value;renderList();};
 }
 function openLeads(f){
@@ -983,7 +1003,7 @@ function leadBoxHTML(b){
   var l=leadOf(b),st=l?l.st:'new';
   return '<div class="lead" id="leadBox"><div class="lh"><b>'+esc(T('Lead tracker'))+'</b><span id="leadUpd"></span></div>'+
    '<div class="lseg" role="group" aria-label="'+esc(T('Lead status'))+'">'+LSTAT.map(function(s){return '<button type="button" data-s="'+s+'" class="s-'+s+(s===st?' on':'')+'">'+esc(T(LLAB[s]))+'</button>';}).join('')+'</div>'+
-   '<div class="lwarn" id="leadWarn" hidden></div>'+
+   '<div id="leadOpen"></div><div class="lwarn" id="leadWarn" hidden></div>'+
    '<div class="lfu" id="leadFuBox"><label for="leadFu">'+esc(T('Follow-up date'))+'</label><input type="date" id="leadFu" value="'+esc(l&&l.fu||'')+'">'+
    '<button type="button" class="q" data-d="3">'+esc(T('+3 days'))+'</button><button type="button" class="q" data-d="7">'+esc(T('+1 week'))+'</button><button type="button" class="q" data-d="x" aria-label="'+esc(T('Clear date'))+'">✕</button></div>'+
    '<div class="lnotes"><label for="leadNotes">'+esc(T('Notes'))+'</label><textarea id="leadNotes" rows="3" placeholder="'+esc(T('E.g. Spoke to the owner, call back on Monday'))+'">'+esc(l&&l.notes||'')+'</textarea></div></div>';
@@ -995,6 +1015,13 @@ function refreshLeadBox(b){
   var w=$('leadWarn'),t=leadWarnText(l);w.hidden=!t;w.textContent=t;w.classList.toggle('ok',st==='sold');
   $('leadFuBox').classList.toggle('due',isDue(l));
   $('leadUpd').textContent=l&&l.upd?T('Updated {0}',fmtDate(l.upd)):'';
+  var oi=$('leadOpen');oi.innerHTML=openInfoHTML(l);
+  var fb=$('leadFollow');if(fb)fb.onclick=function(){
+    var msg=followMsg(b,sendLang),n=waNumber(b.phone);
+    track('map_followup_opened',{category:b.cat});
+    if(!n){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');return;}
+    window.open(waLink(msg,n),'_blank','noopener');
+  };
 }
 function wireLeadBox(b){
   var box=$('leadBox');if(!box)return;
@@ -1017,6 +1044,121 @@ function markSent(b){
   setLead(b,{st:'sent'});
   if($('leadBox')&&cur)refreshLeadBox(cur);
   return true;
+}
+
+/* ---- Link tracking: short link + "opened" events (needs the tracker Worker, see CONFIG.TRACK) ---- */
+(function(){var X={
+ 'Tracking is off. Put your tracker URL in CONFIG.TRACK first (see the worker file).':'El seguimiento está desactivado. Primero pon la URL de tu tracker en CONFIG.TRACK (mira el archivo del worker).',
+ 'Paste your tracking key. Leave it empty to turn tracking off.':'Pega tu clave de seguimiento. Déjala vacía para desactivarlo.',
+ 'Tracking is off.':'Seguimiento desactivado.','Tracking is on.':'Seguimiento activado.','That key is not right.':'Esa clave no es correcta.','Could not reach the tracker.':'No se pudo conectar con el tracker.',
+ 'Tracking is not reachable. Using the long link.':'No se puede contactar con el seguimiento. Se usa el enlace largo.',
+ '👀 {0} opened your link':'👀 {0} ha abierto tu enlace','👀 {0} businesses opened your link':'👀 {0} negocios han abierto tu enlace',
+ 'Tracking link sent · not opened yet':'Enlace con seguimiento enviado · aún sin abrir','Opened {0}× · last {1}':'Abierto {0}× · última vez: {1}',
+ '💬 Follow up: “I see you took a look 😊”':'💬 Seguimiento: «Veo que le echó un vistazo 😊»',
+ '{0} opened':'{0} abiertos','Opened, no reply':'Abierto, sin respuesta','Link tracking':'Seguimiento de aperturas'
+};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
+var REG={};try{REG=JSON.parse(store('elx_links')||'{}')||{};}catch(e){REG={};}
+function saveReg(){var o={};Object.keys(REG).forEach(function(k){var e=REG[k];o[k]={id:e.id,bk:e.bk,lang:e.lang,sig:e.sig};});store('elx_links',JSON.stringify(o));}
+function trackBase(){return String(CONFIG.TRACK||'').replace(/\/+$/,'');}
+function trackOn(){return !!(CONFIG.TRACK&&store('elx_tkey'));}
+function newId(){
+  var A='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789',s='',i,r=new Uint8Array(8);
+  try{crypto.getRandomValues(r);}catch(e){for(i=0;i<8;i++)r[i]=Math.floor(Math.random()*256);}
+  for(i=0;i<8;i++)s+=A.charAt(r[i]%A.length);return s;
+}
+// One short id per business and language. The link is only used once the Worker confirmed it (otherwise the long link is the safe fallback).
+function shortFor(b,o){
+  if(!trackOn()||!b||b.id==='shared')return null;
+  var k=b.id+'|'+o.g,e=REG[k],sig=JSON.stringify(o);
+  if(!e){e=REG[k]={id:newId(),bk:b.id,lang:o.g,sig:''};saveReg();}
+  if(e.sig!==sig)registerLink(e,o,sig);
+  return e.sig?location.origin+location.pathname+'#p='+e.id:null;
+}
+function registerLink(e,o,sig){
+  if(e.busy||(e.fail&&Date.now()-e.fail<30000))return;
+  e.busy=true;var first=!e.sig;
+  fetch(trackBase()+'/l',{method:'POST',headers:{'content-type':'application/json','x-admin-key':store('elx_tkey')||''},body:JSON.stringify({id:e.id,payload:o})})
+    .then(function(r){if(!r.ok)throw new Error(r.status);e.sig=sig;e.busy=false;e.fail=0;saveReg();
+      if(first&&!$('mPrev').hidden&&!sendEdited)refreshSend(true);})   // swap the long link for the short one in the open message
+    .catch(function(){e.busy=false;e.fail=Date.now();if(!registerLink._w){registerLink._w=1;toast('Tracking is not reachable. Using the long link.');}});
+}
+function warmLink(b){try{if(trackOn()&&b&&b.id!=='shared')previewLink(b,sendLang);}catch(e){}}
+function idsFor(b,k,old){
+  var out=(old||[]).slice();
+  Object.keys(REG).forEach(function(r){var e=REG[r];if(e.sig&&(e.bk===b.id||e.bk===k)&&out.indexOf(e.id)<0)out.push(e.id);});
+  return out;
+}
+function trackNoteL(lang,isShort){return isShort?(lang==='es'?' El enlace solo cuenta que se ha abierto (no guarda datos personales).':' The link only counts that it was opened (it stores no personal data).'):'';}
+
+/* Recipient side: resolve the short id, show the preview, count one open */
+function openShortLink(raw){
+  var id=String(raw||'').replace(/[^A-Za-z0-9]/g,'');
+  if(!CONFIG.TRACK||!id){toast('That preview link looks broken.');return;}
+  fetch(trackBase()+'/l/'+id).then(function(r){if(!r.ok)throw new Error('nf');return r.json();}).then(function(d){
+    var o=d.payload||{};
+    if(o.g==='es'||o.g==='en'){LANG=o.g;refreshUI();}
+    openPreview({id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:'',status:'noweb'},o.t);
+    reportOpen(id);
+  }).catch(function(){toast('That preview link looks broken.');});
+}
+function reportOpen(id){
+  if(!CONFIG.TRACK||store('elx_tkey'))return;                       // your own browser never counts
+  for(var k in REG)if(REG[k].id===id)return;
+  try{if(sessionStorage.getItem('elx_o_'+id))return;sessionStorage.setItem('elx_o_'+id,'1');}catch(e){}
+  var go=function(){fetch(trackBase()+'/o/'+id,{method:'POST',keepalive:true}).catch(function(){});};
+  setTimeout(function(){
+    if(document.visibilityState==='visible')go();
+    else document.addEventListener('visibilitychange',function f(){if(document.visibilityState==='visible'){document.removeEventListener('visibilitychange',f);go();}});
+  },1500);
+}
+
+/* Sender side: poll counts, notify, show in the lead card */
+function hot(l){return !!(l&&l.st==='sent'&&l.opn>0);}
+function fmtDT(t){try{return new Date(+t).toLocaleString(LANG==='es'?'es-ES':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+function pollOpens(){
+  if(!trackOn()||pollOpens._b)return;
+  var idk={},ids=[];
+  Object.keys(LEADS).forEach(function(k){(LEADS[k].lids||[]).forEach(function(id){if(!idk[id]){idk[id]=k;ids.push(id);}});});
+  if(!ids.length)return;
+  pollOpens._b=1;var chunks=[];for(var i=0;i<ids.length;i+=40)chunks.push(ids.slice(i,i+40));
+  Promise.all(chunks.map(function(c){
+    return fetch(trackBase()+'/s?ids='+c.join(','),{headers:{'x-admin-key':store('elx_tkey')||''}}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});
+  })).then(function(arr){
+    var per={};
+    arr.forEach(function(d){Object.keys(d).forEach(function(id){var k=idk[id],s=d[id];if(!k||!s||!s.n)return;
+      var p=per[k]=per[k]||{n:0,first:0,last:0};p.n+=s.n;p.first=p.first?Math.min(p.first,s.first||p.first):s.first;p.last=Math.max(p.last,s.last||0);});});
+    var fresh=[];
+    Object.keys(per).forEach(function(k){var l=LEADS[k],p=per[k];if(!l||p.n<=(l.opn||0))return;l.opn=p.n;l.opf=p.first;l.opl=p.last;fresh.push((l.b&&l.b.name)||'');});
+    if(!fresh.length)return;
+    saveLeads();renderLeadbar();
+    toast(fresh.length===1?'👀 {0} opened your link':'👀 {0} businesses opened your link',fresh.length===1?fresh[0]:fresh.length);
+    if(!$('detail').hidden&&cur)refreshLeadBox(cur);
+    else if(!$('list').hidden&&!busy&&(results.length||showLeads))renderList();
+  }).catch(function(){}).then(function(){pollOpens._b=0;});
+}
+setInterval(function(){if(document.visibilityState==='visible')pollOpens();},60000);
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')pollOpens();});
+setTimeout(pollOpens,2000);
+function setupTracking(){
+  if(!CONFIG.TRACK){toast('Tracking is off. Put your tracker URL in CONFIG.TRACK first (see the worker file).');return;}
+  var v=prompt(T('Paste your tracking key. Leave it empty to turn tracking off.'),store('elx_tkey')||'');
+  if(v===null)return;v=v.trim();
+  if(!v){try{localStorage.removeItem('elx_tkey');}catch(e){}renderLeadbar();toast('Tracking is off.');return;}
+  fetch(trackBase()+'/s?ids=',{headers:{'x-admin-key':v}}).then(function(r){
+    if(r.status===401)throw new Error('auth');if(!r.ok)throw new Error('net');
+    store('elx_tkey',v);renderLeadbar();toast('Tracking is on.');if(cur)warmLink(cur);pollOpens();
+  }).catch(function(e){toast(e&&e.message==='auth'?'That key is not right.':'Could not reach the tracker.');});
+}
+function followMsg(b,lang){
+  return lang==='es'
+    ?'Hola! Vi que echó un vistazo a la propuesta de página web para '+b.name+' 😊 ¿Qué le ha parecido? Si quiere cambiar algo (colores, textos, fotos), se lo ajusto sin compromiso.\n— EasyLandX'
+    :'Hi! I noticed you took a look at the website concept for '+b.name+' 😊 What did you think? If you would like to change anything (colours, text, photos), I will adjust it with no commitment.\n— EasyLandX';
+}
+function openInfoHTML(l){
+  if(!trackOn()||!l||!l.lids||!l.lids.length)return '';
+  if(!l.opn)return '<div class="lopen idle">'+esc(T('Tracking link sent · not opened yet'))+'</div>';
+  return '<div class="lopen"><span>👀 '+esc(T('Opened {0}× · last {1}',l.opn,fmtDT(l.opl)))+'</span>'+
+    (l.st==='sold'?'':'<button type="button" class="btn t sm" id="leadFollow">'+esc(T('💬 Follow up: “I see you took a look 😊”'))+'</button>')+'</div>';
 }
 
 /* ---- CSV export ---- */
@@ -1186,7 +1328,7 @@ function select(id,fly){
   var b=byId(id);if(!b)return;cur=b;setSel(id);track('map_select',{category:b.cat,status:b.status});
   openSheet();
   if(fly&&map)map.flyTo({center:[b.lon,b.lat],zoom:17.6,pitch:66,duration:1100,essential:true,offset:window.innerWidth>820?[200,0]:[0,-sheetOffset()]});
-  renderDetail(b);
+  renderDetail(b);warmLink(b);
   enrich(b).then(function(c1){return gEnrich(b).then(function(c2){return c1||c2;});}).then(function(ch){if(ch&&cur===b){renderDetail(b);pushData();}});
 }
 function renderDetail(b){
@@ -1256,9 +1398,9 @@ function copyText(t){
   else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copied to clipboard');}catch(e){toast('Could not copy');}ta.remove();}
 }
 function pitch(b,lang){
-  var l=previewLink(b,lang),unk=b.status==='unk';
-  if(lang==='es')return 'Hola! Encontré '+b.name+' en el mapa y '+(unk?'no encontré su web.':'vi que no tiene web registrada.')+' He preparado una propuesta gratuita de cómo podría ser su página: '+l+'\nSi le gusta, la creo en unas 24h, sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos. — EasyLandX ('+CONFIG.SITE+')';
-  return 'Hi! I came across '+b.name+' on the map and '+(unk?'could not find a website for it.':'noticed there is no website listed.')+' I put together a free concept of what a page for it could look like: '+l+'\nIf you like it, I can build the real one in about 24h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested. — EasyLandX ('+CONFIG.SITE+')';
+  var l=previewLink(b,lang),unk=b.status==='unk',tn=trackNoteL(lang,l.indexOf('#p=')>-1);
+  if(lang==='es')return 'Hola! Encontré '+b.name+' en el mapa y '+(unk?'no encontré su web.':'vi que no tiene web registrada.')+' He preparado una propuesta gratuita de cómo podría ser su página: '+l+'\nSi le gusta, la creo en unas 24h, sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.'+tn+' — EasyLandX ('+CONFIG.SITE+')';
+  return 'Hi! I came across '+b.name+' on the map and '+(unk?'could not find a website for it.':'noticed there is no website listed.')+' I put together a free concept of what a page for it could look like: '+l+'\nIf you like it, I can build the real one in about 24h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.'+tn+' — EasyLandX ('+CONFIG.SITE+')';
 }
 $('side').addEventListener('click',function(){});
 /* ===== Mobile bottom sheet: drag the handle (or the title) to any height ===== */
@@ -1367,6 +1509,7 @@ function b64(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).rep
 function unb64(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return JSON.parse(decodeURIComponent(escape(atob(s))));}
 function previewLink(b,l){
   var o={g:(l==='es'||l==='en')?l:LANG,n:b.name,c:b.cat,a:b.addr,p:b.phone,h:b.hours,la:+b.lat.toFixed(6),lo:+b.lon.toFixed(6),t:(pvT&&pvB&&pvB.id===b.id)?pvT.id:undefined};
+  var sh=shortFor(b,o);if(sh)return sh;
   return location.origin+location.pathname+'#preview='+b64(o);
 }
 function buildThemes(){
@@ -1383,13 +1526,13 @@ function renderFrame(){$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
 /* ===== Send the preview to the business by WhatsApp (outreach mode only) ===== */
 var sendLang=LANG,sendEdited=false;   // the WhatsApp message follows the site language (EN/ES switch)
 function buildMsg(b,lang){
-  var link=previewLink(b,lang),c=catOf(b),ex=c.exUrl,order='https://wa.me/'+CONFIG.WA;
+  var link=previewLink(b,lang),tn=trackNoteL(lang,link.indexOf('#p=')>-1),c=catOf(b),ex=c.exUrl,order='https://wa.me/'+CONFIG.WA;
   if(lang==='es')return 'Hola! Encontré '+b.name+' en el mapa y preparé una propuesta gratuita de cómo podría ser su página web:\n'+link+
     '\n\nAsí son nuestras webs reales para este tipo de negocio:\n'+ex+
-    '\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este mensaje o escríbanos aquí: '+order+'\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.\n— EasyLandX';
+    '\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este mensaje o escríbanos aquí: '+order+'\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.'+tn+'\n— EasyLandX';
   return 'Hi! I found '+b.name+' on the map and prepared a free concept of what its website could look like:\n'+link+
     '\n\nHere are real websites we built for this kind of business:\n'+ex+
-    '\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this message or message us here: '+order+'\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.\n— EasyLandX';
+    '\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this message or message us here: '+order+'\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.'+tn+'\n— EasyLandX';
 }
 function refreshSend(force){
   var box=$('sendBox');
@@ -1413,7 +1556,7 @@ $('sGo').onclick=function(){
   window.open(waLink(msg,n),'_blank','noopener');if(markSent(pvB))toast('Marked as sent. You can change it in the lead tracker.');
 };
 
-$('pBack').onclick=function(){$('mPrev').hidden=true;$('pFrame').srcdoc='';if(location.hash.indexOf('#preview=')===0)history.replaceState(null,'',location.pathname+location.search);};
+$('pBack').onclick=function(){$('mPrev').hidden=true;$('pFrame').srcdoc='';if(/^#(preview|p)=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);};
 $('dMob').onclick=function(){$('device').classList.remove('desk');$('dMob').classList.add('on');$('dDesk').classList.remove('on');};
 $('dDesk').onclick=function(){$('device').classList.add('desk');$('dDesk').classList.add('on');$('dMob').classList.remove('on');};
 $('pCopy').onclick=function(){copyText(previewLink(pvB));track('map_copy_link');};
@@ -1657,6 +1800,7 @@ window.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mAdd').hi
 function geoFromQuery(){}
 function handleHash(){
   var h=location.hash;
+  if(h.indexOf('#p=')===0){openShortLink(h.slice(3));return;}
   if(h.indexOf('#preview=')===0){
     try{
       var o=unb64(h.slice(9));
