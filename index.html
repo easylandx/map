@@ -1727,8 +1727,10 @@ function pageHTML(b,t){
   var wad=waDigits(b),bpx=bestPhone(b);
   var waUrl=wad?waLink(T('Hi! I would like more information about {0}.',b.name),wad):'';   // phones: WhatsApp app straight away; computers: WhatsApp Web (no wa.me page in between)
   var igH=igHandleOf(b),igUrl=igH?'https://www.instagram.com/'+igH+'/':'';
+  var webUrl=b.web?siteUrl(b.web):'';if(!/^https?:\/\/[^\s"'<>]+$/i.test(webUrl))webUrl='';
+  var webTxt=webUrl.replace(/^https?:\/\/(www\.)?/i,'').replace(/\/$/,'');
   var tel=igUrl||waUrl||(bpx?'tel:+'+bpx.d:'#visit');
-  var map='https://www.openstreetmap.org/?mlat='+b.lat+'&mlon='+b.lon+'#map=19/'+b.lat+'/'+b.lon;
+  var map=gMapsUrl(b);
   var rows=parseHours(b.hours,LANG),hrs=b.hours||br.h||'';
   var hoursHTML=rows?'<table class="hrs">'+rows.map(function(r){return '<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>';}).join('')+'</table>':(hrs?'<p>🕒 '+esc(hrs)+'</p>':'');
   var logo=br.logo?'<span class="lg" style="background-image:url(\''+esc(px(br.logo,96,'png'))+'\')"></span>':'';
@@ -1757,8 +1759,8 @@ function pageHTML(b,t){
   (gal.length?'<section class="gal">'+gal.map(function(u){return '<div style="background-image:url(\''+esc(px(u,500))+'\')"></div>';}).join('')+'</section>':'')+
   (svcs.length?'<h2 class="sh">'+esc(c.f1)+'</h2>':'')+
   '<section class="feat">'+featCards+'</section>'+
-  '<section class="visit" id="visit"><h2>'+esc(T('Visit us'))+'</h2>'+(b.addr?'<p>📍 '+esc(b.addr)+'</p>':'')+(hoursHTML?'<p><b>'+esc(T('Opening hours'))+'</b></p>'+hoursHTML:'')+(b.phone?'<p>📞 '+esc(b.phone)+'</p>':'')+
-    '<p>'+(waUrl?'<a class="btn wa" href="'+esc(waUrl)+'" style="margin:10px 6px 0">💬 '+esc(T('Chat on WhatsApp'))+'</a>':'')+(igUrl?'<a class="btn o" href="'+esc(igUrl)+'" style="margin:10px 6px 0">📸 @'+esc(igH)+'</a>':'')+'<a class="btn o" href="'+esc(map)+'" style="margin:10px 6px 0">'+esc(T('Open map'))+'</a></p></section>'+
+  '<section class="visit" id="visit"><h2>'+esc(T('Visit us'))+'</h2>'+(b.addr?'<p>📍 '+esc(b.addr)+'</p>':'')+(hoursHTML?'<p><b>'+esc(T('Opening hours'))+'</b></p>'+hoursHTML:'')+(b.phone?'<p>📞 '+esc(b.phone)+'</p>':'')+(webUrl?'<p>🌐 <a href="'+esc(webUrl)+'" style="color:inherit;font-weight:700">'+esc(webTxt)+'</a></p>':'')+
+    '<p>'+(webUrl?'<a class="btn" href="'+esc(webUrl)+'" style="margin:10px 6px 0">🌐 '+esc(T('Website'))+'</a>':'')+(waUrl?'<a class="btn wa" href="'+esc(waUrl)+'" style="margin:10px 6px 0">💬 '+esc(T('Chat on WhatsApp'))+'</a>':'')+(igUrl?'<a class="btn o" href="'+esc(igUrl)+'" style="margin:10px 6px 0">📸 @'+esc(igH)+'</a>':'')+'<a class="btn o" href="'+esc(map)+'" style="margin:10px 6px 0">'+esc(T('Open map'))+'</a></p></section>'+
   '<section class="cta"><h2>'+esc(T('Ready when you are'))+'</h2><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a></section>'+
   '<footer>'+esc(T("Concept preview built from public map data. Real pages use the owner's own photos, prices and booking."))+' · <a href="'+CONFIG.SITE+'">EasyLandX</a> © 2026</footer>'+
   (waUrl?'<a class="fwa" href="'+esc(waUrl)+'" aria-label="WhatsApp">💬</a>':'')+
