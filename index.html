@@ -204,6 +204,25 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 #sendBox textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:.8rem;line-height:1.45;resize:vertical;min-height:150px;background:#fff}
 #sendBox p{margin:8px 0 10px}
 #sendBox .note{margin:8px 0 0}
+#chSeg{margin-bottom:8px!important}
+#chSeg button,#langSeg button{font-size:.76rem;padding:7px 2px}
+#sMailBox{margin:0 0 8px}
+#sMailBox input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:9px 10px;font:inherit;font-size:.82rem;background:#fff}
+#sCount{font-size:.74rem;color:var(--mute);margin:4px 2px 0;text-align:right}
+#sTplBtn{width:100%;margin:8px 0 0}
+#mTpl{position:fixed;inset:0;z-index:80;background:rgba(29,43,42,.5);display:grid;place-items:center;padding:16px}
+#mTpl[hidden]{display:none}
+#tplForm{background:#fff;border-radius:22px;padding:20px;width:min(560px,100%);max-height:calc(100dvh - 32px);overflow:auto;box-shadow:var(--shadow);display:grid;gap:12px;align-content:start}
+#tplForm h3{margin:0;font-size:1.15rem}
+#tplForm p{margin:0;font-size:.82rem;color:var(--mute);line-height:1.45}
+#tplForm .seg{margin-bottom:0}
+#tplForm .seg button{font-size:.78rem;padding:8px 2px}
+#tplText{width:100%;min-height:230px;border:1.5px solid var(--line);border-radius:14px;padding:12px;font:inherit;font-size:.86rem;line-height:1.5;resize:vertical;outline:none}
+#tplText:focus{border-color:var(--teal2);box-shadow:0 0 0 4px rgba(20,184,166,.15)}
+#tplVars{display:flex;flex-wrap:wrap;gap:6px}
+#tplVars button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:4px 10px;font:inherit;font-size:.75rem;font-weight:700;color:var(--teal);cursor:pointer}
+#tplState{font-size:.78rem;font-weight:700;color:var(--teal)}
+#tplForm .row .btn{flex:1;margin-bottom:0}
 #arStage{flex:1;position:relative;min-height:0;background:radial-gradient(circle at 50% 30%,#fff7e6,#e6f2ff)}
 model-viewer{width:100%;height:100%;--poster-color:transparent;background:transparent}
 .arbtn{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);border:0;border-radius:99px;padding:15px 26px;font-weight:800;font-size:1rem;background:var(--coral);color:#fff;box-shadow:0 10px 26px rgba(244,98,58,.4);white-space:nowrap}
@@ -373,6 +392,22 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
   </form>
 </div>
 
+<!-- Message templates -->
+<div id="mTpl" hidden role="dialog" aria-modal="true" aria-labelledby="tplT">
+  <div id="tplForm">
+    <h3 id="tplT">Message templates</h3>
+    <p id="tplHint">Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.</p>
+    <div class="seg" id="tplChSeg"><button type="button" data-ch="wa">WhatsApp</button><button type="button" data-ch="ig">Instagram</button><button type="button" data-ch="mail">Email</button><button type="button" data-ch="sms">SMS</button></div>
+    <div class="field"><label for="tplCat">Category</label><select id="tplCat"></select></div>
+    <div class="seg" id="tplLangSeg"><button type="button" data-l="es">🇪🇸 Español</button><button type="button" data-l="en">🇬🇧 English</button></div>
+    <div id="tplVars"></div>
+    <textarea id="tplText" aria-label="Template" spellcheck="false"></textarea>
+    <div id="tplState"></div>
+    <div class="row"><button type="button" class="btn l" id="tplReset">Reset</button><button type="button" class="btn p" id="tplSave">Save</button></div>
+    <div class="row"><button type="button" class="btn l" id="tplClose">Close</button></div>
+  </div>
+</div>
+
 <!-- Preview modal -->
 <div class="modal" id="mPrev" hidden>
   <div class="mbar">
@@ -392,10 +427,14 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
       <div class="sw" id="themes"></div>
       <div id="sendBox" hidden>
         <h3>Send to this business</h3>
-        <div class="seg"><button id="sEs" type="button">🇪🇸 Español</button><button id="sEn" type="button">🇬🇧 English</button></div>
-        <textarea id="sMsg" aria-label="WhatsApp message"></textarea>
+        <div class="seg" id="chSeg"><button id="chWa" type="button">WhatsApp</button><button id="chIg" type="button">Instagram</button><button id="chMail" type="button">Email</button><button id="chSms" type="button">SMS</button></div>
+        <div class="seg" id="langSeg"><button id="sEs" type="button">🇪🇸 Español</button><button id="sEn" type="button">🇬🇧 English</button></div>
+        <div id="sMailBox" hidden><input id="sMailTo" type="email" inputmode="email" placeholder="email@business.com" aria-label="Recipient email" autocapitalize="off" spellcheck="false"></div>
+        <textarea id="sMsg" aria-label="Message"></textarea>
+        <div id="sCount" hidden></div>
         <p id="sTo"></p>
         <button class="btn p sm" id="sGo" type="button">💬 Open WhatsApp with this message</button>
+        <button class="btn l sm" id="sTplBtn" type="button">✏️ Edit templates</button>
         <p class="note">Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).</p>
       </div>
       <h3>About this preview</h3>
@@ -449,7 +488,7 @@ function track(n,p){try{if(window.gtag)gtag('event',n,p||{});}catch(e){}}
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 var LANG=(function(){var s=store('elx_lang');if(s==='es'||s==='en')return s;return /^es/i.test(navigator.language||'')?'es':'en';})();
 var ES={"Expand or collapse panel": "Expandir o contraer el panel", "What": "Qué", "Where": "Dónde", "Hair salon, café, yoga…": "Peluquería, cafetería, yoga…", "City or neighbourhood": "Ciudad o barrio", "Use my location": "Usar mi ubicación", "↻ Search this area": "↻ Buscar en esta zona", "Toggle 2D / 3D": "Cambiar entre 2D y 3D", "No website listed": "Sin web registrada", "Social media only": "Solo redes sociales", "Has a website": "Tiene página web", "Website unknown": "Web desconocida", "← Back": "← Volver", "Concept preview · made with EasyLandX": "Vista previa de concepto · hecha con EasyLandX", "📱 View in AR": "📱 Ver en RA", "🔗 Copy link": "🔗 Copiar enlace", "📤 Send to business": "📤 Enviar al negocio", "💬 I want this page": "💬 Quiero esta página", "Concept preview": "Vista previa de concepto", "Device": "Dispositivo", "Colors": "Colores", "About this preview": "Sobre esta vista previa", "Language": "Idioma", "📱 Phone": "📱 Móvil", "🖥️ Desktop": "🖥️ Ordenador", "Send to this business": "Enviar a este negocio", "WhatsApp message": "Mensaje de WhatsApp", "💬 Open WhatsApp with this message": "💬 Abrir WhatsApp con este mensaje", "Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).": "No se envía nada automáticamente: revisas el mensaje y pulsas enviar en WhatsApp. Contacta con los negocios solo por sus canales públicos y cumple la normativa local de marketing (RGPD, LSSI en España).", "A concept built from public map data (name, address, category). It is a sample of what a page could look like, not the business's official website. The real page is written together with the owner: their photos, services, prices and booking.": "Un concepto creado con datos públicos del mapa (nombre, dirección, categoría). Es un ejemplo de cómo podría ser una página, no la web oficial del negocio. La página real se crea junto con el propietario: sus fotos, servicios, precios y reservas.", "See a real EasyLandX example for this niche ↗": "Ver un ejemplo real de EasyLandX para este sector ↗", "← Back to preview": "← Volver a la vista previa", "View in AR": "Ver en RA", "Place the page on your counter": "Coloca la página sobre tu mostrador", "↗ New tab": "↗ Nueva pestaña", "Example page": "Página de ejemplo", "Business data © <a href=\"https://www.openstreetmap.org/copyright\" rel=\"noopener\">OpenStreetMap</a> contributors. \"No website listed\" means none is recorded on the map, so it can be incomplete. © 2026 EasyLandX": "Datos de negocios © colaboradores de <a href=\"https://www.openstreetmap.org/copyright\" rel=\"noopener\">OpenStreetMap</a>. «Sin web registrada» significa que no consta ninguna en el mapa, por lo que puede estar incompleto. © 2026 EasyLandX", "EasyLandX Map — Find local businesses and see the website they could have": "EasyLandX Map — Encuentra negocios locales y mira la web que podrían tener", "Search real local businesses on a 3D map, see who has no website listed, preview a landing page for any of them, and view it in AR in your own shop.": "Busca negocios locales reales en un mapa 3D, mira cuáles no tienen web registrada, previsualiza una landing para cualquiera de ellos y velo en RA en tu propio local.", "Search businesses": "Buscar negocios", "Search {0} categories": "Buscar {0} categorías", "Show fewer ▴": "Mostrar menos ▴", "Show all {0} categories ▾": "Mostrar las {0} categorías ▾", "★ Saved ({0})": "★ Guardados ({0})", "business": "negocio", "businesses": "negocios", "Social only": "Solo redes", "Has website": "Tiene web", "Address not listed": "Dirección no indicada", "Showing the first {0}. Zoom in or move the map and press <b style=\"display:inline\">Search this area</b> to see more.": "Se muestran los primeros {0}. Acércate o mueve el mapa y pulsa <b style=\"display:inline\">Buscar en esta zona</b> para ver más.", "The map is not ready.": "El mapa aún no está listo.", "The map library could not load. Check your connection.": "No se pudo cargar la biblioteca del mapa. Revisa tu conexión.", "Map tiles are slow to load. Showing a simple map.": "Los mosaicos del mapa tardan en cargar. Mostrando un mapa sencillo.", "Live business data unavailable. Showing places from the map itself (website info unknown).": "Datos de negocios en directo no disponibles. Mostrando lugares del propio mapa (se desconoce si tienen web).", "Zoomed out far: searching the centre of the view. Zoom in to see everything.": "Vista muy alejada: se busca en el centro. Acércate para verlo todo.", "That area is too big for the free data service. Searching the centre of the view.": "Esa zona es demasiado grande para el servicio de datos gratuito. Se busca en el centro de la vista.", "Pick what to look for": "Elige qué buscar", "Choose a category above or type something like \"bakery\" or \"yoga\".": "Elige una categoría arriba o escribe algo como «panadería» o «yoga».", "Nothing found here": "No se encontró nada aquí", "Try zooming out, moving the map, or another category. OpenStreetMap does not list every business.": "Prueba a alejar el zoom, mover el mapa o elegir otra categoría. OpenStreetMap no incluye todos los negocios.", "Place not found": "Lugar no encontrado", "Check the spelling of the city or neighbourhood and try again.": "Revisa cómo está escrita la ciudad o el barrio e inténtalo de nuevo.", "Could not load businesses": "No se pudieron cargar los negocios", "The free map data service did not answer ({0}). Wait a few seconds and try again.": "El servicio de datos del mapa no respondió ({0}). Espera unos segundos e inténtalo de nuevo.", "network error": "error de red", "Location is not available on this device.": "La ubicación no está disponible en este dispositivo.", "Finding your location…": "Buscando tu ubicación…", "Location permission was denied. Type a city instead.": "Se denegó el permiso de ubicación. Escribe una ciudad.", "All of these already have a website": "Todos estos ya tienen página web", "Untick \"No Web\" to see them, or search another category.": "Desmarca «Sin Web» para verlos, o busca otra categoría.", "No saved businesses yet": "Aún no hay negocios guardados", "Open a business and tap the star to save it.": "Abre un negocio y toca la estrella para guardarlo.", "Copied to clipboard": "Copiado al portapapeles", "Could not copy": "No se pudo copiar", "No phone listed. Message copied: paste it in their WhatsApp chat.": "Sin teléfono. Mensaje copiado: pégalo en su chat de WhatsApp.", "That preview link looks broken.": "Ese enlace de vista previa parece estar roto.", "This business has no website recorded on the map. A clear page could help new customers find and choose it.": "Este negocio no tiene web registrada en el mapa. Una página clara podría ayudar a que nuevos clientes lo encuentren y lo elijan.", "Only a social profile is listed. A page of its own gives it a home that shows up in search.": "Solo figura un perfil social. Una página propia le da un hogar que aparece en las búsquedas.", "The live business data service was not available, so this place comes from the base map, which does not say whether it has a website. Check before contacting.": "El servicio de datos en directo no estaba disponible, así que este lugar viene del mapa base, que no indica si tiene web. Compruébalo antes de contactar.", "Already has a website": "Ya tiene página web", "It lists a site. You can still preview a fresh concept for comparison.": "Tiene una web registrada. Aun así puedes ver una propuesta nueva para comparar.", "View on OpenStreetMap": "Ver en OpenStreetMap", "← Results": "← Resultados", "‹ Prev": "‹ Ant.", "Next ›": "Sig. ›", "Previous (←)": "Anterior (←)", "Next (→)": "Siguiente (→)", "Previous business": "Negocio anterior", "Next business": "Negocio siguiente", "💬 Send sample by WhatsApp": "💬 Enviar muestra por WhatsApp", "Message language": "Idioma del mensaje", "✨ Preview a page for this business": "✨ Ver una página para este negocio", "🙋 This is my business": "🙋 Este es mi negocio", "See what we built for {0}": "Mira lo que hemos creado para {0}", "Open ↗": "Abrir ↗", "☆ Save": "☆ Guardar", "★ Saved": "★ Guardado", "Copy pitch EN": "Copiar propuesta EN", "Copy pitch ES": "Copiar propuesta ES", "Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain). The pitch includes a preview link, nothing is sent automatically.": "Contacta con los negocios solo por sus canales públicos y cumple la normativa local de marketing (RGPD, LSSI en España). La propuesta incluye un enlace a la vista previa; no se envía nada automáticamente.", "Opens WhatsApp to {0} with the link to their sample page and the example for their niche.": "Abre WhatsApp con {0} y el enlace a su página de muestra y al ejemplo de su sector.", " This looks like a landline, so WhatsApp may not reach it.": " Parece un teléfono fijo, así que puede que WhatsApp no llegue.", "No phone listed for this business: the message will be copied so you can paste it in their chat.": "Este negocio no tiene teléfono: el mensaje se copiará para que lo pegues en su chat.", "Hi! I found my business \"{0}\"{1} on your map and I would like my real page. Could you send me a courtesy sample?": "Hola! He encontrado mi negocio «{0}»{1} en vuestro mapa y me gustaría tener mi página real. ¿Podéis enviarme una muestra de cortesía?", "Hi! I saw the concept page for \"{0}\" on your map and I would like the real one. Could you send me a courtesy sample?": "Hola! He visto la página de ejemplo de «{0}» en vuestro mapa y me gustaría tener la real. ¿Podéis enviarme una muestra de cortesía?", "To: {0}": "Para: {0}", " (looks like a landline, so WhatsApp may not reach it)": " (parece un teléfono fijo, puede que WhatsApp no llegue)", "No phone number listed for this business. The message will be copied so you can paste it in their chat.": "Este negocio no tiene teléfono. El mensaje se copiará para que lo pegues en su chat.", "Concept preview by EasyLandX. Not the official website of {0}.": "Vista previa de concepto de EasyLandX. No es la web oficial de {0}.", "Concept preview by EasyLandX": "Vista previa de concepto de EasyLandX", "Find us": "Encuéntranos", "Everything you offer, easy to scan in seconds.": "Todo lo que ofreces, fácil de ver en segundos.", "{0} in one tap": "{0} en un toque", "A clear button that turns visitors into customers.": "Un botón claro que convierte visitas en clientes.", "Find you fast": "Te encuentran rápido", "Address, hours and directions, always up to date.": "Dirección, horario y cómo llegar, siempre al día.", "Everything you offer, easy to scan": "Todo lo que ofreces, fácil de ver", "A clear button that brings customers": "Un botón claro que atrae clientes", "Address, hours and directions": "Dirección, horario y cómo llegar", "Visit us": "Visítanos", "Open map": "Abrir mapa", "Ready when you are": "Listos cuando tú lo estés", "Concept preview built from public map data. Real pages use the owner's own photos, prices and booking.": "Vista previa de concepto creada con datos públicos del mapa. Las páginas reales usan las fotos, precios y reservas del propietario.", "Look and feel your best at {n}": "Luce y siéntete genial en {n}", "Services, prices and booking on one clean page.": "Servicios, precios y reservas en una página clara.", "Book now": "Reserva ya", "Services & prices": "Servicios y precios", "Good food, easy to find: {n}": "Buena comida, fácil de encontrar: {n}", "Menu, hours and directions one tap away.": "Carta, horario y cómo llegar a un toque.", "Reserve a table": "Reserva una mesa", "Menu & highlights": "Carta y platos destacados", "Move better with {n}": "Muévete mejor con {n}", "Classes, schedule and sign-up in seconds.": "Clases, horarios e inscripción en segundos.", "Join a class": "Apúntate a una clase", "Classes & schedule": "Clases y horarios", "A calm first step: {n}": "Un primer paso con calma: {n}", "See how we can help and book a first session.": "Descubre cómo podemos ayudarte y reserva una primera sesión.", "Book a session": "Reserva una sesión", "How we can help": "Cómo podemos ayudarte", "Clear answers from {n}": "Respuestas claras de {n}", "Services, process and a simple way to get in touch.": "Servicios, proceso y una forma sencilla de contactar.", "Request a call": "Solicita una llamada", "Services": "Servicios", "Made with care by {n}": "Hecho con cariño por {n}", "Browse the work and get in touch to commission.": "Explora el trabajo y contacta para hacer tu encargo.", "Get in touch": "Contacta", "Work & commissions": "Trabajos y encargos", "Happy pets, happy owners: {n}": "Mascotas felices, dueños felices: {n}", "Services, care and easy booking.": "Servicios, cuidados y reserva fácil.", "Book a visit": "Reserva una visita", "Services & care": "Servicios y cuidados", "Make it memorable with {n}": "Hazlo inolvidable con {n}", "See what is on offer and ask for a date.": "Mira lo que ofrecemos y pide fecha.", "Check dates": "Consulta fechas", "Packages": "Paquetes", "Discover {n}": "Descubre {n}", "Everything you need to plan your visit.": "Todo lo que necesitas para planificar tu visita.", "Plan your visit": "Planifica tu visita", "What we offer": "Qué ofrecemos", "Meet {n}": "Conoce {n}", "Everything your customers need to know, in one place.": "Todo lo que tus clientes necesitan saber, en un solo lugar.", "Sunrise": "Amanecer", "Fresh": "Fresco", "Lagoon": "Laguna", "Bloom": "Flor", "Citrus": "Cítrico", "Building your 3D model…": "Creando tu modelo 3D…", "Preparing a phone model that shows your page.": "Preparando un modelo de teléfono que muestra tu página.", "Tap <b>View in your space</b>, then point your camera at your counter or floor. On iPhone the model is a still preview of your page, and you can resize it with two fingers.": "Toca <b>Ver en tu espacio</b> y apunta la cámara a tu mostrador o al suelo. En iPhone el modelo es una vista previa fija de tu página y puedes cambiarle el tamaño con dos dedos.", "Tap <b>View in your space</b>, point your camera at your counter or floor, then move the phone slowly until it is placed. Pinch to resize.": "Toca <b>Ver en tu espacio</b>, apunta la cámara a tu mostrador o al suelo y mueve el teléfono despacio hasta que se coloque. Pellizca para cambiar el tamaño.", "AR needs a phone or tablet with AR support. You can still rotate this 3D model here. Tap <b>Copy link</b> in the preview and open it on your phone.": "La RA necesita un teléfono o tablet compatible. Aun así puedes girar este modelo 3D aquí. Toca <b>Copiar enlace</b> en la vista previa y ábrelo en tu teléfono.", "📱 View in your space": "📱 Ver en tu espacio", "Your page on a phone, placed in your space": "Tu página en un teléfono, colocada en tu espacio", "Could not show the 3D model on this device.": "No se pudo mostrar el modelo 3D en este dispositivo.", "Could not load AR on this connection. Please try again.": "No se pudo cargar la RA con esta conexión. Inténtalo de nuevo.", "AR files could not be loaded.": "No se pudieron cargar los archivos de RA.", "Hair Stylists & Hair Salons": "Peluqueros y salones de peluquería", "Estheticians & Skincare Specialists": "Esteticistas y especialistas en cuidado de la piel", "Tattoo Artists & Studios": "Tatuadores y estudios de tatuaje", "Independent Cafés & Coffee Shops": "Cafeterías independientes", "Private Chefs & Catering": "Chefs privados y catering", "Bakeries & Specialty Food": "Panaderías y alimentación especializada", "Cake Designers & Custom Bakeries": "Diseñadores de tartas y pastelerías a medida", "Chocolatier & Chocolate Makers": "Chocolateros y artesanos del chocolate", "Artisan Cheese Makers": "Queseros artesanos", "Florists & Floral Designers": "Floristas y diseñadores florales", "Gardeners & Garden Designers": "Jardineros y diseñadores de jardines", "Personal Trainers & Studios": "Entrenadores personales y estudios", "Yoga Teachers & Studios": "Profesores y estudios de yoga", "Pilates Studios": "Estudios de pilates", "Dance Teachers & Dance Studios": "Profesores y estudios de baile", "Piano Teachers & Private Music Studios": "Profesores de piano y estudios de música", "Psychologists & Practices": "Psicólogos y consultas", "Lawyers & Legal Services": "Abogados y servicios legales", "Financial Advisors & Independent Planners": "Asesores financieros y planificadores independientes", "Independent Real Estate Sales Professional": "Profesionales inmobiliarios independientes", "Photographers": "Fotógrafos", "Artists & Art Workshops": "Artistas y talleres de arte", "Jewelry Designers & Makers": "Diseñadores y artesanos de joyería", "Ceramic Artists & Pottery Studios": "Ceramistas y estudios de alfarería", "Pet Groomers & Salons": "Peluquerías caninas y salones para mascotas", "Rural Accommodation": "Alojamientos rurales", "Adventure & Outdoor Experiences": "Experiencias de aventura y aire libre", "Children's Party & Entertainment Businesses": "Fiestas infantiles y animación", "Examples hub": "Centro de ejemplos"};
-ES['One by one']='Uno a uno';ES['Bulk list']='Lista en bloque';ES['Instagram handles, one per line']='@usuarios de Instagram, uno por línea';ES['Add all']='Añadir todos';ES['Adding…']='Añadiendo…';ES['Stop']='Detener';ES['Close']='Cerrar';ES['{0} detected']='{0} detectados';ES['Adding {0} of {1} · {2}']='Añadiendo {0} de {1} · {2}';ES['Done: {0} of {1} added']='Listo: {0} de {1} añadidos';ES['Stopped: {0} of {1} added']='Detenido: {0} de {1} añadidos';ES['Could not add: {0}']='No se pudo añadir: {0}';ES['Already on the map: {0}']='Ya en el mapa: {0}';ES['Paste at least one handle first.']='Pega primero al menos un perfil.';ES['Nothing new to add.']='No hay nada nuevo que añadir.';ES['Added {0} businesses']='Añadidos {0} negocios';ES['All categories']='Todas las categorías';ES['Search all categories']='Buscar en todas las categorías';ES['Part of the area did not load. Press "Search this area" to retry.']='Una parte de la zona no se cargó. Pulsa «Buscar en esta zona» para reintentar.';ES['Mobile']='Móvil';ES['Searching…']='Buscando…';ES['＋ Add']='＋ Añadir';ES['Add a business']='Añadir un negocio';ES['Type a business name, an Instagram @handle or a website link.']='Escribe el nombre de un negocio, un @usuario de Instagram o un enlace web.';ES['Name, @instagram or website']='Nombre, @instagram o web';ES['Café Sol, @cafesol or cafesol.es']='Café Sol, @cafesol o cafesol.es';ES['Category']='Categoría';ES['Auto-detect']='Detectar automáticamente';ES['Cancel']='Cancelar';ES['Add']='Añadir';ES['Looking it up…']='Buscando información…';ES['Type a name, an @instagram or a website first.']='Escribe primero un nombre, un @instagram o una web.';ES['Added: {0}']='Añadido: {0}';ES['Could not add it. Try again.']='No se pudo añadir. Inténtalo de nuevo.';ES['Added by you. We could not find a website for it yet. Check before contacting.']='Añadido por ti. Aún no hemos encontrado su web. Compruébalo antes de contactar.';ES['Open in Google Maps']='Abrir en Google Maps';ES['Details completed with Google Maps']='Datos completados con Google Maps';ES['No Web']='Sin Web';ES['With Web']='Con Web';ES['WhatsApp']='WhatsApp';ES['None of these has a website']='Ninguno tiene página web';ES['Untick "With Web" to see them, or search another category.']='Desmarca «Con Web» para verlos, o busca otra categoría.';ES['None of these has a mobile number listed']='Ninguno tiene un móvil registrado';ES['Untick "WhatsApp" to see them, or search another category.']='Desmarca «WhatsApp» para verlos, o busca otra categoría.';
+ES['One by one']='Uno a uno';ES['Bulk list']='Lista en bloque';ES['Instagram handles, one per line']='@usuarios de Instagram, uno por línea';ES['Add all']='Añadir todos';ES['Adding…']='Añadiendo…';ES['Stop']='Detener';ES['Close']='Cerrar';ES['{0} detected']='{0} detectados';ES['Adding {0} of {1} · {2}']='Añadiendo {0} de {1} · {2}';ES['Done: {0} of {1} added']='Listo: {0} de {1} añadidos';ES['Stopped: {0} of {1} added']='Detenido: {0} de {1} añadidos';ES['Could not add: {0}']='No se pudo añadir: {0}';ES['Already on the map: {0}']='Ya en el mapa: {0}';ES['Paste at least one handle first.']='Pega primero al menos un perfil.';ES['Nothing new to add.']='No hay nada nuevo que añadir.';ES['Added {0} businesses']='Añadidos {0} negocios';ES['Message']='Mensaje';ES['✏️ Edit templates']='✏️ Editar plantillas';ES['Message templates']='Plantillas de mensajes';ES['Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.']='Edita el mensaje de cada canal y categoría. Toca una etiqueta para insertarla; se sustituye en cada negocio.';ES['Reset']='Restablecer';ES['Save']='Guardar';ES['📸 Copy message and open Instagram']='📸 Copiar mensaje y abrir Instagram';ES['✉️ Open email app']='✉️ Abrir app de correo';ES['💬 Open SMS app']='💬 Abrir app de SMS';ES[' (looks like a landline, so it may not receive texts)']=' (parece un teléfono fijo, puede que no reciba SMS)';ES['No phone number listed for this business. The message will be copied.']='Este negocio no tiene teléfono. El mensaje se copiará.';ES['No Instagram listed for this business. The message will be copied so you can paste it in their DM.']='Este negocio no tiene Instagram. El mensaje se copiará para que lo pegues en su DM.';ES['Opens your email app with the subject and message filled in.']='Abre tu app de correo con el asunto y el mensaje ya escritos.';ES['{0} characters']='{0} caracteres';ES['about {0} texts']='unos {0} SMS';ES['No phone listed. Message copied.']='Sin teléfono. Mensaje copiado.';ES['Custom template for this category']='Plantilla propia de esta categoría';ES['Using your all-categories template']='Usando tu plantilla de todas las categorías';ES['Using the built-in template']='Usando la plantilla por defecto';ES['The template cannot be empty.']='La plantilla no puede estar vacía.';ES['Template saved']='Plantilla guardada';ES['Template reset']='Plantilla restablecida';ES['Business name']='Nombre del negocio';ES['Category']='Categoría';ES['Address']='Dirección';ES['Preview link']='Enlace de vista previa';ES['Example site']='Web de ejemplo';ES['WhatsApp order link']='Enlace de WhatsApp para pedir';ES['Link note']='Nota del enlace';ES['All categories']='Todas las categorías';ES['Search all categories']='Buscar en todas las categorías';ES['Part of the area did not load. Press "Search this area" to retry.']='Una parte de la zona no se cargó. Pulsa «Buscar en esta zona» para reintentar.';ES['Mobile']='Móvil';ES['Searching…']='Buscando…';ES['＋ Add']='＋ Añadir';ES['Add a business']='Añadir un negocio';ES['Type a business name, an Instagram @handle or a website link.']='Escribe el nombre de un negocio, un @usuario de Instagram o un enlace web.';ES['Name, @instagram or website']='Nombre, @instagram o web';ES['Café Sol, @cafesol or cafesol.es']='Café Sol, @cafesol o cafesol.es';ES['Category']='Categoría';ES['Auto-detect']='Detectar automáticamente';ES['Cancel']='Cancelar';ES['Add']='Añadir';ES['Looking it up…']='Buscando información…';ES['Type a name, an @instagram or a website first.']='Escribe primero un nombre, un @instagram o una web.';ES['Added: {0}']='Añadido: {0}';ES['Could not add it. Try again.']='No se pudo añadir. Inténtalo de nuevo.';ES['Added by you. We could not find a website for it yet. Check before contacting.']='Añadido por ti. Aún no hemos encontrado su web. Compruébalo antes de contactar.';ES['Open in Google Maps']='Abrir en Google Maps';ES['Details completed with Google Maps']='Datos completados con Google Maps';ES['No Web']='Sin Web';ES['With Web']='Con Web';ES['WhatsApp']='WhatsApp';ES['None of these has a website']='Ninguno tiene página web';ES['Untick "With Web" to see them, or search another category.']='Desmarca «Con Web» para verlos, o busca otra categoría.';ES['None of these has a mobile number listed']='Ninguno tiene un móvil registrado';ES['Untick "WhatsApp" to see them, or search another category.']='Desmarca «WhatsApp» para verlos, o busca otra categoría.';
 var CAT_ES={"hair": "Peluquería", "beauty": "Belleza y cuidado de la piel", "tattoo": "Estudio de tatuajes", "cafe": "Cafetería", "restaurant": "Restaurante", "bakery": "Panadería", "pastry": "Pastelería y tartas", "choc": "Chocolatería", "cheese": "Quesería", "florist": "Floristería", "garden": "Jardín y plantas", "fitness": "Gimnasio y fitness", "yoga": "Yoga", "pilates": "Pilates", "dance": "Escuela de baile", "music": "Escuela de música", "therapy": "Terapia y psicología", "lawyer": "Despacho de abogados", "finance": "Contabilidad y finanzas", "realestate": "Inmobiliaria", "photo": "Fotógrafo", "art": "Galería y taller de arte", "jewelry": "Joyería", "pottery": "Cerámica y alfarería", "pets": "Peluquería y tiendas de mascotas", "stay": "Alojamiento rural", "outdoor": "Aire libre y aventura", "party": "Fiestas y eventos", "generic": "Negocio local"};
 function T(k){var s=(LANG==='es'&&ES[k]!=null)?ES[k]:k;for(var i=1;i<arguments.length;i++)s=s.split('{'+(i-1)+'}').join(arguments[i]);return s;}
 function lbl(c){return LANG==='es'?(CAT_ES[c.id]||c.label):c.label;}
@@ -467,7 +506,7 @@ var STATIC=[
 ['#pFrame','title','Concept preview'],
 ['.panel>h3:nth-of-type(1)',0,'Device'],['.panel>h3:nth-of-type(2)',0,'Colors'],['.panel>h3:nth-of-type(3)',0,'About this preview'],['#hLang',0,'Language'],
 ['#dMob',0,'📱 Phone'],['#dDesk',0,'🖥️ Desktop'],
-['#sendBox h3',0,'Send to this business'],['#sMsg','aria-label','WhatsApp message'],['#sGo',0,'💬 Open WhatsApp with this message'],
+['#sendBox h3',0,'Send to this business'],['#sMsg','aria-label','Message'],['#sGo',0,'💬 Open WhatsApp with this message'],['#sTplBtn',0,'✏️ Edit templates'],['#sMailTo','placeholder','email@business.com'],['#tplT',0,'Message templates'],['#tplHint',0,'Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.'],['label[for=tplCat]',0,'Category'],['#tplReset',0,'Reset'],['#tplSave',0,'Save'],['#tplClose',0,'Close'],
 ['#sendBox .note',0,'Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).'],
 ['.panel>p',0,"A concept built from public map data (name, address, category). It is a sample of what a page could look like, not the business's official website. The real page is written together with the owner: their photos, services, prices and booking."],
 ['#pEx',0,'See a real EasyLandX example for this niche ↗'],
@@ -1546,43 +1585,147 @@ function buildThemes(){
   THEMES.forEach(function(t){var x=document.createElement('button');x.innerHTML='<i style="background:'+t.c+'"></i>'+esc(T(t.name));if(t.id===pvT.id)x.className='on';x.onclick=function(){pvT=t;[].forEach.call(th.children,function(y){y.classList.remove('on');});x.className='on';renderFrame();track('map_theme',{theme:t.id});};th.appendChild(x);});
 }
 function openPreview(b,themeId){
-  pvB=b;pvT=themeById(themeId||GROUP_THEME[catOf(b).group]);sendEdited=false;
+  pvB=b;pvT=themeById(themeId||GROUP_THEME[catOf(b).group]);sendEdited=false;sendDrafts={};$('sMailTo').value=b.email||'';
   $('pTitle').textContent=b.name;
   buildThemes();
   renderFrame();$('mPrev').hidden=false;track('map_preview_open',{category:b.cat,status:b.status});
 }
 function renderFrame(){$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
 /* ===== Send the preview to the business by WhatsApp (outreach mode only) ===== */
-var sendLang=LANG,sendEdited=false;   // the WhatsApp message follows the site language (EN/ES switch)
-function buildMsg(b,lang){
-  var link=previewLink(b,lang),tn=trackNoteL(lang,link.indexOf('#p=')>-1),c=catOf(b),ex=c.exUrl,order='https://wa.me/'+CONFIG.WA;
-  if(lang==='es')return 'Hola! Encontré '+b.name+' en el mapa y preparé una propuesta gratuita de cómo podría ser su página web:\n'+link+
-    '\n\nAsí son nuestras webs reales para este tipo de negocio:\n'+ex+
-    '\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este mensaje o escríbanos aquí: '+order+'\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.'+tn+'\n— EasyLandX';
-  return 'Hi! I found '+b.name+' on the map and prepared a free concept of what its website could look like:\n'+link+
-    '\n\nHere are real websites we built for this kind of business:\n'+ex+
-    '\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this message or message us here: '+order+'\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.'+tn+'\n— EasyLandX';
+var sendLang=LANG,sendEdited=false,sendDrafts={};   // the message follows the site language (EN/ES switch)
+var sendCh=store('elx_sendch')||'wa';if(!/^(wa|ig|mail|sms)$/.test(sendCh))sendCh='wa';
+var CHANNELS=['wa','ig','mail','sms'];
+// ---- Message templates: one per channel x category x language. Tags: {name} {category} {address} {link} {example} {order} {note}
+var TPL_VARS=[['name','Business name'],['category','Category'],['address','Address'],['link','Preview link'],['example','Example site'],['order','WhatsApp order link'],['note','Link note']];
+var TPL_DEF={
+ wa:{
+  es:'Hola! Encontré {name} en el mapa y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este mensaje o escríbanos aquí: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n— EasyLandX',
+  en:'Hi! I found {name} on the map and prepared a free concept of what its website could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this message or message us here: {order}\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n— EasyLandX'},
+ ig:{
+  es:'Hola! 👋 Vi {name} en el mapa y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Respóndame por aquí cuando quiera 🙂{note}\n— EasyLandX',
+  en:'Hi! 👋 I came across {name} on the map and made a free concept of what its website could look like:\n{link}\n\nIf you like it, we can build it in about 24 h with no commitment. Just reply here whenever you like 🙂{note}\n— EasyLandX'},
+ mail:{
+  es:'Asunto: Una propuesta de web gratuita para {name}\n\nHola,\n\nEncontré {name} en el mapa y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este correo o escríbanos por WhatsApp: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n\nUn saludo,\nEasyLandX',
+  en:'Subject: A free website concept for {name}\n\nHi,\n\nI found {name} on the map and prepared a free concept of what its website could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this email or message us on WhatsApp: {order}\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n\nBest regards,\nEasyLandX'},
+ sms:{
+  es:'Hola! Preparé una propuesta gratis de web para {name}: {link} Si le gusta, la hacemos en 24 h sin compromiso. — EasyLandX',
+  en:'Hi! I made a free website concept for {name}: {link} If you like it, we build it in 24 h, no commitment. — EasyLandX'}
+};
+function tplAll(){try{return JSON.parse(store('elx_tpl')||'{}')||{};}catch(e){return {};}}
+function tplKey(ch,cat,lang){return ch+'|'+(cat||'*')+'|'+lang;}
+// which template is used: this category's own, the all-categories one, or the built-in default
+function tplSource(ch,cat,lang){var all=tplAll();if(all[tplKey(ch,cat,lang)]!=null)return 'cat';if(all[tplKey(ch,'*',lang)]!=null)return 'all';return 'def';}
+function getTpl(ch,cat,lang){var all=tplAll();var v=all[tplKey(ch,cat,lang)];if(v==null)v=all[tplKey(ch,'*',lang)];return v!=null?v:TPL_DEF[ch][lang];}
+function catLabelL(c,lang){return lang==='es'?(CAT_ES[c.id]||c.label):c.label;}
+function fillTpl(t,b,lang){
+  var link=previewLink(b,lang),c=catOf(b);
+  var v={name:b.name,category:catLabelL(c,lang).toLowerCase(),address:b.addr||'',link:link,example:c.exUrl,order:'https://wa.me/'+CONFIG.WA,note:trackNoteL(lang,link.indexOf('#p=')>-1)};
+  return String(t).replace(/\{(name|category|address|link|example|order|note)\}/g,function(m,k){return v[k]==null?'':v[k];});
 }
+function buildChannelMsg(b,ch,lang){return fillTpl(getTpl(ch,b.cat,lang),b,lang);}
+function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
+function igHandleOf(b){var m=String((b&&b.social)||'').match(/instagram\.com\/([\w.]+)/i);return m?m[1]:'';}
+function splitMail(txt){var m=String(txt).match(/^\s*(?:Subject|Asunto)\s*:\s*(.*)\n+/i);return m?{subject:m[1].trim(),body:txt.slice(m[0].length)}:{subject:'',body:String(txt)};}
+var GO_LABEL={wa:'💬 Open WhatsApp with this message',ig:'📸 Copy message and open Instagram',mail:'✉️ Open email app',sms:'💬 Open SMS app'};
 function refreshSend(force){
   var box=$('sendBox');
   if(!CANSEND||!pvB||pvB.id==='shared'){box.hidden=true;$('pSend').hidden=true;return;}
   $('pSend').hidden=false;
   box.hidden=false;
+  if(force){sendDrafts={};sendEdited=false;}
   $('sEs').classList.toggle('on',sendLang==='es');$('sEn').classList.toggle('on',sendLang==='en');
-  if(force||!sendEdited){$('sMsg').value=buildMsg(pvB,sendLang);sendEdited=false;}
-  var bp=bestPhone(pvB),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m;
-  $('sTo').textContent=n?(T('To: {0}',ph)+(land?T(' (looks like a landline, so WhatsApp may not reach it)'):'')):T('No phone number listed for this business. The message will be copied so you can paste it in their chat.');
+  CHANNELS.forEach(function(c){$('ch'+(c==='wa'?'Wa':c==='ig'?'Ig':c==='mail'?'Mail':'Sms')).classList.toggle('on',sendCh===c);});
+  $('sMsg').value=sendDrafts[sendCh]!=null?sendDrafts[sendCh]:buildChannelMsg(pvB,sendCh,sendLang);
+  $('sMsg').setAttribute('aria-label',T('Message'));
+  $('sGo').textContent=T(GO_LABEL[sendCh]);
+  $('sMailBox').hidden=sendCh!=='mail';
+  if(sendCh==='mail'&&!$('sMailTo').value&&pvB.email)$('sMailTo').value=pvB.email;
+  var bp=bestPhone(pvB),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m,to='';
+  if(sendCh==='wa'||sendCh==='sms'){
+    to=n?(T('To: {0}',ph)+(land?T(sendCh==='wa'?' (looks like a landline, so WhatsApp may not reach it)':' (looks like a landline, so it may not receive texts)'):'')):T(sendCh==='wa'?'No phone number listed for this business. The message will be copied so you can paste it in their chat.':'No phone number listed for this business. The message will be copied.');
+  }else if(sendCh==='ig'){
+    var h=igHandleOf(pvB);to=h?T('To: {0}','@'+h):T('No Instagram listed for this business. The message will be copied so you can paste it in their DM.');
+  }else{
+    to=T('Opens your email app with the subject and message filled in.');
+  }
+  $('sTo').textContent=to;
+  var ct=$('sCount');ct.hidden=sendCh!=='sms'&&sendCh!=='ig';
+  if(!ct.hidden)updSendCount();
 }
+function updSendCount(){
+  var len=$('sMsg').value.length,ct=$('sCount');
+  if(sendCh==='sms'){var parts=Math.max(1,Math.ceil(len/153));ct.textContent=T('{0} characters',len)+(len>160?' · '+T('about {0} texts',parts):'');}
+  else if(sendCh==='ig'){ct.textContent=T('{0} characters',len);}
+}
+function setSendCh(c){
+  if(sendCh===c)return;
+  sendCh=c;store('elx_sendch',c);refreshSend();
+}
+$('chWa').onclick=function(){setSendCh('wa');};$('chIg').onclick=function(){setSendCh('ig');};$('chMail').onclick=function(){setSendCh('mail');};$('chSms').onclick=function(){setSendCh('sms');};
 $('sEs').onclick=function(){sendLang='es';store('elx_sendlang','es');refreshSend(true);};
 $('sEn').onclick=function(){sendLang='en';store('elx_sendlang','en');refreshSend(true);};
-$('sMsg').addEventListener('input',function(){sendEdited=true;});
+$('sMsg').addEventListener('input',function(){sendEdited=true;sendDrafts[sendCh]=this.value;if(!$('sCount').hidden)updSendCount();});
 $('pSend').onclick=function(){if(!$('sendBox').hidden){$('sGo').click();}};
 $('sGo').onclick=function(){
   if(pvB&&!okToSend(pvB))return;
-  var msg=$('sMsg').value,n=waNumber(pvB&&pvB.phone);
-  track('map_send_business',{category:pvB&&pvB.cat,lang:sendLang,has_phone:!!n});
-  if(!n){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(pvB);return;}
-  window.open(waLink(msg,n),'_blank','noopener');if(markSent(pvB))toast('Marked as sent. You can change it in the lead tracker.');
+  var msg=$('sMsg').value,bp=bestPhone(pvB),n=bp?bp.d:'';
+  track('map_send_business',{category:pvB&&pvB.cat,lang:sendLang,channel:sendCh,has_phone:!!n});
+  var sent=function(){if(markSent(pvB))toast('Marked as sent. You can change it in the lead tracker.');};
+  if(sendCh==='wa'){
+    var wn=waNumber(pvB&&pvB.phone);
+    if(!wn){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(pvB);return;}
+    window.open(waLink(msg,wn),'_blank','noopener');sent();return;
+  }
+  if(sendCh==='ig'){
+    var h=igHandleOf(pvB);copyText(msg);
+    if(h)window.open('https://ig.me/m/'+encodeURIComponent(h),'_blank','noopener');
+    sent();return;
+  }
+  if(sendCh==='mail'){
+    var m=splitMail(msg),to=$('sMailTo').value.trim();
+    window.location.href='mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(m.body);
+    sent();return;
+  }
+  if(!n){copyText(msg);toast('No phone listed. Message copied.');markSent(pvB);return;}
+  window.location.href='sms:+'+n+'?&body='+encodeURIComponent(msg);sent();
+};
+/* ---- template editor ---- */
+var tplCh='wa',tplLang='es',tplCat='*';
+function tplFill(){
+  var seg=$('tplChSeg').querySelectorAll('button');[].forEach.call(seg,function(x){x.classList.toggle('on',x.dataset.ch===tplCh);});
+  [].forEach.call($('tplLangSeg').querySelectorAll('button'),function(x){x.classList.toggle('on',x.dataset.l===tplLang);});
+  $('tplCat').value=tplCat;
+  $('tplText').value=getTpl(tplCh,tplCat==='*'?'':tplCat,tplLang);
+  var src=tplSource(tplCh,tplCat==='*'?'':tplCat,tplLang);
+  $('tplState').textContent=T(src==='cat'?'Custom template for this category':(src==='all'?'Using your all-categories template':'Using the built-in template'));
+}
+function openTpl(){
+  var cats=CATS.slice().sort(function(x,y){return lbl(x).localeCompare(lbl(y),LANG,{sensitivity:'base'});});
+  $('tplCat').innerHTML='<option value="*">'+esc(T('All categories'))+'</option>'+cats.map(function(c){return '<option value="'+c.id+'">'+esc(c.emoji+' '+lbl(c))+'</option>';}).join('');
+  $('tplVars').innerHTML=TPL_VARS.map(function(v){return '<button type="button" data-v="'+v[0]+'" title="'+esc(T(v[1]))+'">{'+v[0]+'}</button>';}).join('');
+  tplCh=sendCh;tplLang=sendLang;tplCat=(pvB&&pvB.cat&&tplSource(tplCh,pvB.cat,tplLang)==='cat')?pvB.cat:(pvB&&pvB.cat?pvB.cat:'*');
+  tplFill();$('mTpl').hidden=false;
+}
+function closeTpl(){$('mTpl').hidden=true;if(pvB){sendDrafts={};sendEdited=false;refreshSend();}}
+$('sTplBtn').onclick=openTpl;
+$('tplClose').onclick=closeTpl;
+$('mTpl').addEventListener('click',function(e){if(e.target===this)closeTpl();});
+[].forEach.call($('tplChSeg').querySelectorAll('button'),function(x){x.onclick=function(){tplCh=x.dataset.ch;tplFill();};});
+[].forEach.call($('tplLangSeg').querySelectorAll('button'),function(x){x.onclick=function(){tplLang=x.dataset.l;tplFill();};});
+$('tplCat').onchange=function(){tplCat=this.value;tplFill();};
+$('tplVars').addEventListener('click',function(e){
+  var bt=e.target.closest('button');if(!bt)return;var ta=$('tplText'),t='{'+bt.dataset.v+'}',a=ta.selectionStart||0,z=ta.selectionEnd||0;
+  ta.value=ta.value.slice(0,a)+t+ta.value.slice(z);ta.focus();ta.selectionStart=ta.selectionEnd=a+t.length;
+});
+$('tplSave').onclick=function(){
+  var all=tplAll(),k=tplKey(tplCh,tplCat==='*'?'':tplCat,tplLang),v=$('tplText').value;
+  if(!v.trim()){toast('The template cannot be empty.');return;}
+  if(v===TPL_DEF[tplCh][tplLang]&&tplCat==='*')delete all[k];else all[k]=v;
+  store('elx_tpl',JSON.stringify(all));tplFill();toast('Template saved');
+};
+$('tplReset').onclick=function(){
+  var all=tplAll();delete all[tplKey(tplCh,tplCat==='*'?'':tplCat,tplLang)];
+  store('elx_tpl',JSON.stringify(all));tplFill();toast('Template reset');
 };
 
 $('pBack').onclick=function(){$('mPrev').hidden=true;$('pFrame').srcdoc='';if(/^#(preview|p)=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);};
@@ -1820,6 +1963,7 @@ function addOne(v,catSel,where,center){
       b.wa=waFrom(info);
       if(inp.kind==='url'&&info.ig&&/^https?:/i.test(info.ig))b.social=info.ig.split('?')[0];
       var am=(info.text||'').match(ADDR_RE);if(am)b.addr=am[0].trim();
+      var em=((info.text||'')+' '+(info.desc||'')+' '+(info.title||'')).match(/[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[a-z]{2,}/i);if(em&&!/\.(png|jpe?g|gif|webp|svg)$/i.test(em[0]))b.email=em[0];
     }
     return lookupOSM(b,where,center);
   }).then(function(r){
@@ -1832,6 +1976,7 @@ function addOne(v,catSel,where,center){
       var xp=collectPhones(x);
       if(xp.phone)b.phone=b.phone?b.phone+'; '+xp.phone:xp.phone;
       b.wa=b.wa||xp.wa;b.hours=x.opening_hours||'';
+      if(!b.email&&(x.email||x['contact:email']))b.email=String(x.email||x['contact:email']).split(';')[0].trim();
       if(!b.web&&(x.website||x['contact:website']||x.url)){b.web=x.website||x['contact:website']||x.url;}
     }
     b.cat=(catSel&&CAT[catSel]?CAT[catSel]:guessCat(b.name+' '+desc)).id;
