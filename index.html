@@ -1586,9 +1586,10 @@ function themeFromColor(hex){
   while(1.05/(lumHex(acc)+0.05)<3.2&&i++<12)acc=mixHex(acc,'#000000',0.12);   // keep white text readable on the brand colour
   return{id:'brand',name:'Brand',c:acc,bg1:mixHex(acc,'#ffffff',0.88),bg2:mixHex(acc,'#ffffff',0.78),bg3:mixHex(acc,'#ffffff',0.95),acc:acc,ink:mixHex(acc,'#000000',0.75)};
 }
+function hasBrandTheme(){return THEMES.length>0&&THEMES[THEMES.length-1].id==='brand';}
 function setBrandTheme(br){
   for(var i=THEMES.length-1;i>=0;i--)if(THEMES[i].id==='brand')THEMES.splice(i,1);
-  if(br&&br.k)THEMES.unshift(themeFromColor(br.k));
+  if(br&&br.k)THEMES.push(themeFromColor(br.k));
 }
 // Dominant saturated colour of an image (logo / profile picture). The image goes through a CORS-friendly resizer so the canvas can be read.
 function sampleColor(url){
@@ -1773,7 +1774,7 @@ function openPreview(b,themeId){
   pvB=b;sendEdited=false;sendDrafts={};$('sMailTo').value=b.email||'';
   pvBrandOn=true;pvPicked=false;$('brandOn').checked=true;
   setBrandTheme(brandOf(b));
-  pvT=themeById(themeId||(THEMES[0].id==='brand'?'brand':GROUP_THEME[catOf(b).group]));
+  pvT=themeById(themeId||'sun');
   $('pTitle').textContent=b.name;
   buildThemes();brandNote(b);
   renderFrame();$('mPrev').hidden=false;track('map_preview_open',{category:b.cat,status:b.status});
@@ -1781,7 +1782,7 @@ function openPreview(b,themeId){
     enrichBrand(b).then(function(){
       if(pvB!==b||$('mPrev').hidden)return;
       brandNote(b);setBrandTheme(brandOf(b));
-      if(!pvPicked)pvT=themeById(THEMES[0].id==='brand'?'brand':GROUP_THEME[catOf(b).group]);
+      if(!pvPicked)pvT=themeById('sun');
       buildThemes();renderFrame();
     });
   }
@@ -1789,7 +1790,7 @@ function openPreview(b,themeId){
 $('brandOn').onchange=function(){
   pvBrandOn=this.checked;pvPicked=false;
   setBrandTheme(brandOf(pvB));
-  pvT=themeById(THEMES[0].id==='brand'?'brand':GROUP_THEME[catOf(pvB).group]);
+  pvT=themeById('sun');
   buildThemes();renderFrame();
 };
 function renderFrame(){$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
