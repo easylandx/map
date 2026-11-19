@@ -972,7 +972,7 @@ function saveLeads(){store('elx_leads',JSON.stringify(LEADS));LIX=null;}
 function snap(b){var o={};['id','name','cat','addr','phone','wa','hours','lat','lon','web','social','status','custom','rating','ratingN','gmaps','gsrc'].forEach(function(k){if(b[k]!=null&&b[k]!=='')o[k]=b[k];});return o;}
 function reindex(){
   LIX={ph:{},nm:{}};
-  Object.keys(LEADS).forEach(function(k){var x=LEADS[k].b||{},ph=x.phone?waNumber(x.phone):'',nn=normName(x.name);
+  Object.keys(LEADS).forEach(function(k){var x=LEADS[k].b||{},wk=waPick(x),ph=wk?wk.d:'',nn=normName(x.name);
     if(ph)LIX.ph[ph]=k;if(nn.length>2)(LIX.nm[nn]=LIX.nm[nn]||[]).push(k);});
 }
 // The same business can come back with another id (re-searched, re-added), so also match by phone or by name + place
@@ -981,7 +981,7 @@ function leadKeyOf(b){
   if(LEADS[b.id])return b.id;
   if(!Object.keys(LEADS).length)return null;
   if(!LIX)reindex();
-  var ph=b.phone?waNumber(b.phone):'';if(ph&&LIX.ph[ph])return LIX.ph[ph];
+  var wk=waPick(b),ph=wk?wk.d:'';if(ph&&LIX.ph[ph])return LIX.ph[ph];
   var a=LIX.nm[normName(b.name)];
   if(a&&b.lat!=null)for(var i=0;i<a.length;i++){var x=LEADS[a[i]].b;if(x&&x.lat!=null&&haversine(b.lat,b.lon,x.lat,x.lon)<250)return a[i];}
   return null;
@@ -1119,7 +1119,7 @@ function refreshLeadBox(b){
   $('leadUpd').textContent=l&&l.upd?T('Updated {0}',fmtDate(l.upd)):'';
   var oi=$('leadOpen');oi.innerHTML=openInfoHTML(l);
   var fb=$('leadFollow');if(fb)fb.onclick=function(){
-    var msg=followMsg(b,sendLang),n=waNumber(b.phone);
+    var msg=followMsg(b,sendLang),wk=waPick(b),n=wk?wk.d:'';
     track('map_followup_opened',{category:b.cat});
     if(!n){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');return;}
     window.open(waLink(msg,n),'_blank','noopener');
@@ -1283,7 +1283,7 @@ function exportCSV(rows){
   var head=['Name','Category','Lead status','Follow-up date','Notes','Phone','WhatsApp link','Website','Social','Address','Google Maps','First contacted','Last updated','Website status'].map(function(x){return csvCell(T(x),sep);}).join(sep);
   var lines=[head];
   rows.forEach(function(b){
-    var l=leadOf(b)||{st:'new',notes:'',fu:'',at:0,upd:0},n=b.phone?waNumber(b.phone):'';
+    var l=leadOf(b)||{st:'new',notes:'',fu:'',at:0,upd:0},wk=waPick(b),n=wk?wk.d:'';
     lines.push([[b.name],[lbl(catOf(b))],[T(LLAB[l.st])],[l.fu||''],[l.notes||''],[b.phone||'',1],[n?'https://wa.me/'+n:''],[b.web||''],[b.social||''],[b.addr||''],[gMapsUrl(b)],[isoDay(l.at)],[isoDay(l.upd)],[T(WL[b.status]||WL.unk)]]
       .map(function(c){return csvCell(c[0],sep,c[1]);}).join(sep));
   });
@@ -1328,6 +1328,13 @@ function phoneList(ph){
 function bestPhoneOf(ph){var l=phoneList(ph),i;for(i=0;i<l.length;i++)if(l[i].m)return l[i];return l[0]||null;}
 function bestPhone(b){return bestPhoneOf(b&&b.phone);}
 function waNumber(ph){var x=bestPhoneOf(ph);return x?x.d:'';}
+// The number to open WhatsApp with: the WhatsApp number found on the site or map first, else the best mobile / phone listed
+function waPick(b){
+  if(!b)return null;
+  var w=toIntl(b.wa);if(!w){var rw=String(b.wa||'').replace(/\D/g,'');if(rw.length>=8&&rw.length<=15)w=rw;}
+  if(w)return{d:w,raw:'+'+w,m:true};
+  var bp=bestPhone(b);return bp?{d:bp.d,raw:bp.raw,m:bp.m}:null;
+}
 // Every phone-like OSM tag, WhatsApp tags first
 function collectPhones(t){
   var wa='',list=[];
@@ -1484,15 +1491,16 @@ function renderDetail(b){
   if(CANSEND){
     enrichBrand(b);   // read their page / Instagram in the background so the link carries their real brand
     var refreshDSend=function(){
-      var bp=bestPhone(b),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m;
+      var bp=waPick(b),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m;
       $('dLang').textContent=sendLang.toUpperCase();
       $('dSendTo').textContent=n?(T('Opens WhatsApp to {0} with the link to their sample page and the example for their niche.',ph)+(land?T(' This looks like a landline, so WhatsApp may not reach it.'):'')):T('No phone listed for this business: the message will be copied so you can paste it in their chat.');
     };
     refreshDSend();
+    enrichBrand(b).then(function(){if(cur&&cur.id===b.id&&$('dSendTo'))refreshDSend();});
     $('dLang').onclick=function(){sendLang=sendLang==='es'?'en':'es';store('elx_sendlang',sendLang);refreshDSend();};
     $('dSend').onclick=function(){
       if(!okToSend(b))return;
-      var n=waNumber(b.phone),msg=buildMsg(b,sendLang);
+      var wk=waPick(b),n=wk?wk.d:'',msg=buildMsg(b,sendLang);
       track('map_send_business',{category:b.cat,lang:sendLang,has_phone:!!n,from:'detail'});
       if(!n){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(b);return;}
       window.open(waLink(msg,n),'_blank','noopener');if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
@@ -1686,13 +1694,13 @@ function enrichBrand(b){
   var list=[];if(b.social)list.push({u:siteUrl(b.social),kind:'ig'});if(b.web)list.push({u:siteUrl(b.web),kind:'web'});
   if(!list.length){b.brand=null;return Promise.resolve(null);}
   BRANDP[b.id]=Promise.all(list.map(function(x){return readPage(x.u,x.kind!=='web').then(function(info){return{info:info,kind:x.kind};});}))
-    .then(buildBrand).then(function(br){b.brand=br;delete BRANDP[b.id];return br;},function(){b.brand=null;delete BRANDP[b.id];return null;});
+    .then(function(entries){entries.forEach(function(e){if(!b.wa&&e&&e.info){var w=waFrom(e.info);if(w)b.wa=w;}});return buildBrand(entries);}).then(function(br){b.brand=br;delete BRANDP[b.id];return br;},function(){b.brand=null;delete BRANDP[b.id];return null;});
   return BRANDP[b.id];
 }
 function brandOf(b){if(!b||!b.brand)return null;if(b.id==='shared')return b.brand;return pvBrandOn?b.brand:null;}
 function safeUrl(u){u=String(u||'');return /^https:\/\/[^\s"'<>()]+$/i.test(u)&&u.length<=600?u:'';}
 function px(u,w,fmt){return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&fit=cover&output='+(fmt||'jpg');}
-function waDigits(b){var x=String(b.wa||'').replace(/\D/g,'');if(x.length>=8&&x.length<=15)return x;var bp=bestPhone(b);return bp&&bp.m?bp.d:'';}
+function waDigits(b){var t=toIntl(b.wa);if(t)return t;var x=String(b.wa||'').replace(/\D/g,'');if(x.length>=8&&x.length<=15)return x;var bp=bestPhone(b);return bp&&bp.m?bp.d:'';}
 var DAYSH={Mo:['Lun','Mon'],Tu:['Mar','Tue'],We:['Mié','Wed'],Th:['Jue','Thu'],Fr:['Vie','Fri'],Sa:['Sáb','Sat'],Su:['Dom','Sun']};
 // OpenStreetMap "opening_hours" (Mo-Fr 09:00-20:00; Sa 10:00-14:00) -> [[days,time],...]; null when it cannot be read
 function parseHours(h,lang){
@@ -1766,8 +1774,8 @@ function previewLink(b,l){
     if(br.k)o.k=br.k;if(safeUrl(br.logo))o.l=br.logo;
     if(br.s&&br.s.length)o.s=br.s.slice(0,6).map(function(x){return String(x).slice(0,40);});
     var im=(br.i||[]).filter(safeUrl).slice(0,3);if(im.length)o.i=im;
-    if(b.wa)o.w=String(b.wa).slice(0,20);
   }
+  if(b.wa)o.w=String(b.wa).slice(0,20);
   var sh=shortFor(b,o);if(sh)return sh;
   if(o.i&&JSON.stringify(o.i).length>500){delete o.i;if(o.l&&o.l.length>200)delete o.l;}   // keep the long (untracked) link a reasonable size
   return location.origin+location.pathname+'#preview='+b64(o);
@@ -1802,7 +1810,7 @@ function openPreview(b,themeId){
       if(pvB!==b||$('mPrev').hidden)return;
       brandNote(b);setBrandTheme(brandOf(b));
       if(!pvPicked)pvT=themeById('sun');
-      buildThemes();renderFrame();
+      buildThemes();renderFrame();refreshSend();
     });
   }
 }
@@ -1862,7 +1870,7 @@ function refreshSend(force){
   $('sGo').textContent=T(GO_LABEL[sendCh]);
   $('sMailBox').hidden=sendCh!=='mail';
   if(sendCh==='mail'&&!$('sMailTo').value&&pvB.email)$('sMailTo').value=pvB.email;
-  var bp=bestPhone(pvB),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m,to='';
+  var bp=sendCh==='wa'?waPick(pvB):bestPhone(pvB),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m,to='';
   if(sendCh==='wa'||sendCh==='sms'){
     to=n?(T('To: {0}',ph)+(land?T(sendCh==='wa'?' (looks like a landline, so WhatsApp may not reach it)':' (looks like a landline, so it may not receive texts)'):'')):T(sendCh==='wa'?'No phone number listed for this business. The message will be copied so you can paste it in their chat.':'No phone number listed for this business. The message will be copied.');
   }else if(sendCh==='ig'){
@@ -1890,11 +1898,11 @@ $('sMsg').addEventListener('input',function(){sendEdited=true;sendDrafts[sendCh]
 $('pSend').onclick=function(){if(!$('sendBox').hidden){$('sGo').click();}};
 $('sGo').onclick=function(){
   if(pvB&&!okToSend(pvB))return;
-  var msg=$('sMsg').value,bp=bestPhone(pvB),n=bp?bp.d:'';
+  var msg=$('sMsg').value,bp=sendCh==='wa'?waPick(pvB):bestPhone(pvB),n=bp?bp.d:'';
   track('map_send_business',{category:pvB&&pvB.cat,lang:sendLang,channel:sendCh,has_phone:!!n});
   var sent=function(){if(markSent(pvB))toast('Marked as sent. You can change it in the lead tracker.');};
   if(sendCh==='wa'){
-    var wn=waNumber(pvB&&pvB.phone);
+    var wn=n;
     if(!wn){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(pvB);return;}
     window.open(waLink(msg,wn),'_blank','noopener');sent();return;
   }
@@ -2118,7 +2126,7 @@ function pageInfoFromHTML(html,base){
   });
   var mt=function(sel){var e=d.querySelector(sel);return e?(e.getAttribute('content')||''):'';};
   var tels=[].map.call(d.querySelectorAll('a[href^="tel:"]'),function(a){var h=a.getAttribute('href').slice(4);try{return decodeURIComponent(h);}catch(e){return h;}});
-  var was=[].map.call(d.querySelectorAll('a[href*="wa.me/"],a[href*="api.whatsapp.com/send"],a[href*="whatsapp.com/send"]'),function(a){return a.getAttribute('href');});
+  var was=[].map.call(d.querySelectorAll('a[href*="wa.me/"],a[href*="api.whatsapp.com/send"],a[href*="whatsapp.com/send"]'),function(a){return a.getAttribute('href');}).concat(waRawFromHTML(html));
   var l=d.querySelector('a[href*="instagram.com/"]'),ig=l?l.getAttribute('href'):'';
   [].forEach.call(d.querySelectorAll('script,style,noscript'),function(n){n.remove();});
   var text=((d.body&&d.body.textContent)||'').replace(/\s+/g,' ');
@@ -2137,7 +2145,7 @@ function pageInfoFromReader(txt,base){
     x=x.replace(/!?\[([^\]]*)\]\([^)]*\)/g,'$1').replace(/[*_`]/g,'').replace(/\s+/g,' ').trim();
     if(x&&x.length<=90)lines.push({t:hm?'h':'li',x:x});
   });
-  return{theme:'',imgs:imgs,logo:logo,lines:lines,site:'',title:m?m[1]:'',desc:'',tels:(txt.match(/tel:[+\d\s().-]+/g)||[]).map(function(x){return x.slice(4);}),was:txt.match(/https?:\/\/(?:wa\.me|api\.whatsapp\.com\/send)[^\s)\]]*/g)||[],ig:(txt.match(/https?:\/\/(?:www\.)?instagram\.com\/[\w.]+/i)||[''])[0],text:txt.slice(0,20000)};
+  return{theme:'',imgs:imgs,logo:logo,lines:lines,site:'',title:m?m[1]:'',desc:'',tels:(txt.match(/tel:[+\d\s().-]+/g)||[]).map(function(x){return x.slice(4);}),was:waRawFromHTML(txt),ig:(txt.match(/https?:\/\/(?:www\.)?instagram\.com\/[\w.]+/i)||[''])[0],text:txt.slice(0,20000)};
 }
 // Websites are read straight from the browser when the site allows it; otherwise (and for Instagram/Facebook) through the free r.jina.ai page reader.
 function readPage(url,skipDirect){
@@ -2147,8 +2155,22 @@ function readPage(url,skipDirect){
 }
 var PH_RE=/(?:\+|00)\d{1,3}[\s.-]?(?:\(?\d\)?[\s.-]?){7,12}\d|\b[6-9]\d{2}[\s.-]?\d{3}[\s.-]?\d{3}\b|\b[6-9]\d{2}[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}\b/g;
 var ADDR_RE=/\b(?:Calle|C\/|Avda\.?|Avenida|Plaza|Paseo|Camino|Ronda|Traves[ií]a)\s+[^\n|;,]{2,45}?,?\s+(?:n[º°o.]*\s*)?\d{1,4}\b/i;
+// every way a site links WhatsApp: wa.me/NUMBER, api/web.whatsapp.com/send?phone=NUMBER, whatsapp://send?phone=NUMBER
+var WA_RAW_RE=/(?:wa\.me\/|whatsapp\.com\/send\/?\?[^"'\s<>]*?phone=|whatsapp:\/\/send\/?\?[^"'\s<>]*?phone=)(?:%2B|\+)?\d{8,15}/gi;
+// also catches chat widgets that keep the number in their settings (Join.chat, "whatsapp":"+34…")
+function waRawFromHTML(html){
+  var out=String(html).match(WA_RAW_RE)||[],m;
+  if((m=String(html).match(/["']whats?app["']\s*[:=]\s*["'](\+?[\d\s().-]{9,20})["']/i))){var d=toIntl(m[1]);if(d)out.push('wa.me/'+d);}
+  if(/joinchat|wa-chat|whatsapp/i.test(html)&&(m=String(html).match(/["']telephone["']\s*:\s*["']\+?(\d{9,15})/i))){var d2=toIntl(m[1]);if(d2)out.push('wa.me/'+d2);}
+  return out;
+}
 function waFrom(info){
-  var out='';(info.was||[]).some(function(u){var m=String(u).match(/(?:wa\.me\/|phone=)(\+?\d{8,15})/);if(m){out='+'+m[1].replace('+','');return true;}return false;});return out;
+  var out='';(info.was||[]).some(function(u){var m=String(u).match(/(?:wa\.me\/|phone=)(?:%2B|\+)?(\d{8,15})/i);if(m){out='+'+m[1];return true;}return false;});
+  if(out)return out;
+  // no link: a number written next to the word WhatsApp ("WhatsApp: +34 600 123 456" or "600 123 456 (WhatsApp)")
+  var tx=((info.desc||'')+' '+(info.text||'')).slice(0,30000),m2=tx.match(/whats\s?app[^0-9+]{0,25}(\+?\d[\d\s().-]{7,18}\d)/i)||tx.match(/(\+?\d[\d\s().-]{7,18}\d)\s*[(\-–:]?\s*(?:whats\s?app|wasap|wsp)/i);
+  if(m2){var l=phoneList(m2[1]);if(l.length)return '+'+l[0].d;}
+  return out;
 }
 function phonesFrom(info){
   var list=[],w=waFrom(info);if(w)list.push(w);
