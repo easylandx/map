@@ -204,6 +204,9 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 #sendBox textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:.8rem;line-height:1.45;resize:vertical;min-height:150px;background:#fff}
 #sendBox p{margin:8px 0 10px}
 #sendBox .note{margin:8px 0 0}
+#brandBox{margin-bottom:16px;padding:12px;border-radius:14px;background:#fff;border:1.5px solid var(--line)}
+#brandBox label{display:flex;align-items:flex-start;gap:8px;font-weight:700;font-size:.82rem;cursor:pointer}
+#brandBox .note{margin:6px 0 0}
 #chSeg{margin-bottom:8px!important}
 #chSeg button,#langSeg button{font-size:.76rem;padding:7px 2px}
 #sMailBox{margin:0 0 8px}
@@ -423,6 +426,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
     <div class="panel">
       <h3>Device</h3>
       <div class="seg"><button id="dMob" class="on">📱 Phone</button><button id="dDesk">🖥️ Desktop</button></div>
+      <div id="brandBox" hidden><label><input type="checkbox" id="brandOn" checked> <span id="brandLbl">Use their brand (colours, logo, photos, services)</span></label><p class="note" id="brandNote"></p></div>
       <h3>Colors</h3>
       <div class="sw" id="themes"></div>
       <div id="sendBox" hidden>
@@ -488,7 +492,7 @@ function track(n,p){try{if(window.gtag)gtag('event',n,p||{});}catch(e){}}
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 var LANG=(function(){var s=store('elx_lang');if(s==='es'||s==='en')return s;return /^es/i.test(navigator.language||'')?'es':'en';})();
 var ES={"Expand or collapse panel": "Expandir o contraer el panel", "What": "Qué", "Where": "Dónde", "Hair salon, café, yoga…": "Peluquería, cafetería, yoga…", "City or neighbourhood": "Ciudad o barrio", "Use my location": "Usar mi ubicación", "↻ Search this area": "↻ Buscar en esta zona", "Toggle 2D / 3D": "Cambiar entre 2D y 3D", "No website listed": "Sin web registrada", "Social media only": "Solo redes sociales", "Has a website": "Tiene página web", "Website unknown": "Web desconocida", "← Back": "← Volver", "Concept preview · made with EasyLandX": "Vista previa de concepto · hecha con EasyLandX", "📱 View in AR": "📱 Ver en RA", "🔗 Copy link": "🔗 Copiar enlace", "📤 Send to business": "📤 Enviar al negocio", "💬 I want this page": "💬 Quiero esta página", "Concept preview": "Vista previa de concepto", "Device": "Dispositivo", "Colors": "Colores", "About this preview": "Sobre esta vista previa", "Language": "Idioma", "📱 Phone": "📱 Móvil", "🖥️ Desktop": "🖥️ Ordenador", "Send to this business": "Enviar a este negocio", "WhatsApp message": "Mensaje de WhatsApp", "💬 Open WhatsApp with this message": "💬 Abrir WhatsApp con este mensaje", "Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).": "No se envía nada automáticamente: revisas el mensaje y pulsas enviar en WhatsApp. Contacta con los negocios solo por sus canales públicos y cumple la normativa local de marketing (RGPD, LSSI en España).", "A concept built from public map data (name, address, category). It is a sample of what a page could look like, not the business's official website. The real page is written together with the owner: their photos, services, prices and booking.": "Un concepto creado con datos públicos del mapa (nombre, dirección, categoría). Es un ejemplo de cómo podría ser una página, no la web oficial del negocio. La página real se crea junto con el propietario: sus fotos, servicios, precios y reservas.", "See a real EasyLandX example for this niche ↗": "Ver un ejemplo real de EasyLandX para este sector ↗", "← Back to preview": "← Volver a la vista previa", "View in AR": "Ver en RA", "Place the page on your counter": "Coloca la página sobre tu mostrador", "↗ New tab": "↗ Nueva pestaña", "Example page": "Página de ejemplo", "Business data © <a href=\"https://www.openstreetmap.org/copyright\" rel=\"noopener\">OpenStreetMap</a> contributors. \"No website listed\" means none is recorded on the map, so it can be incomplete. © 2026 EasyLandX": "Datos de negocios © colaboradores de <a href=\"https://www.openstreetmap.org/copyright\" rel=\"noopener\">OpenStreetMap</a>. «Sin web registrada» significa que no consta ninguna en el mapa, por lo que puede estar incompleto. © 2026 EasyLandX", "EasyLandX Map — Find local businesses and see the website they could have": "EasyLandX Map — Encuentra negocios locales y mira la web que podrían tener", "Search real local businesses on a 3D map, see who has no website listed, preview a landing page for any of them, and view it in AR in your own shop.": "Busca negocios locales reales en un mapa 3D, mira cuáles no tienen web registrada, previsualiza una landing para cualquiera de ellos y velo en RA en tu propio local.", "Search businesses": "Buscar negocios", "Search {0} categories": "Buscar {0} categorías", "Show fewer ▴": "Mostrar menos ▴", "Show all {0} categories ▾": "Mostrar las {0} categorías ▾", "★ Saved ({0})": "★ Guardados ({0})", "business": "negocio", "businesses": "negocios", "Social only": "Solo redes", "Has website": "Tiene web", "Address not listed": "Dirección no indicada", "Showing the first {0}. Zoom in or move the map and press <b style=\"display:inline\">Search this area</b> to see more.": "Se muestran los primeros {0}. Acércate o mueve el mapa y pulsa <b style=\"display:inline\">Buscar en esta zona</b> para ver más.", "The map is not ready.": "El mapa aún no está listo.", "The map library could not load. Check your connection.": "No se pudo cargar la biblioteca del mapa. Revisa tu conexión.", "Map tiles are slow to load. Showing a simple map.": "Los mosaicos del mapa tardan en cargar. Mostrando un mapa sencillo.", "Live business data unavailable. Showing places from the map itself (website info unknown).": "Datos de negocios en directo no disponibles. Mostrando lugares del propio mapa (se desconoce si tienen web).", "Zoomed out far: searching the centre of the view. Zoom in to see everything.": "Vista muy alejada: se busca en el centro. Acércate para verlo todo.", "That area is too big for the free data service. Searching the centre of the view.": "Esa zona es demasiado grande para el servicio de datos gratuito. Se busca en el centro de la vista.", "Pick what to look for": "Elige qué buscar", "Choose a category above or type something like \"bakery\" or \"yoga\".": "Elige una categoría arriba o escribe algo como «panadería» o «yoga».", "Nothing found here": "No se encontró nada aquí", "Try zooming out, moving the map, or another category. OpenStreetMap does not list every business.": "Prueba a alejar el zoom, mover el mapa o elegir otra categoría. OpenStreetMap no incluye todos los negocios.", "Place not found": "Lugar no encontrado", "Check the spelling of the city or neighbourhood and try again.": "Revisa cómo está escrita la ciudad o el barrio e inténtalo de nuevo.", "Could not load businesses": "No se pudieron cargar los negocios", "The free map data service did not answer ({0}). Wait a few seconds and try again.": "El servicio de datos del mapa no respondió ({0}). Espera unos segundos e inténtalo de nuevo.", "network error": "error de red", "Location is not available on this device.": "La ubicación no está disponible en este dispositivo.", "Finding your location…": "Buscando tu ubicación…", "Location permission was denied. Type a city instead.": "Se denegó el permiso de ubicación. Escribe una ciudad.", "All of these already have a website": "Todos estos ya tienen página web", "Untick \"No Web\" to see them, or search another category.": "Desmarca «Sin Web» para verlos, o busca otra categoría.", "No saved businesses yet": "Aún no hay negocios guardados", "Open a business and tap the star to save it.": "Abre un negocio y toca la estrella para guardarlo.", "Copied to clipboard": "Copiado al portapapeles", "Could not copy": "No se pudo copiar", "No phone listed. Message copied: paste it in their WhatsApp chat.": "Sin teléfono. Mensaje copiado: pégalo en su chat de WhatsApp.", "That preview link looks broken.": "Ese enlace de vista previa parece estar roto.", "This business has no website recorded on the map. A clear page could help new customers find and choose it.": "Este negocio no tiene web registrada en el mapa. Una página clara podría ayudar a que nuevos clientes lo encuentren y lo elijan.", "Only a social profile is listed. A page of its own gives it a home that shows up in search.": "Solo figura un perfil social. Una página propia le da un hogar que aparece en las búsquedas.", "The live business data service was not available, so this place comes from the base map, which does not say whether it has a website. Check before contacting.": "El servicio de datos en directo no estaba disponible, así que este lugar viene del mapa base, que no indica si tiene web. Compruébalo antes de contactar.", "Already has a website": "Ya tiene página web", "It lists a site. You can still preview a fresh concept for comparison.": "Tiene una web registrada. Aun así puedes ver una propuesta nueva para comparar.", "View on OpenStreetMap": "Ver en OpenStreetMap", "← Results": "← Resultados", "‹ Prev": "‹ Ant.", "Next ›": "Sig. ›", "Previous (←)": "Anterior (←)", "Next (→)": "Siguiente (→)", "Previous business": "Negocio anterior", "Next business": "Negocio siguiente", "💬 Send sample by WhatsApp": "💬 Enviar muestra por WhatsApp", "Message language": "Idioma del mensaje", "✨ Preview a page for this business": "✨ Ver una página para este negocio", "🙋 This is my business": "🙋 Este es mi negocio", "See what we built for {0}": "Mira lo que hemos creado para {0}", "Open ↗": "Abrir ↗", "☆ Save": "☆ Guardar", "★ Saved": "★ Guardado", "Copy pitch EN": "Copiar propuesta EN", "Copy pitch ES": "Copiar propuesta ES", "Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain). The pitch includes a preview link, nothing is sent automatically.": "Contacta con los negocios solo por sus canales públicos y cumple la normativa local de marketing (RGPD, LSSI en España). La propuesta incluye un enlace a la vista previa; no se envía nada automáticamente.", "Opens WhatsApp to {0} with the link to their sample page and the example for their niche.": "Abre WhatsApp con {0} y el enlace a su página de muestra y al ejemplo de su sector.", " This looks like a landline, so WhatsApp may not reach it.": " Parece un teléfono fijo, así que puede que WhatsApp no llegue.", "No phone listed for this business: the message will be copied so you can paste it in their chat.": "Este negocio no tiene teléfono: el mensaje se copiará para que lo pegues en su chat.", "Hi! I found my business \"{0}\"{1} on your map and I would like my real page. Could you send me a courtesy sample?": "Hola! He encontrado mi negocio «{0}»{1} en vuestro mapa y me gustaría tener mi página real. ¿Podéis enviarme una muestra de cortesía?", "Hi! I saw the concept page for \"{0}\" on your map and I would like the real one. Could you send me a courtesy sample?": "Hola! He visto la página de ejemplo de «{0}» en vuestro mapa y me gustaría tener la real. ¿Podéis enviarme una muestra de cortesía?", "To: {0}": "Para: {0}", " (looks like a landline, so WhatsApp may not reach it)": " (parece un teléfono fijo, puede que WhatsApp no llegue)", "No phone number listed for this business. The message will be copied so you can paste it in their chat.": "Este negocio no tiene teléfono. El mensaje se copiará para que lo pegues en su chat.", "Concept preview by EasyLandX. Not the official website of {0}.": "Vista previa de concepto de EasyLandX. No es la web oficial de {0}.", "Concept preview by EasyLandX": "Vista previa de concepto de EasyLandX", "Find us": "Encuéntranos", "Everything you offer, easy to scan in seconds.": "Todo lo que ofreces, fácil de ver en segundos.", "{0} in one tap": "{0} en un toque", "A clear button that turns visitors into customers.": "Un botón claro que convierte visitas en clientes.", "Find you fast": "Te encuentran rápido", "Address, hours and directions, always up to date.": "Dirección, horario y cómo llegar, siempre al día.", "Everything you offer, easy to scan": "Todo lo que ofreces, fácil de ver", "A clear button that brings customers": "Un botón claro que atrae clientes", "Address, hours and directions": "Dirección, horario y cómo llegar", "Visit us": "Visítanos", "Open map": "Abrir mapa", "Ready when you are": "Listos cuando tú lo estés", "Concept preview built from public map data. Real pages use the owner's own photos, prices and booking.": "Vista previa de concepto creada con datos públicos del mapa. Las páginas reales usan las fotos, precios y reservas del propietario.", "Look and feel your best at {n}": "Luce y siéntete genial en {n}", "Services, prices and booking on one clean page.": "Servicios, precios y reservas en una página clara.", "Book now": "Reserva ya", "Services & prices": "Servicios y precios", "Good food, easy to find: {n}": "Buena comida, fácil de encontrar: {n}", "Menu, hours and directions one tap away.": "Carta, horario y cómo llegar a un toque.", "Reserve a table": "Reserva una mesa", "Menu & highlights": "Carta y platos destacados", "Move better with {n}": "Muévete mejor con {n}", "Classes, schedule and sign-up in seconds.": "Clases, horarios e inscripción en segundos.", "Join a class": "Apúntate a una clase", "Classes & schedule": "Clases y horarios", "A calm first step: {n}": "Un primer paso con calma: {n}", "See how we can help and book a first session.": "Descubre cómo podemos ayudarte y reserva una primera sesión.", "Book a session": "Reserva una sesión", "How we can help": "Cómo podemos ayudarte", "Clear answers from {n}": "Respuestas claras de {n}", "Services, process and a simple way to get in touch.": "Servicios, proceso y una forma sencilla de contactar.", "Request a call": "Solicita una llamada", "Services": "Servicios", "Made with care by {n}": "Hecho con cariño por {n}", "Browse the work and get in touch to commission.": "Explora el trabajo y contacta para hacer tu encargo.", "Get in touch": "Contacta", "Work & commissions": "Trabajos y encargos", "Happy pets, happy owners: {n}": "Mascotas felices, dueños felices: {n}", "Services, care and easy booking.": "Servicios, cuidados y reserva fácil.", "Book a visit": "Reserva una visita", "Services & care": "Servicios y cuidados", "Make it memorable with {n}": "Hazlo inolvidable con {n}", "See what is on offer and ask for a date.": "Mira lo que ofrecemos y pide fecha.", "Check dates": "Consulta fechas", "Packages": "Paquetes", "Discover {n}": "Descubre {n}", "Everything you need to plan your visit.": "Todo lo que necesitas para planificar tu visita.", "Plan your visit": "Planifica tu visita", "What we offer": "Qué ofrecemos", "Meet {n}": "Conoce {n}", "Everything your customers need to know, in one place.": "Todo lo que tus clientes necesitan saber, en un solo lugar.", "Sunrise": "Amanecer", "Fresh": "Fresco", "Lagoon": "Laguna", "Bloom": "Flor", "Citrus": "Cítrico", "Building your 3D model…": "Creando tu modelo 3D…", "Preparing a phone model that shows your page.": "Preparando un modelo de teléfono que muestra tu página.", "Tap <b>View in your space</b>, then point your camera at your counter or floor. On iPhone the model is a still preview of your page, and you can resize it with two fingers.": "Toca <b>Ver en tu espacio</b> y apunta la cámara a tu mostrador o al suelo. En iPhone el modelo es una vista previa fija de tu página y puedes cambiarle el tamaño con dos dedos.", "Tap <b>View in your space</b>, point your camera at your counter or floor, then move the phone slowly until it is placed. Pinch to resize.": "Toca <b>Ver en tu espacio</b>, apunta la cámara a tu mostrador o al suelo y mueve el teléfono despacio hasta que se coloque. Pellizca para cambiar el tamaño.", "AR needs a phone or tablet with AR support. You can still rotate this 3D model here. Tap <b>Copy link</b> in the preview and open it on your phone.": "La RA necesita un teléfono o tablet compatible. Aun así puedes girar este modelo 3D aquí. Toca <b>Copiar enlace</b> en la vista previa y ábrelo en tu teléfono.", "📱 View in your space": "📱 Ver en tu espacio", "Your page on a phone, placed in your space": "Tu página en un teléfono, colocada en tu espacio", "Could not show the 3D model on this device.": "No se pudo mostrar el modelo 3D en este dispositivo.", "Could not load AR on this connection. Please try again.": "No se pudo cargar la RA con esta conexión. Inténtalo de nuevo.", "AR files could not be loaded.": "No se pudieron cargar los archivos de RA.", "Hair Stylists & Hair Salons": "Peluqueros y salones de peluquería", "Estheticians & Skincare Specialists": "Esteticistas y especialistas en cuidado de la piel", "Tattoo Artists & Studios": "Tatuadores y estudios de tatuaje", "Independent Cafés & Coffee Shops": "Cafeterías independientes", "Private Chefs & Catering": "Chefs privados y catering", "Bakeries & Specialty Food": "Panaderías y alimentación especializada", "Cake Designers & Custom Bakeries": "Diseñadores de tartas y pastelerías a medida", "Chocolatier & Chocolate Makers": "Chocolateros y artesanos del chocolate", "Artisan Cheese Makers": "Queseros artesanos", "Florists & Floral Designers": "Floristas y diseñadores florales", "Gardeners & Garden Designers": "Jardineros y diseñadores de jardines", "Personal Trainers & Studios": "Entrenadores personales y estudios", "Yoga Teachers & Studios": "Profesores y estudios de yoga", "Pilates Studios": "Estudios de pilates", "Dance Teachers & Dance Studios": "Profesores y estudios de baile", "Piano Teachers & Private Music Studios": "Profesores de piano y estudios de música", "Psychologists & Practices": "Psicólogos y consultas", "Lawyers & Legal Services": "Abogados y servicios legales", "Financial Advisors & Independent Planners": "Asesores financieros y planificadores independientes", "Independent Real Estate Sales Professional": "Profesionales inmobiliarios independientes", "Photographers": "Fotógrafos", "Artists & Art Workshops": "Artistas y talleres de arte", "Jewelry Designers & Makers": "Diseñadores y artesanos de joyería", "Ceramic Artists & Pottery Studios": "Ceramistas y estudios de alfarería", "Pet Groomers & Salons": "Peluquerías caninas y salones para mascotas", "Rural Accommodation": "Alojamientos rurales", "Adventure & Outdoor Experiences": "Experiencias de aventura y aire libre", "Children's Party & Entertainment Businesses": "Fiestas infantiles y animación", "Examples hub": "Centro de ejemplos"};
-ES['One by one']='Uno a uno';ES['Bulk list']='Lista en bloque';ES['Instagram handles, one per line']='@usuarios de Instagram, uno por línea';ES['Add all']='Añadir todos';ES['Adding…']='Añadiendo…';ES['Stop']='Detener';ES['Close']='Cerrar';ES['{0} detected']='{0} detectados';ES['Adding {0} of {1} · {2}']='Añadiendo {0} de {1} · {2}';ES['Done: {0} of {1} added']='Listo: {0} de {1} añadidos';ES['Stopped: {0} of {1} added']='Detenido: {0} de {1} añadidos';ES['Could not add: {0}']='No se pudo añadir: {0}';ES['Already on the map: {0}']='Ya en el mapa: {0}';ES['Paste at least one handle first.']='Pega primero al menos un perfil.';ES['Nothing new to add.']='No hay nada nuevo que añadir.';ES['Added {0} businesses']='Añadidos {0} negocios';ES['Message']='Mensaje';ES['✏️ Edit templates']='✏️ Editar plantillas';ES['Message templates']='Plantillas de mensajes';ES['Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.']='Edita el mensaje de cada canal y categoría. Toca una etiqueta para insertarla; se sustituye en cada negocio.';ES['Reset']='Restablecer';ES['Save']='Guardar';ES['📸 Copy message and open Instagram']='📸 Copiar mensaje y abrir Instagram';ES['✉️ Open email app']='✉️ Abrir app de correo';ES['💬 Open SMS app']='💬 Abrir app de SMS';ES[' (looks like a landline, so it may not receive texts)']=' (parece un teléfono fijo, puede que no reciba SMS)';ES['No phone number listed for this business. The message will be copied.']='Este negocio no tiene teléfono. El mensaje se copiará.';ES['No Instagram listed for this business. The message will be copied so you can paste it in their DM.']='Este negocio no tiene Instagram. El mensaje se copiará para que lo pegues en su DM.';ES['Opens your email app with the subject and message filled in.']='Abre tu app de correo con el asunto y el mensaje ya escritos.';ES['{0} characters']='{0} caracteres';ES['about {0} texts']='unos {0} SMS';ES['No phone listed. Message copied.']='Sin teléfono. Mensaje copiado.';ES['Custom template for this category']='Plantilla propia de esta categoría';ES['Using your all-categories template']='Usando tu plantilla de todas las categorías';ES['Using the built-in template']='Usando la plantilla por defecto';ES['The template cannot be empty.']='La plantilla no puede estar vacía.';ES['Template saved']='Plantilla guardada';ES['Template reset']='Plantilla restablecida';ES['Business name']='Nombre del negocio';ES['Category']='Categoría';ES['Address']='Dirección';ES['Preview link']='Enlace de vista previa';ES['Example site']='Web de ejemplo';ES['WhatsApp order link']='Enlace de WhatsApp para pedir';ES['Link note']='Nota del enlace';ES['All categories']='Todas las categorías';ES['Search all categories']='Buscar en todas las categorías';ES['Part of the area did not load. Press "Search this area" to retry.']='Una parte de la zona no se cargó. Pulsa «Buscar en esta zona» para reintentar.';ES['Mobile']='Móvil';ES['Searching…']='Buscando…';ES['＋ Add']='＋ Añadir';ES['Add a business']='Añadir un negocio';ES['Type a business name, an Instagram @handle or a website link.']='Escribe el nombre de un negocio, un @usuario de Instagram o un enlace web.';ES['Name, @instagram or website']='Nombre, @instagram o web';ES['Café Sol, @cafesol or cafesol.es']='Café Sol, @cafesol o cafesol.es';ES['Category']='Categoría';ES['Auto-detect']='Detectar automáticamente';ES['Cancel']='Cancelar';ES['Add']='Añadir';ES['Looking it up…']='Buscando información…';ES['Type a name, an @instagram or a website first.']='Escribe primero un nombre, un @instagram o una web.';ES['Added: {0}']='Añadido: {0}';ES['Could not add it. Try again.']='No se pudo añadir. Inténtalo de nuevo.';ES['Added by you. We could not find a website for it yet. Check before contacting.']='Añadido por ti. Aún no hemos encontrado su web. Compruébalo antes de contactar.';ES['Open in Google Maps']='Abrir en Google Maps';ES['Details completed with Google Maps']='Datos completados con Google Maps';ES['No Web']='Sin Web';ES['With Web']='Con Web';ES['WhatsApp']='WhatsApp';ES['None of these has a website']='Ninguno tiene página web';ES['Untick "With Web" to see them, or search another category.']='Desmarca «Con Web» para verlos, o busca otra categoría.';ES['None of these has a mobile number listed']='Ninguno tiene un móvil registrado';ES['Untick "WhatsApp" to see them, or search another category.']='Desmarca «WhatsApp» para verlos, o busca otra categoría.';
+ES['One by one']='Uno a uno';ES['Bulk list']='Lista en bloque';ES['Instagram handles, one per line']='@usuarios de Instagram, uno por línea';ES['Add all']='Añadir todos';ES['Adding…']='Añadiendo…';ES['Stop']='Detener';ES['Close']='Cerrar';ES['{0} detected']='{0} detectados';ES['Adding {0} of {1} · {2}']='Añadiendo {0} de {1} · {2}';ES['Done: {0} of {1} added']='Listo: {0} de {1} añadidos';ES['Stopped: {0} of {1} added']='Detenido: {0} de {1} añadidos';ES['Could not add: {0}']='No se pudo añadir: {0}';ES['Already on the map: {0}']='Ya en el mapa: {0}';ES['Paste at least one handle first.']='Pega primero al menos un perfil.';ES['Nothing new to add.']='No hay nada nuevo que añadir.';ES['Added {0} businesses']='Añadidos {0} negocios';ES['Message']='Mensaje';ES['✏️ Edit templates']='✏️ Editar plantillas';ES['Message templates']='Plantillas de mensajes';ES['Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.']='Edita el mensaje de cada canal y categoría. Toca una etiqueta para insertarla; se sustituye en cada negocio.';ES['Reset']='Restablecer';ES['Save']='Guardar';ES['📸 Copy message and open Instagram']='📸 Copiar mensaje y abrir Instagram';ES['✉️ Open email app']='✉️ Abrir app de correo';ES['💬 Open SMS app']='💬 Abrir app de SMS';ES[' (looks like a landline, so it may not receive texts)']=' (parece un teléfono fijo, puede que no reciba SMS)';ES['No phone number listed for this business. The message will be copied.']='Este negocio no tiene teléfono. El mensaje se copiará.';ES['No Instagram listed for this business. The message will be copied so you can paste it in their DM.']='Este negocio no tiene Instagram. El mensaje se copiará para que lo pegues en su DM.';ES['Opens your email app with the subject and message filled in.']='Abre tu app de correo con el asunto y el mensaje ya escritos.';ES['{0} characters']='{0} caracteres';ES['about {0} texts']='unos {0} SMS';ES['No phone listed. Message copied.']='Sin teléfono. Mensaje copiado.';ES['Custom template for this category']='Plantilla propia de esta categoría';ES['Using your all-categories template']='Usando tu plantilla de todas las categorías';ES['Using the built-in template']='Usando la plantilla por defecto';ES['The template cannot be empty.']='La plantilla no puede estar vacía.';ES['Template saved']='Plantilla guardada';ES['Template reset']='Plantilla restablecida';ES['Business name']='Nombre del negocio';ES['Category']='Categoría';ES['Address']='Dirección';ES['Preview link']='Enlace de vista previa';ES['Example site']='Web de ejemplo';ES['WhatsApp order link']='Enlace de WhatsApp para pedir';ES['Link note']='Nota del enlace';ES['Use their brand (colours, logo, photos, services)']='Usar su marca (colores, logo, fotos, servicios)';ES['Reading their page…']='Leyendo su página…';ES['Nothing usable found on their page or Instagram.']='No se encontró nada aprovechable en su web o Instagram.';ES['No website or Instagram known for this business.']='No se conoce web ni Instagram de este negocio.';ES['colours']='colores';ES['logo']='logo';ES['{0} photos']='{0} fotos';ES['{0} services']='{0} servicios';ES['hours']='horario';ES['Found: {0}']='Encontrado: {0}';ES['Brand']='Marca';ES['Hi! I would like more information about {0}.']='Hola! Me gustaría más información sobre {0}.';ES['Chat on WhatsApp']='Escríbenos por WhatsApp';ES['Opening hours']='Horario';ES['All categories']='Todas las categorías';ES['Search all categories']='Buscar en todas las categorías';ES['Part of the area did not load. Press "Search this area" to retry.']='Una parte de la zona no se cargó. Pulsa «Buscar en esta zona» para reintentar.';ES['Mobile']='Móvil';ES['Searching…']='Buscando…';ES['＋ Add']='＋ Añadir';ES['Add a business']='Añadir un negocio';ES['Type a business name, an Instagram @handle or a website link.']='Escribe el nombre de un negocio, un @usuario de Instagram o un enlace web.';ES['Name, @instagram or website']='Nombre, @instagram o web';ES['Café Sol, @cafesol or cafesol.es']='Café Sol, @cafesol o cafesol.es';ES['Category']='Categoría';ES['Auto-detect']='Detectar automáticamente';ES['Cancel']='Cancelar';ES['Add']='Añadir';ES['Looking it up…']='Buscando información…';ES['Type a name, an @instagram or a website first.']='Escribe primero un nombre, un @instagram o una web.';ES['Added: {0}']='Añadido: {0}';ES['Could not add it. Try again.']='No se pudo añadir. Inténtalo de nuevo.';ES['Added by you. We could not find a website for it yet. Check before contacting.']='Añadido por ti. Aún no hemos encontrado su web. Compruébalo antes de contactar.';ES['Open in Google Maps']='Abrir en Google Maps';ES['Details completed with Google Maps']='Datos completados con Google Maps';ES['No Web']='Sin Web';ES['With Web']='Con Web';ES['WhatsApp']='WhatsApp';ES['None of these has a website']='Ninguno tiene página web';ES['Untick "With Web" to see them, or search another category.']='Desmarca «Con Web» para verlos, o busca otra categoría.';ES['None of these has a mobile number listed']='Ninguno tiene un móvil registrado';ES['Untick "WhatsApp" to see them, or search another category.']='Desmarca «WhatsApp» para verlos, o busca otra categoría.';
 var CAT_ES={"hair": "Peluquería", "beauty": "Belleza y cuidado de la piel", "tattoo": "Estudio de tatuajes", "cafe": "Cafetería", "restaurant": "Restaurante", "bakery": "Panadería", "pastry": "Pastelería y tartas", "choc": "Chocolatería", "cheese": "Quesería", "florist": "Floristería", "garden": "Jardín y plantas", "fitness": "Gimnasio y fitness", "yoga": "Yoga", "pilates": "Pilates", "dance": "Escuela de baile", "music": "Escuela de música", "therapy": "Terapia y psicología", "lawyer": "Despacho de abogados", "finance": "Contabilidad y finanzas", "realestate": "Inmobiliaria", "photo": "Fotógrafo", "art": "Galería y taller de arte", "jewelry": "Joyería", "pottery": "Cerámica y alfarería", "pets": "Peluquería y tiendas de mascotas", "stay": "Alojamiento rural", "outdoor": "Aire libre y aventura", "party": "Fiestas y eventos", "generic": "Negocio local"};
 function T(k){var s=(LANG==='es'&&ES[k]!=null)?ES[k]:k;for(var i=1;i<arguments.length;i++)s=s.split('{'+(i-1)+'}').join(arguments[i]);return s;}
 function lbl(c){return LANG==='es'?(CAT_ES[c.id]||c.label):c.label;}
@@ -506,7 +510,7 @@ var STATIC=[
 ['#pFrame','title','Concept preview'],
 ['.panel>h3:nth-of-type(1)',0,'Device'],['.panel>h3:nth-of-type(2)',0,'Colors'],['.panel>h3:nth-of-type(3)',0,'About this preview'],['#hLang',0,'Language'],
 ['#dMob',0,'📱 Phone'],['#dDesk',0,'🖥️ Desktop'],
-['#sendBox h3',0,'Send to this business'],['#sMsg','aria-label','Message'],['#sGo',0,'💬 Open WhatsApp with this message'],['#sTplBtn',0,'✏️ Edit templates'],['#sMailTo','placeholder','email@business.com'],['#tplT',0,'Message templates'],['#tplHint',0,'Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.'],['label[for=tplCat]',0,'Category'],['#tplReset',0,'Reset'],['#tplSave',0,'Save'],['#tplClose',0,'Close'],
+['#brandLbl',0,'Use their brand (colours, logo, photos, services)'],['#sendBox h3',0,'Send to this business'],['#sMsg','aria-label','Message'],['#sGo',0,'💬 Open WhatsApp with this message'],['#sTplBtn',0,'✏️ Edit templates'],['#sMailTo','placeholder','email@business.com'],['#tplT',0,'Message templates'],['#tplHint',0,'Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.'],['label[for=tplCat]',0,'Category'],['#tplReset',0,'Reset'],['#tplSave',0,'Save'],['#tplClose',0,'Close'],
 ['#sendBox .note',0,'Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).'],
 ['.panel>p',0,"A concept built from public map data (name, address, category). It is a sample of what a page could look like, not the business's official website. The real page is written together with the owner: their photos, services, prices and booking."],
 ['#pEx',0,'See a real EasyLandX example for this niche ↗'],
@@ -1158,13 +1162,18 @@ function idsFor(b,k,old){
 function trackNoteL(lang,isShort){return isShort?(lang==='es'?' El enlace solo cuenta que se ha abierto (no guarda datos personales).':' The link only counts that it was opened (it stores no personal data).'):'';}
 
 /* Recipient side: resolve the short id, show the preview, count one open */
+function sharedBiz(o){
+  var br=null,k=hex6(o.k);
+  if(k||o.l||(o.s&&o.s.length)||(o.i&&o.i.length))br={k:k,logo:safeUrl(o.l),s:(Array.isArray(o.s)?o.s:[]).slice(0,6).map(function(x){return String(x).slice(0,60);}),i:(Array.isArray(o.i)?o.i:[]).slice(0,3).map(safeUrl).filter(Boolean),h:''};
+  return{id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:'',status:'noweb',wa:String(o.w||'').slice(0,20),brand:br};
+}
 function openShortLink(raw){
   var id=String(raw||'').replace(/[^A-Za-z0-9]/g,'');
   if(!CONFIG.TRACK||!id){toast('That preview link looks broken.');return;}
   fetch(trackBase()+'/l/'+id).then(function(r){if(!r.ok)throw new Error('nf');return r.json();}).then(function(d){
     var o=d.payload||{};
     if(o.g==='es'||o.g==='en'){LANG=o.g;refreshUI();}
-    openPreview({id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:'',status:'noweb'},o.t);
+    openPreview(sharedBiz(o),o.t);
     reportOpen(id);
   }).catch(function(){toast('That preview link looks broken.');});
 }
@@ -1422,7 +1431,7 @@ function renderDetail(b){
   var nav='<div class="dnav"><button class="back" id="dBackBtn">'+T('← Results')+'</button>'+(ix>-1&&vis.length>1?'<div class="pn"><button id="dPrevBiz" title="'+T('Previous (←)')+'" aria-label="'+T('Previous business')+'"'+(ix===0?' disabled':'')+'>'+T('‹ Prev')+'</button><span>'+(ix+1)+' / '+vis.length+'</span><button id="dNextBiz" title="'+T('Next (→)')+'" aria-label="'+T('Next business')+'"'+(ix===vis.length-1?' disabled':'')+'>'+T('Next ›')+'</button></div>':'')+'</div>';
   var h=nav+
    '<div class="dhead"><span class="ico">'+c.emoji+'</span><div><h2>'+esc(b.name)+'</h2><p>'+esc(lbl(c))+'</p></div></div>'+stat+
-   '<div class="facts">'+facts+'</div>'+(b.gsrc?'<p class="note">'+T('Details completed with Google Maps')+'</p>':'')+leadBoxHTML(b)+
+   '<div class="facts">'+facts+'</div>'+(b.gsrc?'<p class="note">'+T('Details completed with Google Maps')+'</p>':'')+
    (CANSEND?'<div class="row"><button class="btn p" id="dSend" style="flex:1">'+T('💬 Send sample by WhatsApp')+'</button><button class="btn l" id="dLang" style="width:64px;flex:none" title="'+T('Message language')+'"></button></div><p class="note" id="dSendTo"></p>':'')+
    '<button class="btn p" id="dPrev">'+T('✨ Preview a page for this business')+'</button>'+
    '<button class="btn t" id="dMine">'+T('🙋 This is my business')+'</button>'+
@@ -1431,6 +1440,7 @@ function renderDetail(b){
     h+='<div class="row"><button class="btn l sm" id="dSave">'+T(saved[b.id]?'★ Saved':'☆ Save')+'</button><button class="btn l sm" id="dCopyEn">'+T('Copy pitch EN')+'</button><button class="btn l sm" id="dCopyEs">'+T('Copy pitch ES')+'</button></div>'+
        '<p class="note">'+T('Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain). The pitch includes a preview link, nothing is sent automatically.')+'</p>';
   }
+  h+=leadBoxHTML(b);   // lead tracker goes below the action buttons so they stay in view
   d.innerHTML=h;$('list').hidden=true;d.hidden=false;d.scrollTop=0;$('side').scrollTop=0;$('side').classList.add('indetail');
   $('dBackBtn').onclick=function(){setSel(null);cur=null;renderList();scrollToResults();};
   if($('dPrevBiz'))$('dPrevBiz').onclick=function(){if(ix>0)select(vis[ix-1].id,true);};
@@ -1440,6 +1450,7 @@ function renderDetail(b){
   $('dEx').onclick=function(){openViewer(c.exUrl,T(c.exTitle));};
   wireLeadBox(b);
   if(CANSEND){
+    enrichBrand(b);   // read their page / Instagram in the background so the link carries their real brand
     var refreshDSend=function(){
       var bp=bestPhone(b),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m;
       $('dLang').textContent=sendLang.toUpperCase();
@@ -1548,48 +1559,231 @@ var COPY={
 function copyFor(b){var g=COPY[catOf(b).group]||COPY.generic;return{h:T(g.h).replace('{n}',b.name),s:T(g.s),cta:T(g.cta),f1:T(g.f1)};}
 function themeById(id){for(var i=0;i<THEMES.length;i++)if(THEMES[i].id===id)return THEMES[i];return THEMES[0];}
 var pvB=null,pvT=null;
+/* ---------- Brand kit: colours, logo, photos, services and hours taken from the business's own page / Instagram ---------- */
+var pvBrandOn=true,pvPicked=false,BRANDP={};
+function hexRgb(h){h=hex6(h)||'#000000';return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+function rgbHex(r){return '#'+r.map(function(v){v=Math.max(0,Math.min(255,Math.round(v)));return (v<16?'0':'')+v.toString(16);}).join('');}
+function mixHex(a,b,t){var x=hexRgb(a),y=hexRgb(b);return rgbHex([x[0]+(y[0]-x[0])*t,x[1]+(y[1]-x[1])*t,x[2]+(y[2]-x[2])*t]);}
+function lumHex(h){var c=hexRgb(h).map(function(v){v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];}
+function themeFromColor(hex){
+  var acc=hex6(hex)||'#2563eb',i=0;
+  while(1.05/(lumHex(acc)+0.05)<3.2&&i++<12)acc=mixHex(acc,'#000000',0.12);   // keep white text readable on the brand colour
+  return{id:'brand',name:'Brand',c:acc,bg1:mixHex(acc,'#ffffff',0.88),bg2:mixHex(acc,'#ffffff',0.78),bg3:mixHex(acc,'#ffffff',0.95),acc:acc,ink:mixHex(acc,'#000000',0.75)};
+}
+function setBrandTheme(br){
+  for(var i=THEMES.length-1;i>=0;i--)if(THEMES[i].id==='brand')THEMES.splice(i,1);
+  if(br&&br.k)THEMES.unshift(themeFromColor(br.k));
+}
+// Dominant saturated colour of an image (logo / profile picture). The image goes through a CORS-friendly resizer so the canvas can be read.
+function sampleColor(url){
+  return new Promise(function(res){
+    var img=new Image(),done=false,to=setTimeout(function(){if(!done){done=true;res('');}},6000);
+    img.crossOrigin='anonymous';
+    img.onerror=function(){if(!done){done=true;clearTimeout(to);res('');}};
+    img.onload=function(){
+      if(done)return;done=true;clearTimeout(to);
+      try{
+        var cv=document.createElement('canvas');cv.width=cv.height=48;var cx=cv.getContext('2d');cx.drawImage(img,0,0,48,48);
+        var d=cx.getImageData(0,0,48,48).data,bins=[],k;for(k=0;k<18;k++)bins.push({w:0,r:0,g:0,b:0});
+        for(var i=0;i<d.length;i+=4){
+          if(d[i+3]<128)continue;
+          var r=d[i]/255,g=d[i+1]/255,b=d[i+2]/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),v=mx,sat=mx?(mx-mn)/mx:0;
+          if(v<0.2||sat<0.28)continue;
+          var h=0,df=mx-mn;if(df){h=mx===r?((g-b)/df)%6:(mx===g?(b-r)/df+2:(r-g)/df+4);h=(h*60+360)%360;}
+          var bn=bins[Math.floor(h/20)%18],wt=sat*v;bn.w+=wt;bn.r+=d[i]*wt;bn.g+=d[i+1]*wt;bn.b+=d[i+2]*wt;
+        }
+        var best=null;bins.forEach(function(x){if(!best||x.w>best.w)best=x;});
+        res(best&&best.w>1.5?rgbHex([best.r/best.w,best.g/best.w,best.b/best.w]):'');
+      }catch(e){res('');}
+    };
+    img.src='https://wsrv.nl/?url='+encodeURIComponent(url)+'&w=48&h=48&fit=cover&output=png';
+  });
+}
+var SVC_KEY=/servicios|services|tratamientos|treatments|carta|men[uú]|clases|classes|productos|products|precios|prices|especialidades|what we (?:do|offer)|qu[eé] ofrecemos|talleres|cursos|workshops|nuestros/i;
+var SVC_STOP=/contact|contacto|about|sobre|horario|hours|ubicaci|testimon|reviews|opiniones|faq|preguntas|blog|newsletter|s[ií]guenos|follow|privacidad|privacy|cookies|reserva|book/i;
+function servicesFrom(lines){
+  var i,out=[],seen={};
+  for(i=0;i<lines.length;i++)if(lines[i].t==='h'&&SVC_KEY.test(lines[i].x))break;
+  if(i>=lines.length)return [];
+  for(i=i+1;i<lines.length&&out.length<6;i++){
+    var l=lines[i];
+    if(l.t==='h'&&SVC_STOP.test(l.x)&&out.length)break;
+    var x=l.x.replace(/^[\W_]+/,'').trim();
+    if(x.length<3||x.length>48||/@|https?:|\.com|\.es/i.test(x)||SVC_STOP.test(x)||seen[x.toLowerCase()])continue;
+    seen[x.toLowerCase()]=1;out.push(x);
+  }
+  return out.length>=2?out:[];
+}
+// Instagram bios often list the services like "Pestañas | Cejas | Láser"
+function bioServices(info){
+  var src=[info.desc||'',info.title||''].concat(String(info.text||'').split('\n').slice(0,40)),k;
+  for(k=0;k<src.length;k++){
+    var ln=String(src[k]);if(!/[|•·✔✓▪▫➡→✨]/.test(ln))continue;
+    var parts=ln.split(/\s*[|•·✔✓▪▫➡→✨]+\s*/).map(function(x){return x.replace(/[*_`]/g,'').replace(/^[\W_]+|[\W_]+$/g,'').trim();}).filter(function(x){return x.length>=3&&x.length<=32&&!/@|https?:|\d{6,}/.test(x);});
+    if(parts.length>=3)return parts.slice(0,6);
+  }
+  return [];
+}
+function hoursFrom(text){
+  var m=String(text||'').match(/(?:horario|opening hours|hours)\s*[:\-]?\s*([^\n]{10,140})/i);
+  if(m&&/\d{1,2}[:.]\d{2}/.test(m[1])&&/lun|mar|mi[eé]|jue|vie|s[aá]b|dom|mon|tue|wed|thu|fri|sat|sun/i.test(m[1]))return m[1].trim().slice(0,110);
+  return '';
+}
+function buildBrand(entries){
+  var br={k:'',logo:'',s:[],i:[],h:''},cands=[];
+  entries.forEach(function(e){
+    var info=e.info;if(!info)return;
+    var imgs=(info.imgs||[]).map(function(x){return x.u;}),logo=info.logo||'';
+    if(e.kind!=='web'&&!logo&&imgs.length)logo=imgs.shift();   // on Instagram the first picture is the profile photo
+    if(logo&&!br.logo)br.logo=logo;
+    if(e.kind==='web'&&info.theme&&!br.k)br.k=info.theme;
+    imgs.forEach(function(u){if(u!==logo&&br.i.indexOf(u)<0&&br.i.length<4)br.i.push(u);});
+    if(!br.s.length)br.s=servicesFrom(info.lines||[]);
+    if(!br.s.length)br.s=bioServices(info);
+    if(!br.h)br.h=hoursFrom(info.text);
+  });
+  var pick=br.k?Promise.resolve(br.k):(br.logo?sampleColor(br.logo):Promise.resolve('')).then(function(c){return c||(br.i[0]?sampleColor(br.i[0]):'');});
+  return pick.then(function(c){br.k=c||br.k||'';return(br.k||br.logo||br.s.length||br.i.length||br.h)?br:null;});
+}
+function siteUrl(u){u=String(u||'').trim();return u&&!/^https?:\/\//i.test(u)?'https://'+u:u;}
+function enrichBrand(b){
+  if(!b||b.id==='shared')return Promise.resolve(null);
+  if(b.brand!==undefined)return Promise.resolve(b.brand);
+  if(BRANDP[b.id])return BRANDP[b.id];
+  var list=[];if(b.social)list.push({u:siteUrl(b.social),kind:'ig'});if(b.web)list.push({u:siteUrl(b.web),kind:'web'});
+  if(!list.length){b.brand=null;return Promise.resolve(null);}
+  BRANDP[b.id]=Promise.all(list.map(function(x){return readPage(x.u,x.kind!=='web').then(function(info){return{info:info,kind:x.kind};});}))
+    .then(buildBrand).then(function(br){b.brand=br;delete BRANDP[b.id];return br;},function(){b.brand=null;delete BRANDP[b.id];return null;});
+  return BRANDP[b.id];
+}
+function brandOf(b){if(!b||!b.brand)return null;if(b.id==='shared')return b.brand;return pvBrandOn?b.brand:null;}
+function safeUrl(u){u=String(u||'');return /^https:\/\/[^\s"'<>()]+$/i.test(u)&&u.length<=600?u:'';}
+function px(u,w,fmt){return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&fit=cover&output='+(fmt||'jpg');}
+function waDigits(b){var x=String(b.wa||'').replace(/\D/g,'');if(x.length>=8&&x.length<=15)return x;var bp=bestPhone(b);return bp&&bp.m?bp.d:'';}
+var DAYSH={Mo:['Lun','Mon'],Tu:['Mar','Tue'],We:['Mié','Wed'],Th:['Jue','Thu'],Fr:['Vie','Fri'],Sa:['Sáb','Sat'],Su:['Dom','Sun']};
+// OpenStreetMap "opening_hours" (Mo-Fr 09:00-20:00; Sa 10:00-14:00) -> [[days,time],...]; null when it cannot be read
+function parseHours(h,lang){
+  h=String(h||'').trim();if(!h)return null;
+  var li=lang==='es'?0:1;
+  if(h==='24/7')return [[lang==='es'?'Todos los días':'Every day','24 h']];
+  var rows=[],ok=true,D='(?:Mo|Tu|We|Th|Fr|Sa|Su)';
+  h.split(';').forEach(function(part){
+    part=part.trim();if(!part||!ok)return;
+    var m=part.match(new RegExp('^('+D+'(?:\\s*[-,]\\s*'+D+')*)\\s+(.+)$'));
+    var days,time;
+    if(m){days=m[1].replace(/\s/g,'');time=m[2];}
+    else if(/^\d{1,2}:\d{2}/.test(part)){days='Mo-Su';time=part;}
+    else{ok=false;return;}
+    var lab=days.split(',').map(function(r){var q=r.split('-');return q.length===2?DAYSH[q[0]][li]+'–'+DAYSH[q[1]][li]:DAYSH[q[0]][li];}).join(', ');
+    if(days==='Mo-Su')lab=lang==='es'?'Todos los días':'Every day';
+    time=/^(off|closed)$/i.test(time.trim())?(lang==='es'?'Cerrado':'Closed'):time.replace(/\s*,\s*/g,' · ').replace(/-/g,'–');
+    rows.push([lab,time]);
+  });
+  return ok&&rows.length?rows:null;
+}
+function tileMap(lat,lon,url){
+  if(!lat&&!lon)return '';
+  var z=16,n=Math.pow(2,z),la=lat*Math.PI/180,xf=(lon+180)/360*n,yf=(1-Math.log(Math.tan(la)+1/Math.cos(la))/Math.PI)/2*n,tx=Math.floor(xf),ty=Math.floor(yf),pxx=Math.round((xf-tx)*256),pyy=Math.round((yf-ty)*256),t='',dx,dy;
+  for(dy=-1;dy<=1;dy++)for(dx=-1;dx<=1;dx++)t+='<img alt="" src="https://tile.openstreetmap.org/'+z+'/'+(tx+dx)+'/'+(ty+dy)+'.png" style="left:'+(256*(dx+1))+'px;top:'+(256*(dy+1))+'px">';
+  return '<a class="map" href="'+esc(url)+'"><div class="tl" style="left:calc(50% - '+(256+pxx)+'px);top:calc(110px - '+(256+pyy)+'px)">'+t+'</div><span class="pin">📍</span><small>© OpenStreetMap</small></a>';
+}
 function pageHTML(b,t){
-  var c=copyFor(b),cat=catOf(b);
-  var bpx=bestPhone(b),tel=bpx?'tel:+'+bpx.d:'#visit';
+  var c=copyFor(b),cat=catOf(b),br=brandOf(b)||{},photos=br.i||[],svcs=br.s||[],hero=photos[0]||'',gal=photos.slice(1,4);
+  var wad=waDigits(b),bpx=bestPhone(b);
+  var waUrl=wad?'https://wa.me/'+wad+'?text='+encodeURIComponent(T('Hi! I would like more information about {0}.',b.name)):'';
+  var tel=waUrl||(bpx?'tel:+'+bpx.d:'#visit');
   var map='https://www.openstreetmap.org/?mlat='+b.lat+'&mlon='+b.lon+'#map=19/'+b.lat+'/'+b.lon;
+  var rows=parseHours(b.hours,LANG),hrs=b.hours||br.h||'';
+  var hoursHTML=rows?'<table class="hrs">'+rows.map(function(r){return '<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>';}).join('')+'</table>':(hrs?'<p>🕒 '+esc(hrs)+'</p>':'');
+  var logo=br.logo?'<span class="lg" style="background-image:url(\''+esc(px(br.logo,96,'png'))+'\')"></span>':'';
+  var featCards=svcs.length?svcs.map(function(x){return '<div class="card"><i>✦</i><h3>'+esc(x)+'</h3></div>';}).join(''):
+    '<div class="card"><i>📋</i><h3>'+esc(c.f1)+'</h3><p>'+esc(T('Everything you offer, easy to scan in seconds.'))+'</p></div><div class="card"><i>📱</i><h3>'+esc(T('{0} in one tap',c.cta))+'</h3><p>'+esc(T('A clear button that turns visitors into customers.'))+'</p></div><div class="card"><i>📍</i><h3>'+esc(T('Find you fast'))+'</h3><p>'+esc(T('Address, hours and directions, always up to date.'))+'</p></div>';
+  var heroStyle=hero?' style="background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),url(\''+esc(px(hero,1100))+'\') center/cover,'+t.bg2+'"':'';
   return '<!doctype html><html lang="'+LANG+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><style>'+
   '*{box-sizing:border-box}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;color:'+t.ink+';background:'+t.bg3+';line-height:1.5}'+
   '.ban{background:#fff;color:#555;font-size:11px;text-align:center;padding:6px 10px;border-bottom:1px solid #eee}'+
-  'nav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:'+t.bg1+'}nav b{font-size:17px}'+
-  '.btn{display:inline-block;background:'+t.acc+';color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:999px;font-size:15px}.btn.o{background:#fff;color:'+t.acc+';border:2px solid '+t.acc+'}'+
+  'nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 22px;background:'+t.bg1+'}nav b{font-size:17px;display:flex;align-items:center;gap:10px;min-width:0}.lg{flex:none;width:34px;height:34px;border-radius:50%;background:#fff center/cover no-repeat;border:2px solid '+t.acc+'}'+
+  '.btn{display:inline-block;background:'+t.acc+';color:#fff;text-decoration:none;font-weight:800;padding:12px 20px;border-radius:999px;font-size:15px}.btn.o{background:#fff;color:'+t.acc+';border:2px solid '+t.acc+'}.btn.wa{background:#25d366;color:#fff}'+
   '.hero{background:linear-gradient(160deg,'+t.bg1+','+t.bg2+');padding:44px 22px 52px;text-align:center}.hero .em{font-size:54px}.hero h1{font-size:clamp(26px,5vw,44px);line-height:1.15;margin:10px auto 12px;max-width:760px;letter-spacing:-.02em}.hero p{font-size:clamp(15px,2.4vw,19px);margin:0 auto 22px;max-width:560px;opacity:.85}'+
-  '.hero .b{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}'+
-  '.feat{padding:40px 22px;background:'+t.bg3+';display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));max-width:980px;margin:0 auto}.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 20px rgba(0,0,0,.06)}.card i{font-style:normal;font-size:28px}.card h3{margin:8px 0 4px;font-size:16px}.card p{margin:0;font-size:14px;opacity:.75}'+
-  '.visit{background:'+t.bg2+';padding:38px 22px;text-align:center}.visit h2{margin:0 0 12px;font-size:24px}.visit p{margin:4px 0}'+
+  '.hero.ph{color:#fff}.hero.ph p{opacity:.95}.hero.ph .btn.o{background:transparent;color:#fff;border-color:#fff}.hero .b{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}'+
+  '.gal{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));padding:22px;max-width:980px;margin:0 auto}.gal div{aspect-ratio:1;border-radius:16px;background:'+t.bg2+' center/cover no-repeat}'+
+  '.sh{max-width:980px;margin:0 auto;padding:30px 22px 0;font-size:24px}'+
+  '.feat{padding:18px 22px 40px;background:'+t.bg3+';display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));max-width:980px;margin:0 auto}.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 6px 20px rgba(0,0,0,.06)}.card i{font-style:normal;font-size:28px;color:'+t.acc+'}.card h3{margin:8px 0 4px;font-size:16px}.card p{margin:0;font-size:14px;opacity:.75}'+
+  '.visit{background:'+t.bg2+';padding:38px 22px;text-align:center}.visit h2{margin:0 0 12px;font-size:24px}.visit p{margin:4px 0}.hrs{margin:8px auto;border-collapse:collapse;font-size:14px}.hrs td{padding:3px 12px;text-align:left}.hrs td:first-child{font-weight:700}'+
+  '.map{position:relative;display:block;height:220px;max-width:560px;margin:16px auto;overflow:hidden;border-radius:18px;background:#e8e4da;box-shadow:0 6px 20px rgba(0,0,0,.1)}.tl{position:absolute;width:768px;height:768px}.tl img{position:absolute;width:256px;height:256px;display:block}.pin{position:absolute;left:50%;top:110px;transform:translate(-50%,-100%);font-size:34px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}.map small{position:absolute;right:6px;bottom:4px;font-size:10px;color:#333;background:rgba(255,255,255,.8);padding:1px 5px;border-radius:6px}'+
   '.cta{background:'+t.acc+';color:#fff;text-align:center;padding:34px 22px}.cta h2{margin:0 0 14px;font-size:24px}.cta .btn{background:#fff;color:'+t.acc+'}'+
   'footer{padding:16px 22px;font-size:12px;text-align:center;background:'+t.bg1+';opacity:.95}footer a{color:'+t.ink+'}'+
+  '.fwa{position:fixed;right:16px;bottom:16px;width:56px;height:56px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;font-size:28px;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.3);z-index:5}'+
   '</style></head><body>'+
   '<div class="ban">'+esc(T('Concept preview by EasyLandX. Not the official website of {0}.',b.name))+'</div>'+
-  '<nav><b>'+esc(b.name)+'</b><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a></nav>'+
-  '<section class="hero"><div class="em">'+cat.emoji+'</div><h1>'+esc(c.h)+'</h1><p>'+esc(c.s)+'</p><div class="b"><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a><a class="btn o" href="#visit">'+esc(T('Find us'))+'</a></div></section>'+
-  '<section class="feat"><div class="card"><i>📋</i><h3>'+esc(c.f1)+'</h3><p>'+esc(T('Everything you offer, easy to scan in seconds.'))+'</p></div><div class="card"><i>📱</i><h3>'+esc(T('{0} in one tap',c.cta))+'</h3><p>'+esc(T('A clear button that turns visitors into customers.'))+'</p></div><div class="card"><i>📍</i><h3>'+esc(T('Find you fast'))+'</h3><p>'+esc(T('Address, hours and directions, always up to date.'))+'</p></div></section>'+
-  '<section class="visit" id="visit"><h2>'+esc(T('Visit us'))+'</h2>'+(b.addr?'<p>📍 '+esc(b.addr)+'</p>':'')+(b.hours?'<p>🕒 '+esc(b.hours)+'</p>':'')+(b.phone?'<p>📞 '+esc(b.phone)+'</p>':'')+'<p><a class="btn o" href="'+esc(map)+'" style="margin-top:10px">'+esc(T('Open map'))+'</a></p></section>'+
+  '<nav><b>'+logo+'<span>'+esc(b.name)+'</span></b><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a></nav>'+
+  '<section class="hero'+(hero?' ph':'')+'"'+heroStyle+'>'+(hero?'':'<div class="em">'+cat.emoji+'</div>')+'<h1>'+esc(c.h)+'</h1><p>'+esc(c.s)+'</p><div class="b"><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a><a class="btn o" href="#visit">'+esc(T('Find us'))+'</a></div></section>'+
+  (gal.length?'<section class="gal">'+gal.map(function(u){return '<div style="background-image:url(\''+esc(px(u,500))+'\')"></div>';}).join('')+'</section>':'')+
+  (svcs.length?'<h2 class="sh">'+esc(c.f1)+'</h2>':'')+
+  '<section class="feat">'+featCards+'</section>'+
+  '<section class="visit" id="visit"><h2>'+esc(T('Visit us'))+'</h2>'+(b.addr?'<p>📍 '+esc(b.addr)+'</p>':'')+(hoursHTML?'<p><b>'+esc(T('Opening hours'))+'</b></p>'+hoursHTML:'')+(b.phone?'<p>📞 '+esc(b.phone)+'</p>':'')+
+    tileMap(+b.lat,+b.lon,map)+
+    '<p>'+(waUrl?'<a class="btn wa" href="'+esc(waUrl)+'" style="margin:10px 6px 0">💬 '+esc(T('Chat on WhatsApp'))+'</a>':'')+'<a class="btn o" href="'+esc(map)+'" style="margin:10px 6px 0">'+esc(T('Open map'))+'</a></p></section>'+
   '<section class="cta"><h2>'+esc(T('Ready when you are'))+'</h2><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a></section>'+
   '<footer>'+esc(T("Concept preview built from public map data. Real pages use the owner's own photos, prices and booking."))+' · <a href="'+CONFIG.SITE+'">EasyLandX</a> © 2026</footer>'+
+  (waUrl?'<a class="fwa" href="'+esc(waUrl)+'" aria-label="WhatsApp">💬</a>':'')+
   '</body></html>';
 }
 function b64(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function unb64(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return JSON.parse(decodeURIComponent(escape(atob(s))));}
 function previewLink(b,l){
   var o={g:(l==='es'||l==='en')?l:LANG,n:b.name,c:b.cat,a:b.addr,p:b.phone,h:b.hours,la:+b.lat.toFixed(6),lo:+b.lon.toFixed(6),t:(pvT&&pvB&&pvB.id===b.id)?pvT.id:undefined};
+  var br=brandOf(b);
+  if(br){
+    if(br.k)o.k=br.k;if(safeUrl(br.logo))o.l=br.logo;
+    if(br.s&&br.s.length)o.s=br.s.slice(0,6).map(function(x){return String(x).slice(0,40);});
+    var im=(br.i||[]).filter(safeUrl).slice(0,3);if(im.length)o.i=im;
+    if(b.wa)o.w=String(b.wa).slice(0,20);
+  }
   var sh=shortFor(b,o);if(sh)return sh;
+  if(o.i&&JSON.stringify(o.i).length>500){delete o.i;if(o.l&&o.l.length>200)delete o.l;}   // keep the long (untracked) link a reasonable size
   return location.origin+location.pathname+'#preview='+b64(o);
 }
 function buildThemes(){
   var th=$('themes');th.innerHTML='';
-  THEMES.forEach(function(t){var x=document.createElement('button');x.innerHTML='<i style="background:'+t.c+'"></i>'+esc(T(t.name));if(t.id===pvT.id)x.className='on';x.onclick=function(){pvT=t;[].forEach.call(th.children,function(y){y.classList.remove('on');});x.className='on';renderFrame();track('map_theme',{theme:t.id});};th.appendChild(x);});
+  THEMES.forEach(function(t){var x=document.createElement('button');x.innerHTML='<i style="background:'+t.c+'"></i>'+esc(T(t.name));if(t.id===pvT.id)x.className='on';x.onclick=function(){pvT=t;pvPicked=true;[].forEach.call(th.children,function(y){y.classList.remove('on');});x.className='on';renderFrame();track('map_theme',{theme:t.id});};th.appendChild(x);});
+}
+function brandNote(b){
+  var box=$('brandBox'),note=$('brandNote');
+  if(!b||b.id==='shared'){box.hidden=true;return;}
+  box.hidden=false;
+  if(b.brand===undefined){note.textContent=T('Reading their page…');return;}
+  var br=b.brand;
+  if(!br){note.textContent=(b.web||b.social)?T('Nothing usable found on their page or Instagram.'):T('No website or Instagram known for this business.');return;}
+  var parts=[];
+  if(br.k)parts.push(T('colours'));if(br.logo)parts.push(T('logo'));
+  if(br.i.length)parts.push(T('{0} photos',br.i.length));if(br.s.length)parts.push(T('{0} services',br.s.length));
+  if(br.h)parts.push(T('hours'));
+  note.textContent=parts.length?T('Found: {0}',parts.join(', ')):T('Nothing usable found on their page or Instagram.');
 }
 function openPreview(b,themeId){
-  pvB=b;pvT=themeById(themeId||GROUP_THEME[catOf(b).group]);sendEdited=false;sendDrafts={};$('sMailTo').value=b.email||'';
+  pvB=b;sendEdited=false;sendDrafts={};$('sMailTo').value=b.email||'';
+  pvBrandOn=true;pvPicked=false;$('brandOn').checked=true;
+  setBrandTheme(brandOf(b));
+  pvT=themeById(themeId||(THEMES[0].id==='brand'?'brand':GROUP_THEME[catOf(b).group]));
   $('pTitle').textContent=b.name;
-  buildThemes();
+  buildThemes();brandNote(b);
   renderFrame();$('mPrev').hidden=false;track('map_preview_open',{category:b.cat,status:b.status});
+  if(b.id!=='shared'&&b.brand===undefined){
+    enrichBrand(b).then(function(){
+      if(pvB!==b||$('mPrev').hidden)return;
+      brandNote(b);setBrandTheme(brandOf(b));
+      if(!pvPicked)pvT=themeById(THEMES[0].id==='brand'?'brand':GROUP_THEME[catOf(b).group]);
+      buildThemes();renderFrame();
+    });
+  }
 }
+$('brandOn').onchange=function(){
+  pvBrandOn=this.checked;pvPicked=false;
+  setBrandTheme(brandOf(pvB));
+  pvT=themeById(THEMES[0].id==='brand'?'brand':GROUP_THEME[catOf(pvB).group]);
+  buildThemes();renderFrame();
+};
 function renderFrame(){$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
 /* ===== Send the preview to the business by WhatsApp (outreach mode only) ===== */
 var sendLang=LANG,sendEdited=false,sendDrafts={};   // the message follows the site language (EN/ES switch)
@@ -1855,25 +2049,58 @@ function fetchText(u,ms){
   var ctl=new AbortController(),to=setTimeout(function(){ctl.abort();},ms||8000);
   return fetch(u,{signal:ctl.signal}).then(function(r){clearTimeout(to);if(!r.ok)throw new Error('http '+r.status);return r.text();},function(e){clearTimeout(to);throw e;});
 }
-function pageInfoFromHTML(html){
+function absUrl(u,base){try{return new URL(u,base||location.href).href;}catch(e){return '';}}
+function okImg(u){return /^https:\/\/[^\s"'<>()]+$/i.test(u)&&u.length<=600&&!/\.(svg|gif|ico)(\?|$)/i.test(u)&&!/sprite|pixel|spacer|1x1|emoji|flag|arrow|loader|placeholder|blank/i.test(u);}
+function hex6(h){h=String(h||'').trim();if(/^#[0-9a-f]{3}$/i.test(h))h='#'+h[1]+h[1]+h[2]+h[2]+h[3]+h[3];return /^#[0-9a-f]{6}$/i.test(h)?h.toLowerCase():'';}
+function pageInfoFromHTML(html,base){
   var d=new DOMParser().parseFromString(html,'text/html');
+  var theme=hex6((d.querySelector('meta[name="theme-color"]')||{getAttribute:function(){return '';}}).getAttribute('content'));
+  var imgs=[],logo='',lines=[];
+  var ogm=d.querySelector('meta[property="og:image"]'),og=ogm?absUrl(ogm.getAttribute('content'),base):'';
+  if(og&&okImg(og))imgs.push({u:og,a:'og'});
+  [].forEach.call(d.querySelectorAll('img'),function(im){
+    var src=im.getAttribute('src')||im.getAttribute('data-src')||im.getAttribute('data-lazy-src')||'',u=absUrl(src,base);if(!u)return;
+    var meta=(src+' '+(im.getAttribute('alt')||'')+' '+(im.className||'')+' '+(im.id||'')).toLowerCase();
+    var w=+im.getAttribute('width')||0,h=+im.getAttribute('height')||0;
+    if(/logo/.test(meta)){if(!logo&&/^https:\/\/[^\s"'<>()]+$/i.test(u)&&!/\.svg(\?|$)/i.test(u))logo=u;return;}
+    if(!okImg(u)||/icon|avatar/.test(meta))return;
+    if((w&&w<200)||(h&&h<140))return;
+    if(imgs.length<8&&!imgs.some(function(x){return x.u===u;}))imgs.push({u:u,a:im.getAttribute('alt')||''});
+  });
+  if(!logo){var ic=d.querySelector('link[rel="apple-touch-icon"]');if(ic){var iu=absUrl(ic.getAttribute('href'),base);if(/^https:\/\/[^\s"'<>()]+$/i.test(iu)&&!/\.svg/i.test(iu))logo=iu;}}
+  [].forEach.call(d.querySelectorAll('h1,h2,h3,h4,li'),function(e){
+    if(lines.length>=200||(e.closest&&e.closest('nav,footer')))return;
+    var tx=(e.textContent||'').replace(/\s+/g,' ').trim();if(!tx||tx.length>90)return;
+    lines.push({t:/^H/.test(e.tagName)?'h':'li',x:tx});
+  });
   var mt=function(sel){var e=d.querySelector(sel);return e?(e.getAttribute('content')||''):'';};
   var tels=[].map.call(d.querySelectorAll('a[href^="tel:"]'),function(a){var h=a.getAttribute('href').slice(4);try{return decodeURIComponent(h);}catch(e){return h;}});
   var was=[].map.call(d.querySelectorAll('a[href*="wa.me/"],a[href*="api.whatsapp.com/send"],a[href*="whatsapp.com/send"]'),function(a){return a.getAttribute('href');});
   var l=d.querySelector('a[href*="instagram.com/"]'),ig=l?l.getAttribute('href'):'';
   [].forEach.call(d.querySelectorAll('script,style,noscript'),function(n){n.remove();});
   var text=((d.body&&d.body.textContent)||'').replace(/\s+/g,' ');
-  return{site:mt('meta[property="og:site_name"]'),title:mt('meta[property="og:title"]')||d.title||'',desc:mt('meta[name="description"]')||mt('meta[property="og:description"]'),tels:tels,was:was,ig:ig,text:text.slice(0,20000)};
+  return{site:mt('meta[property="og:site_name"]'),title:mt('meta[property="og:title"]')||d.title||'',desc:mt('meta[name="description"]')||mt('meta[property="og:description"]'),tels:tels,was:was,ig:ig,text:text.slice(0,20000),theme:theme,imgs:imgs,logo:logo,lines:lines};
 }
-function pageInfoFromReader(txt){
-  var m=txt.match(/^Title:\s*(.+)$/m);
-  return{site:'',title:m?m[1]:'',desc:'',tels:(txt.match(/tel:[+\d\s().-]+/g)||[]).map(function(x){return x.slice(4);}),was:txt.match(/https?:\/\/(?:wa\.me|api\.whatsapp\.com\/send)[^\s)\]]*/g)||[],ig:(txt.match(/https?:\/\/(?:www\.)?instagram\.com\/[\w.]+/i)||[''])[0],text:txt.slice(0,20000)};
+function pageInfoFromReader(txt,base){
+  var m=txt.match(/^Title:\s*(.+)$/m),imgs=[],logo='',lines=[],im,re=/!\[([^\]]*)\]\((https?:\/\/[^)\s]+)/g;
+  while((im=re.exec(txt))){
+    var u=im[2],meta=(u+' '+im[1]).toLowerCase();
+    if(/logo/.test(meta)){if(!logo&&okImg(u))logo=u;continue;}
+    if(okImg(u)&&!imgs.some(function(x){return x.u===u;})&&imgs.length<10)imgs.push({u:u,a:im[1]});
+  }
+  txt.split('\n').forEach(function(ln){
+    if(lines.length>=200)return;
+    var hm=ln.match(/^#{1,4}\s+(.+)$/),lm=ln.match(/^\s*[-*+]\s+(.+)$/),x=hm?hm[1]:(lm?lm[1]:'');if(!x)return;
+    x=x.replace(/!?\[([^\]]*)\]\([^)]*\)/g,'$1').replace(/[*_`]/g,'').replace(/\s+/g,' ').trim();
+    if(x&&x.length<=90)lines.push({t:hm?'h':'li',x:x});
+  });
+  return{theme:'',imgs:imgs,logo:logo,lines:lines,site:'',title:m?m[1]:'',desc:'',tels:(txt.match(/tel:[+\d\s().-]+/g)||[]).map(function(x){return x.slice(4);}),was:txt.match(/https?:\/\/(?:wa\.me|api\.whatsapp\.com\/send)[^\s)\]]*/g)||[],ig:(txt.match(/https?:\/\/(?:www\.)?instagram\.com\/[\w.]+/i)||[''])[0],text:txt.slice(0,20000)};
 }
 // Websites are read straight from the browser when the site allows it; otherwise (and for Instagram/Facebook) through the free r.jina.ai page reader.
 function readPage(url,skipDirect){
-  var viaReader=function(){return fetchText('https://r.jina.ai/'+url,12000).then(pageInfoFromReader);};
+  var viaReader=function(){return fetchText('https://r.jina.ai/'+url,12000).then(function(t){return pageInfoFromReader(t,url);});};
   if(skipDirect)return viaReader().catch(function(){return null;});
-  return fetchText(url,7000).then(pageInfoFromHTML).catch(viaReader).catch(function(){return null;});
+  return fetchText(url,7000).then(function(h){return pageInfoFromHTML(h,url);}).catch(viaReader).catch(function(){return null;});
 }
 var PH_RE=/(?:\+|00)\d{1,3}[\s.-]?(?:\(?\d\)?[\s.-]?){7,12}\d|\b[6-9]\d{2}[\s.-]?\d{3}[\s.-]?\d{3}\b|\b[6-9]\d{2}[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}\b/g;
 var ADDR_RE=/\b(?:Calle|C\/|Avda\.?|Avenida|Plaza|Paseo|Camino|Ronda|Traves[ií]a)\s+[^\n|;,]{2,45}?,?\s+(?:n[º°o.]*\s*)?\d{1,4}\b/i;
@@ -2062,8 +2289,7 @@ function handleHash(){
     try{
       var o=unb64(h.slice(9));
       if(o.g==='es'||o.g==='en'){LANG=o.g;refreshUI();}
-      var b={id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:'',status:'noweb'};
-      openPreview(b,o.t);
+      openPreview(sharedBiz(o),o.t);
     }catch(e){toast('That preview link looks broken.');}
   }
 }
