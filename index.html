@@ -1969,29 +1969,44 @@ function loadARLibs(){
   return arLibs;
 }
 function wrapText(ctx,text,x,y,maxW,lh,maxLines){
-  var words=text.split(' '),line='',lines=[];
+  var words=[],line='',lines=[];
+  String(text).split(' ').forEach(function(w){
+    // a single word wider than the line (long names, handles) is cut into pieces that fit
+    while(w&&ctx.measureText(w).width>maxW){var n=w.length;while(n>1&&ctx.measureText(w.slice(0,n)).width>maxW)n--;words.push(w.slice(0,n));w=w.slice(n);}
+    if(w)words.push(w);
+  });
   words.forEach(function(w){var t=line?line+' '+w:w;if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=w;}else line=t;});
   if(line)lines.push(line);
+  if(lines.length>maxLines){var l=lines[maxLines-1];while(l.length>1&&ctx.measureText(l+'…').width>maxW)l=l.slice(0,-1);lines[maxLines-1]=l+'…';}
   lines.slice(0,maxLines).forEach(function(l,i){ctx.fillText(l,x,y+i*lh);});
   return Math.min(lines.length,maxLines)*lh;
 }
+// One line of text that always fits maxW: shrinks the font, then cuts with an ellipsis
+function fitLine(ctx,txt,maxW,weight,px,min,F){
+  txt=String(txt);var s=px;ctx.font=weight+' '+s+'px '+F;
+  while(s>min&&ctx.measureText(txt).width>maxW){s-=2;ctx.font=weight+' '+s+'px '+F;}
+  if(ctx.measureText(txt).width>maxW){while(txt.length>1&&ctx.measureText(txt+'…').width>maxW)txt=txt.slice(0,-1);txt+='…';}
+  return txt;
+}
 function screenCanvas(b,t){
-  var W=720,H=1500,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d'),c=copyFor(b),cat=catOf(b);
+  var W=720,H=1500,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d'),c=copyFor(b),cat=catOf(b),igH=igHandleOf(b);
   var F='"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif',E='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
   x.fillStyle=t.bg3;x.fillRect(0,0,W,H);
-  x.fillStyle='#fff';x.fillRect(0,0,W,52);x.fillStyle='#666';x.font='500 22px '+F;x.textAlign='center';x.textBaseline='middle';x.fillText(T('Concept preview by EasyLandX'),W/2,27);
-  x.fillStyle=t.bg1;x.fillRect(0,52,W,96);x.fillStyle=t.ink;x.textAlign='left';x.font='800 32px '+F;x.fillText(b.name.length>22?b.name.slice(0,21)+'…':b.name,34,101);
-  x.fillStyle=t.acc;rr(x,W-230,76,196,50,25);x.fill();x.fillStyle='#fff';x.font='800 22px '+F;x.textAlign='center';x.fillText(c.cta,W-132,102);
+  x.fillStyle='#fff';x.fillRect(0,0,W,52);x.fillStyle='#666';x.textAlign='center';x.textBaseline='middle';x.fillText(fitLine(x,T('Concept preview by EasyLandX'),W-80,'500',22,14,F),W/2,27);
+  x.fillStyle=t.bg1;x.fillRect(0,52,W,96);x.fillStyle=t.ink;x.textAlign='left';x.fillText(fitLine(x,b.name,W-34-230-20,'800',32,20,F),34,101);
+  x.fillStyle=t.acc;rr(x,W-230,76,196,50,25);x.fill();x.fillStyle='#fff';x.textAlign='center';x.fillText(fitLine(x,c.cta,196-28,'800',22,14,F),W-132,102);
   var g=x.createLinearGradient(0,148,W,760);g.addColorStop(0,t.bg1);g.addColorStop(1,t.bg2);x.fillStyle=g;x.fillRect(0,148,W,600);
   x.font='120px '+E;x.textAlign='center';x.fillStyle='#000';x.fillText(cat.emoji,W/2,260);
+  // headline = the business name only (no generic sentence), then its Instagram @handle
   x.fillStyle=t.ink;x.font='800 54px '+F;x.textAlign='center';
-  var hh=wrapText(x,c.h,W/2,370,W-90,64,4);
-  x.font='500 29px '+F;x.globalAlpha=.85;wrapText(x,c.s,W/2,370+hh+22,W-140,40,3);x.globalAlpha=1;
-  x.fillStyle=t.acc;rr(x,W/2-190,640,380,74,37);x.fill();x.fillStyle='#fff';x.font='800 30px '+F;x.fillText(c.cta,W/2,678);
+  var hh=wrapText(x,b.name,W/2,370,W-120,64,3);
+  if(igH){var iy=370+hh+14;x.fillStyle=t.ink;x.fillText(fitLine(x,'📸 @'+igH,W-120,'800',32,20,F),W/2,iy);}
+  x.fillStyle=t.acc;rr(x,W/2-190,640,380,74,37);x.fill();x.fillStyle='#fff';x.fillText(fitLine(x,c.cta,380-40,'800',30,18,F),W/2,678);
   var cards=[['📋',c.f1],['📱',T('{0} in one tap',c.cta)],['📍',T('Find you fast')]];
-  cards.forEach(function(k,i){var cx=34,cy=780+i*170,cw=W-68;x.fillStyle='#fff';rr(x,cx,cy,cw,148,26);x.fill();x.font='56px '+E;x.textAlign='left';x.fillStyle='#000';x.fillText(k[0],cx+26,cy+78);x.fillStyle=t.ink;x.font='800 31px '+F;x.fillText(k[1],cx+112,cy+66);x.font='500 24px '+F;x.globalAlpha=.7;x.fillText(T(['Everything you offer, easy to scan','A clear button that brings customers','Address, hours and directions'][i]),cx+112,cy+106);x.globalAlpha=1;});
+  cards.forEach(function(k,i){var cx=34,cy=780+i*170,cw=W-68,tw=cw-112-24;x.fillStyle='#fff';rr(x,cx,cy,cw,148,26);x.fill();x.font='56px '+E;x.textAlign='left';x.fillStyle='#000';x.fillText(k[0],cx+26,cy+78);x.fillStyle=t.ink;x.fillText(fitLine(x,k[1],tw,'800',31,20,F),cx+112,cy+66);x.globalAlpha=.7;x.fillText(fitLine(x,T(['Everything you offer, easy to scan','A clear button that brings customers','Address, hours and directions'][i]),tw,'500',24,16,F),cx+112,cy+106);x.globalAlpha=1;});
   x.fillStyle=t.bg2;x.fillRect(0,1300,W,200);x.fillStyle=t.ink;x.textAlign='center';x.font='800 34px '+F;x.fillText(T('Visit us'),W/2,1350);x.font='500 26px '+F;
   wrapText(x,b.addr||T('Address, hours and directions'),W/2,1400,W-100,36,2);
+  if(igH){x.fillText(fitLine(x,'📸 @'+igH,W-100,'800',26,16,F),W/2,1474);}
   return cv;
 }
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
