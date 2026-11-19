@@ -421,6 +421,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
 <div class="modal" id="mPrev" hidden>
   <div class="mbar">
     <button class="pill" id="pBack">← Back</button>
+    <button class="pill" id="pPrev" aria-label="Previous business">‹ Prev</button><span id="pPos" style="font-size:.78rem;font-weight:700;color:var(--mute);min-width:44px;text-align:center"></span><button class="pill" id="pNext" aria-label="Next business">Next ›</button>
     <div class="t"><span id="pTitle"></span><small>Concept preview · made with EasyLandX</small></div>
     <button class="pill t" id="pAR">📱 View in AR</button>
     <button class="pill" id="pCopy">🔗 Copy link</button>
@@ -956,7 +957,7 @@ var LIX=null,showLeads=false,leadFilter='all';
  'Name':'Nombre','Category':'Categoría','Phone':'Teléfono','WhatsApp link':'Enlace de WhatsApp','Website':'Web','Social':'Redes sociales','Address':'Dirección','Google Maps':'Google Maps',
  'First contacted':'Primer contacto','Last updated':'Última actualización','Website status':'Estado de la web'
 };Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
-STATIC.push(['#lg5',0,'Already contacted']);
+STATIC.push(['#lg5',0,'Already contacted']);STATIC.push(['#pPrev',0,'‹ Prev'],['#pNext',0,'Next ›']);
 
 function p2(n){return (n<10?'0':'')+n;}
 function dstr(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
@@ -1806,7 +1807,7 @@ function openPreview(b,themeId){
   pvT=themeById(themeId||'sun');
   $('pTitle').textContent=b.name;
   buildThemes();brandNote(b);
-  renderFrame();$('mPrev').hidden=false;track('map_preview_open',{category:b.cat,status:b.status});
+  renderFrame();$('mPrev').hidden=false;updPvNav();track('map_preview_open',{category:b.cat,status:b.status});
   if(b.id!=='shared'&&b.brand===undefined){
     enrichBrand(b).then(function(){
       if(pvB!==b||$('mPrev').hidden)return;
@@ -1816,6 +1817,27 @@ function openPreview(b,themeId){
     });
   }
 }
+function pvIndex(){
+  if(!pvB||pvB.id==='shared')return{ix:-1,vis:[]};
+  var vis=visibleRows(),ix=-1;for(var q=0;q<vis.length;q++)if(vis[q].id===pvB.id){ix=q;break;}
+  return{ix:ix,vis:vis};
+}
+function updPvNav(){
+  var r=pvIndex(),show=r.ix>-1&&r.vis.length>1;
+  $('pPrev').hidden=$('pNext').hidden=$('pPos').hidden=!show;
+  if(!show)return;
+  $('pPrev').disabled=r.ix===0;$('pNext').disabled=r.ix===r.vis.length-1;
+  $('pPos').textContent=(r.ix+1)+' / '+r.vis.length;
+}
+function stepPreview(d){
+  var r=pvIndex(),nb=r.vis[r.ix+d];if(r.ix<0||!nb)return;
+  var keep=pvPicked&&pvT&&pvT.id!=='brand'?pvT.id:undefined;
+  select(nb.id,true);        // keeps the map and the detail panel in step with the preview
+  openPreview(nb,keep);
+  track('map_preview_step',{dir:d});
+}
+$('pPrev').onclick=function(){stepPreview(-1);};
+$('pNext').onclick=function(){stepPreview(1);};
 $('brandOn').onchange=function(){
   pvBrandOn=this.checked;pvPicked=false;
   setBrandTheme(brandOf(pvB));
@@ -2410,6 +2432,11 @@ window.addEventListener('hashchange',handleHash);
 window.addEventListener('keydown',function(e){
   if((e.key==='ArrowLeft'||e.key==='ArrowRight')&&!$('detail').hidden&&$('mAR').hidden&&$('viewer').hidden&&$('mPrev').hidden&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')){
     var bt=$(e.key==='ArrowLeft'?'dPrevBiz':'dNextBiz');if(bt&&!bt.disabled){e.preventDefault();bt.click();}
+  }
+});
+window.addEventListener('keydown',function(e){
+  if((e.key==='ArrowLeft'||e.key==='ArrowRight')&&!$('mPrev').hidden&&$('mAR').hidden&&$('viewer').hidden&&$('mTpl').hidden&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')){
+    var bt=$(e.key==='ArrowLeft'?'pPrev':'pNext');if(bt&&!bt.hidden&&!bt.disabled){e.preventDefault();bt.click();}
   }
 });
 window.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!$('mAR').hidden)$('mAR').hidden=true;else if(!$('viewer').hidden)$('vBack').click();else if(!$('mPrev').hidden)$('pBack').click();}});
