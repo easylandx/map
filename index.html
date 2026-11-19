@@ -2001,22 +2001,38 @@ function fitLine(ctx,txt,maxW,weight,px,min,F){
 function screenCanvas(b,t){
   var W=720,H=1500,cv=document.createElement('canvas');cv.width=W;cv.height=H;var x=cv.getContext('2d'),c=copyFor(b),cat=catOf(b),igH=igHandleOf(b);
   var F='"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif',E='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+  var webU=b.web?siteUrl(b.web):'';if(!/^https?:\/\/[^\s"'<>]+$/i.test(webU))webU='';
+  var webT=webU.replace(/^https?:\/\/(www\.)?/i,'').replace(/\/$/,'');
+  var phs=String(b.phone||'').split(/[;,]/).map(function(s){return s.trim();}).filter(Boolean).slice(0,2).join('  ·  ');
   x.fillStyle=t.bg3;x.fillRect(0,0,W,H);
   x.fillStyle='#fff';x.fillRect(0,0,W,52);x.fillStyle='#666';x.textAlign='center';x.textBaseline='middle';x.fillText(fitLine(x,T('Concept preview by EasyLandX'),W-80,'500',22,14,F),W/2,27);
   x.fillStyle=t.bg1;x.fillRect(0,52,W,96);x.fillStyle=t.ink;x.textAlign='left';x.fillText(fitLine(x,b.name,W-34-230-20,'800',32,20,F),34,101);
   x.fillStyle=t.acc;rr(x,W-230,76,196,50,25);x.fill();x.fillStyle='#fff';x.textAlign='center';x.fillText(fitLine(x,c.cta,196-28,'800',22,14,F),W-132,102);
-  var g=x.createLinearGradient(0,148,W,760);g.addColorStop(0,t.bg1);g.addColorStop(1,t.bg2);x.fillStyle=g;x.fillRect(0,148,W,600);
-  x.font='120px '+E;x.textAlign='center';x.fillStyle='#000';x.fillText(cat.emoji,W/2,260);
-  // headline = the business name only (no generic sentence), then its Instagram @handle
-  x.fillStyle=t.ink;x.font='800 54px '+F;x.textAlign='center';
-  var hh=wrapText(x,b.name,W/2,370,W-120,64,3);
-  if(igH){var iy=370+hh+14;x.fillStyle=t.ink;x.fillText(fitLine(x,'📸 @'+igH,W-120,'800',32,20,F),W/2,iy);}
-  x.fillStyle=t.acc;rr(x,W/2-190,640,380,74,37);x.fill();x.fillStyle='#fff';x.fillText(fitLine(x,c.cta,380-40,'800',30,18,F),W/2,678);
+  var g=x.createLinearGradient(0,148,W,620);g.addColorStop(0,t.bg1);g.addColorStop(1,t.bg2);x.fillStyle=g;x.fillRect(0,148,W,472);
+  x.font='110px '+E;x.textAlign='center';x.fillStyle='#000';x.fillText(cat.emoji,W/2,245);
+  x.fillStyle=t.ink;x.font='800 52px '+F;x.textAlign='center';
+  var hh=wrapText(x,b.name,W/2,330,W-120,62,2);
+  if(igH){x.fillStyle=t.ink;x.fillText(fitLine(x,'📸 @'+igH,W-120,'800',30,20,F),W/2,330+hh+14);}
+  x.fillStyle=t.acc;rr(x,W/2-190,520,380,66,33);x.fill();x.fillStyle='#fff';x.fillText(fitLine(x,c.cta,380-40,'800',28,18,F),W/2,553);
   var cards=[['📋',c.f1],['📱',T('{0} in one tap',c.cta)],['📍',T('Find you fast')]];
-  cards.forEach(function(k,i){var cx=34,cy=780+i*170,cw=W-68,tw=cw-112-24;x.fillStyle='#fff';rr(x,cx,cy,cw,148,26);x.fill();x.font='56px '+E;x.textAlign='left';x.fillStyle='#000';x.fillText(k[0],cx+26,cy+78);x.fillStyle=t.ink;x.fillText(fitLine(x,k[1],tw,'800',31,20,F),cx+112,cy+66);x.globalAlpha=.7;x.fillText(fitLine(x,T(['Everything you offer, easy to scan','A clear button that brings customers','Address, hours and directions'][i]),tw,'500',24,16,F),cx+112,cy+106);x.globalAlpha=1;});
-  x.fillStyle=t.bg2;x.fillRect(0,1300,W,200);x.fillStyle=t.ink;x.textAlign='center';x.font='800 34px '+F;x.fillText(T('Visit us'),W/2,1350);x.font='500 26px '+F;
-  wrapText(x,b.addr||T('Address, hours and directions'),W/2,1400,W-100,36,2);
-  if(igH){x.fillText(fitLine(x,'📸 @'+igH,W-100,'800',26,16,F),W/2,1474);}
+  cards.forEach(function(k,i){var cx=34,cy=640+i*124,cw=W-68,tw=cw-100-24;x.fillStyle='#fff';rr(x,cx,cy,cw,112,24);x.fill();x.font='48px '+E;x.textAlign='left';x.fillStyle='#000';x.fillText(k[0],cx+24,cy+58);x.fillStyle=t.ink;x.fillText(fitLine(x,k[1],tw,'800',28,18,F),cx+100,cy+42);x.globalAlpha=.7;x.fillText(fitLine(x,T(['Everything you offer, easy to scan','A clear button that brings customers','Address, hours and directions'][i]),tw,'500',22,14,F),cx+100,cy+80);x.globalAlpha=1;});
+  // Visit us: address, phone, website and the contact buttons (drawn only, not clickable in AR)
+  x.fillStyle=t.bg2;x.fillRect(0,1016,W,484);x.fillStyle=t.ink;x.textAlign='center';x.font='800 34px '+F;x.fillText(T('Visit us'),W/2,1058);
+  x.font='500 24px '+F;wrapText(x,b.addr||T('Address, hours and directions'),W/2,1100,W-100,32,2);
+  var ly=1176;
+  if(phs){x.fillStyle=t.ink;x.fillText(fitLine(x,'📞 '+phs,W-80,'800',26,16,F),W/2,ly);ly+=40;}
+  if(webT){x.fillStyle=t.ink;x.fillText(fitLine(x,'🌐 '+webT,W-80,'800',26,14,F),W/2,ly);ly+=40;}
+  var btns=[{l:'💬 WhatsApp',bg:'#25d366',fg:'#fff'}];
+  if(webU)btns.push({l:'🌐 '+T('Website'),bg:t.acc,fg:'#fff'});
+  btns.push({l:'🗺️ '+T('Open map'),bg:'#fff',fg:t.acc,line:t.acc});
+  if(igH)btns.push({l:'📸 @'+igH,bg:'#fff',fg:t.acc,line:t.acc});
+  var by=Math.max(ly+10,1290);
+  btns.forEach(function(k,i){
+    var bx=i%2?376:34,yy=by+Math.floor(i/2)*84;
+    x.fillStyle=k.bg;rr(x,bx,yy,310,68,34);x.fill();
+    if(k.line){x.strokeStyle=k.line;x.lineWidth=3;rr(x,bx+1.5,yy+1.5,307,65,32.5);x.stroke();}
+    x.fillStyle=k.fg;x.textAlign='center';x.fillText(fitLine(x,k.l,310-36,'800',26,14,F),bx+155,yy+35);
+  });
   return cv;
 }
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
