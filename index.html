@@ -1578,14 +1578,14 @@ $('vBack').onclick=function(){$('viewer').hidden=true;$('vFrame').src='about:bla
 
 /* ================= PREVIEW GENERATOR ================= */
 var THEMES=[
- {id:'sun',name:'Neon Orange',c:'#ff5a1f',bg1:'#ffe1d0',bg2:'#ffb088',bg3:'#fff3ec',acc:'#ff5a1f',ink:'#2a1000',on:'#1f0b00'},
- {id:'fresh',name:'Neon Green',c:'#00e676',bg1:'#d6ffe9',bg2:'#7dffb8',bg3:'#effff6',acc:'#00e676',ink:'#00331a',on:'#00240f'},
- {id:'lagoon',name:'Neon Blue',c:'#00b8ff',bg1:'#d4f1ff',bg2:'#7fd9ff',bg3:'#eefaff',acc:'#00b8ff',ink:'#00263a',on:'#001a29'},
- {id:'bloom',name:'Neon Pink',c:'#ff2bd6',bg1:'#ffd6f7',bg2:'#ff8fe9',bg3:'#fff0fc',acc:'#ff2bd6',ink:'#3d0033',on:'#2a0023'},
- {id:'citrus',name:'Neon Lime',c:'#c6ff00',bg1:'#f4ffc2',bg2:'#d9ff4d',bg3:'#fbffe6',acc:'#c6ff00',ink:'#243300',on:'#1a2400'},
- {id:'brand',name:'Neon Yellow',c:'#ffea00',bg1:'#fffbb8',bg2:'#fff04d',bg3:'#fffde6',acc:'#ffea00',ink:'#332e00',on:'#262200'}
+ {id:'sun',name:'Orange',c:'#ff5a1f',bg1:'#ffe1d0',bg2:'#ffb088',bg3:'#fff3ec',acc:'#ff5a1f',ink:'#2a1000',on:'#1f0b00'},
+ {id:'fresh',name:'Green',c:'#00e676',bg1:'#d6ffe9',bg2:'#7dffb8',bg3:'#effff6',acc:'#00e676',ink:'#00331a',on:'#00240f'},
+ {id:'lagoon',name:'Blue',c:'#00b8ff',bg1:'#d4f1ff',bg2:'#7fd9ff',bg3:'#eefaff',acc:'#00b8ff',ink:'#00263a',on:'#001a29'},
+ {id:'bloom',name:'Pink',c:'#ff2bd6',bg1:'#ffd6f7',bg2:'#ff8fe9',bg3:'#fff0fc',acc:'#ff2bd6',ink:'#3d0033',on:'#2a0023'},
+ {id:'citrus',name:'Lime',c:'#c6ff00',bg1:'#f4ffc2',bg2:'#d9ff4d',bg3:'#fbffe6',acc:'#c6ff00',ink:'#243300',on:'#1a2400'},
+ {id:'brand',name:'Yellow',c:'#ffea00',bg1:'#fffbb8',bg2:'#fff04d',bg3:'#fffde6',acc:'#ffea00',ink:'#332e00',on:'#262200'}
 ];
-(function(){var X={'Neon Orange':'Naranja neón','Neon Green':'Verde neón','Neon Blue':'Azul neón','Neon Pink':'Rosa neón','Neon Lime':'Lima neón','Neon Yellow':'Amarillo neón'};Object.keys(X).forEach(function(k){ES[k]=X[k];});})();
+(function(){var X={'Orange':'Naranja','Green':'Verde','Blue':'Azul','Pink':'Rosa','Lime':'Lima','Yellow':'Amarillo'};Object.keys(X).forEach(function(k){ES[k]=X[k];});})();
 var GROUP_THEME={beauty:'bloom',food:'sun',fitness:'fresh',mind:'lagoon',pro:'lagoon',creative:'citrus',pets:'citrus',events:'bloom',outdoor:'fresh',generic:'sun'};
 var COPY={
  beauty:{h:'Look and feel your best at {n}',s:'Services, prices and booking on one clean page.',cta:'Book now',f1:'Services & prices'},
