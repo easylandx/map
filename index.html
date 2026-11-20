@@ -673,14 +673,16 @@ var PC=(function(){
     });
     return dbp;
   }
-  function get(k){return open().then(function(db){return new Promise(function(res){if(!db)return res(null);try{var q=db.transaction('q').objectStore('q').get(k);q.onsuccess=function(){res(q.result||null);};q.onerror=function(){res(null);};}catch(e){res(null);}});});}
-  function put(k,v,capped){return open().then(function(db){if(!db)return;try{db.transaction('q','readwrite').objectStore('q').put({k:k,t:Date.now(),v:v,c:!!capped});}catch(e){}});}
+  function get(k){return Promise.resolve(null);}
+  function getOld(k){return open().then(function(db){return new Promise(function(res){if(!db)return res(null);try{var q=db.transaction('q').objectStore('q').get(k);q.onsuccess=function(){res(q.result||null);};q.onerror=function(){res(null);};}catch(e){res(null);}});});}
+  function put(k,v,capped){return Promise.resolve();}
+  function putOld(k,v,capped){return open().then(function(db){if(!db)return;try{db.transaction('q','readwrite').objectStore('q').put({k:k,t:Date.now(),v:v,c:!!capped});}catch(e){}});}
   function prune(){open().then(function(db){if(!db)return;try{var st=db.transaction('q','readwrite').objectStore('q'),cur=st.openCursor();cur.onsuccess=function(){var c=cur.result;if(!c)return;if(Date.now()-c.value.t>STALE_MS)c.delete();c.continue();};}catch(e){}});}
-  setTimeout(prune,4000);
+  
   return{get:get,put:put};
 })();
 var NET={active:0,max:2,gap:600,last:0,q:[]};
-function netRun(fn){return new Promise(function(res,rej){NET.q.push({fn:fn,res:res,rej:rej});netPump();});}
+function netRun(fn){return fn();}   // no queue: requests start immediately
 function netPump(){
   if(NET.active>=NET.max||!NET.q.length)return;
   var wait=NET.last+NET.gap-Date.now();
@@ -713,10 +715,10 @@ var provider={
   // a part that fails is split in 4 and retried, and saved results are used when the free servers are down.
   search:function(cats,text,bounds0){
     var self=this,STEP=0.005;
-    var bounds={s:Math.floor(bounds0.s/STEP+1e-9)*STEP,n:Math.ceil(bounds0.n/STEP-1e-9)*STEP,w:Math.floor(bounds0.w/STEP+1e-9)*STEP,e:Math.ceil(bounds0.e/STEP-1e-9)*STEP};
+    var bounds={s:bounds0.s,n:bounds0.n,w:bounds0.w,e:bounds0.e};
     var h=bounds.n-bounds.s,w=bounds.e-bounds.w;
-    var g=cats.length>=CATS.length?3:((cats.length>2||h>0.03||w>0.04)?2:1);
-    var lim=g===1?300:(cats.length>=CATS.length?450:500),jobs=[],i,j;
+    var g=1;
+    var lim=cats.length>=CATS.length?450:300,jobs=[],i,j;
     for(i=0;i<g;i++)for(j=0;j<g;j++)jobs.push({s:bounds.s+h*i/g,n:bounds.s+h*(i+1)/g,w:bounds.w+w*j/g,e:bounds.w+w*(j+1)/g});
     var out=[],seen={},fails=0,okN=0,firstErr=null,capped=false,stale=false,idx=0,finished=0;
     var skey='S|'+(cats.length?cats.map(function(c){return c.id;}).sort().join('+'):'t:'+text.toLowerCase())+'|'+bounds.s.toFixed(5)+','+bounds.w.toFixed(5)+','+bounds.n.toFixed(5)+','+bounds.e.toFixed(5)+'|'+lim;
@@ -729,7 +731,7 @@ var provider={
           l.forEach(function(b){if(!seen[b.id]){seen[b.id]=1;out.push(b);}});if(l.capped)capped=true;
         },function(e){
           firstErr=firstErr||e;
-          if(!job.sub&&(job.n-job.s)>0.004&&!/\b429\b|Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message))){   // split only when the area was too heavy, not when we are rate-limited or offline
+          if(false&&!job.sub&&(job.n-job.s)>0.004&&!/\b429\b|Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message))){   // split only when the area was too heavy, not when we are rate-limited or offline
             var mh=(job.s+job.n)/2,mw=(job.w+job.e)/2;
             [{s:job.s,n:mh,w:job.w,e:mw},{s:job.s,n:mh,w:mw,e:job.e},{s:mh,n:job.n,w:job.w,e:mw},{s:mh,n:job.n,w:mw,e:job.e}].forEach(function(q){q.sub=1;jobs.push(q);});
             console.info('[EasyLandX Map] part failed, splitting it in 4');
@@ -806,7 +808,7 @@ var provider={
         console.info('[EasyLandX Map] saved results used');return o;
       }
       return netRun(rawFetch)
-        .catch(function(e){if(/\b429\b/.test(String(e&&e.message)))throw e;return sleep(2500+Math.random()*1500).then(function(){return netRun(rawFetch);});})   // one retry after a short wait (not when the server says too many requests)
+        
         .then(function(out){SEARCH_CACHE[cacheKey]={t:Date.now(),v:out};PC.put(cacheKey,out.slice(),out.capped);return out;},function(e){
           if(row&&Date.now()-row.t<STALE_MS){var o2=row.v;o2.capped=row.c;o2.stale=true;staleNote();return o2;}   // servers down: show the last saved copy
           throw e;
