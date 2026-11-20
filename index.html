@@ -180,6 +180,7 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 .mbar{display:flex;align-items:center;gap:8px;padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top));background:#fff;border-bottom:1px solid var(--line);flex:none;flex-wrap:wrap}
 .mbar .t{flex:1;min-width:140px;font-weight:800;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mbar .t small{display:block;font-weight:500;color:var(--mute);font-size:.74rem}
+.pill:disabled,.btn:disabled{opacity:.4;pointer-events:none}
 .pill{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:9px 14px;font-weight:700;font-size:.84rem;text-decoration:none;color:var(--ink);white-space:nowrap}
 .pill.t{background:var(--teal);border-color:var(--teal);color:#fff}
 .pill.c{background:var(--coral);border-color:var(--coral);color:#fff}
@@ -406,7 +407,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
   <div id="tplForm">
     <h3 id="tplT">Message templates</h3>
     <p id="tplHint">Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.</p>
-    <div class="seg" id="tplChSeg"><button type="button" data-ch="wa">WhatsApp</button><button type="button" data-ch="ig">Instagram</button><button type="button" data-ch="mail">Email</button><button type="button" data-ch="sms">SMS</button></div>
+    <div class="seg" id="tplChSeg"><button type="button" data-ch="wa">WhatsApp</button><button type="button" data-ch="ig">Instagram</button><button type="button" data-ch="fb">Messenger</button><button type="button" data-ch="mail">Email</button><button type="button" data-ch="sms">SMS</button></div>
     <div class="field"><label for="tplCat">Category</label><select id="tplCat"></select></div>
     <div class="seg" id="tplLangSeg"><button type="button" data-l="es">🇪🇸 Español</button><button type="button" data-l="en">🇬🇧 English</button></div>
     <div id="tplVars"></div>
@@ -426,6 +427,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
     <button class="pill t" id="pAR">📱 View in AR</button>
     <button class="pill" id="pCopy">🔗 Copy link</button>
     <span id="pSend" title="Send to business" style="display:inline-flex;gap:2px;vertical-align:middle" hidden><button class="pill" id="pSendWa" type="button" style="background:var(--green);border-color:var(--green);color:#fff;border-radius:99px 6px 6px 99px">💬 WhatsApp</button><button class="pill" id="pSendMail" type="button" style="background:var(--teal);border-color:var(--teal);color:#fff;border-radius:6px 99px 99px 6px">✉️ Email</button></span>
+    <span id="pSend2" title="Send by social message" style="display:inline-flex;gap:2px;vertical-align:middle" hidden><button class="pill" id="pSendIg" type="button" style="background:#c13584;border-color:#c13584;color:#fff;border-radius:99px 6px 6px 99px">📸 Instagram</button><button class="pill" id="pSendFb" type="button" style="background:#0a7cff;border-color:#0a7cff;color:#fff;border-radius:6px 99px 99px 6px">💬 Messenger</button></span>
     <button class="pill c" id="pWa">💬 I want this page</button>
   </div>
   <div class="stage">
@@ -438,7 +440,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
       <div class="sw" id="themes"></div>
       <div id="sendBox" hidden>
         <h3>Send to this business</h3>
-        <div class="seg" id="chSeg"><button id="chWa" type="button">WhatsApp</button><button id="chIg" type="button">Instagram</button><button id="chMail" type="button">Email</button><button id="chSms" type="button">SMS</button></div>
+        <div class="seg" id="chSeg"><button id="chWa" type="button">WhatsApp</button><button id="chIg" type="button">Instagram</button><button id="chFb" type="button">Messenger</button><button id="chMail" type="button">Email</button><button id="chSms" type="button">SMS</button></div>
         <div class="seg" id="langSeg"><button id="sEs" type="button">🇪🇸 Español</button><button id="sEn" type="button">🇬🇧 English</button></div>
         <div id="sMailBox" hidden><input id="sMailTo" type="email" inputmode="email" placeholder="email@business.com" aria-label="Recipient email" autocapitalize="off" spellcheck="false"></div>
         <textarea id="sMsg" aria-label="Message"></textarea>
@@ -1446,7 +1448,7 @@ function gEnrich(b){
 /* ===== Find the possible website of a business on the web (not Maps) =====
    1) Google Custom Search API if CONFIG.GCSE_KEY + GCSE_CX are set (real Google results)
    2) otherwise DuckDuckGo results, read through the free r.jina.ai page reader. Results are cached in this browser. */
-(function(){var X={'Email: {0}':'Email: {0}','No email known: the email app opens without a recipient.':'No hay email conocido: el correo se abre sin destinatario.','No email known. Add the recipient in your email app.':'No hay email conocido. Añade el destinatario en tu app de correo.','Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding websites {0} of {1}':'Buscando webs {0} de {1}','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
+(function(){var X={'💬 Copy message and open Messenger':'💬 Copiar mensaje y abrir Messenger','No Facebook page known for this business. The message will be copied so you can paste it in their chat.':'No hay página de Facebook conocida. El mensaje se copiará para pegarlo en su chat.','Email: {0}':'Email: {0}','No email known: the email app opens without a recipient.':'No hay email conocido: el correo se abre sin destinatario.','No email known. Add the recipient in your email app.':'No hay email conocido. Añade el destinatario en tu app de correo.','Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding websites {0} of {1}':'Buscando webs {0} de {1}','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
 STATIC.push(['#btnFind',0,'🔎 Find contacts']);
 var GUESS={};try{GUESS=JSON.parse(store('elx_guess3')||'{}')||{};}catch(e){GUESS={};}
 function saveGuess(){try{store('elx_guess3',JSON.stringify(GUESS));}catch(e){}}
@@ -1634,7 +1636,7 @@ function renderDetail(b){
   var h=nav+
    '<div class="dhead"><span class="ico">'+c.emoji+'</span><div><h2>'+esc(b.name)+'</h2><p>'+esc(lbl(c))+'</p></div></div>'+stat+
    '<div class="facts">'+facts+'</div>'+(b.gsrc?'<p class="note">'+T('Details completed with Google Maps')+'</p>':'')+
-   (CANSEND?'<div class="row"><div style="flex:1;display:flex;gap:3px;min-width:0;margin-bottom:8px"><button class="btn p" id="dSend" style="flex:1;margin:0;border-radius:14px 5px 5px 14px;white-space:nowrap">'+T('💬 WhatsApp')+'</button><button class="btn t" id="dSendMail" style="flex:1;margin:0;border-radius:5px 14px 14px 5px;white-space:nowrap">'+T('✉️ Email')+'</button></div><button class="btn l" id="dLang" style="width:64px;flex:none;margin-bottom:8px" title="'+T('Message language')+'"></button></div><p class="note" id="dSendTo"></p>':'')+
+   (CANSEND?'<div class="row"><div style="flex:1;display:flex;gap:3px;min-width:0;margin-bottom:8px"><button class="btn p" id="dSend" style="flex:1;margin:0;border-radius:14px 5px 5px 14px;white-space:nowrap">'+T('💬 WhatsApp')+'</button><button class="btn t" id="dSendMail" style="flex:1;margin:0;border-radius:5px 14px 14px 5px;white-space:nowrap">'+T('✉️ Email')+'</button></div><button class="btn l" id="dLang" style="width:64px;flex:none;margin-bottom:8px" title="'+T('Message language')+'"></button></div>'+socRowHTML(b)+'<p class="note" id="dSendTo"></p>':'')+
    '<button class="btn p" id="dPrev">'+T('✨ Preview a page for this business')+'</button>'+
    '<button class="btn t" id="dMine">'+T('🙋 This is my business')+'</button>'+
    '<div class="ex"><span>'+esc(T('See what we built for {0}',lbl(c).toLowerCase()))+'</span><button id="dEx">'+T('Open ↗')+'</button></div>';
@@ -1670,6 +1672,19 @@ function renderDetail(b){
       else if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
       if(!to)markSent(b);
       window.location.href='mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(m.body);
+    };
+    if($('dSendIg'))$('dSendIg').onclick=function(){
+      var h=igHandleOf(b);if(!h||!okToSend(b))return;
+      track('map_send_business',{category:b.cat,lang:sendLang,channel:'ig',from:'detail'});
+      copyText(buildChannelMsg(b,'ig',sendLang));window.open('https://ig.me/m/'+encodeURIComponent(h),'_blank','noopener');
+      if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
+    };
+    if($('dSendFb'))$('dSendFb').onclick=function(){
+      var fu=fbOf(b);if(!fu||!okToSend(b))return;
+      var msg=buildChannelMsg(b,'fb',sendLang),pg=fbMe(b);
+      track('map_send_business',{category:b.cat,lang:sendLang,channel:'fb',from:'detail'});
+      copyText(msg);window.open(pg?'https://m.me/'+encodeURIComponent(pg)+'?text='+encodeURIComponent(msg):fu,'_blank','noopener');
+      if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
     };
     $('dSend').onclick=function(){
       if(!okToSend(b))return;
@@ -1898,6 +1913,11 @@ function parseHours(h,lang){
 }
 function emailOf(b){var e=String((b&&(b.email||(b.guess&&b.guess.e)))||'');return /^[^\s@<>"']+@[^\s@<>"']+\.[A-Za-z]{2,}$/.test(e)&&e.length<=80?e:'';}
 function fbOf(b){var sc=String((b&&b.social)||'');if(/^https:\/\/(www\.)?facebook\.com\/[\w.\-\/?=%]+$/i.test(sc))return sc;var g=String((b&&b.guess&&b.guess.fb)||'');return /^https:\/\/www\.facebook\.com\/[\w.\-\/?=%]+$/.test(g)?g:'';}
+function fbMe(b){var u=fbOf(b),m=u.match(/^https:\/\/(?:www\.)?facebook\.com\/(?:pages\/[^\/]+\/(\d+)|([A-Za-z0-9.\-]{3,80}))\/?$/);return m?(m[1]||m[2]):'';}
+function socRowHTML(b){
+  var ig=igHandleOf(b),fb=fbOf(b);if(!ig&&!fb)return '';
+  return '<div class="row"><div style="flex:1;display:flex;gap:3px;min-width:0;margin-bottom:8px"><button class="btn p" id="dSendIg" style="flex:1;margin:0;border-radius:14px 5px 5px 14px;white-space:nowrap;background:#c13584;box-shadow:none"'+(ig?'':' disabled')+'>'+T('📸 Instagram')+'</button><button class="btn p" id="dSendFb" style="flex:1;margin:0;border-radius:5px 14px 14px 5px;white-space:nowrap;background:#0a7cff;box-shadow:none"'+(fb?'':' disabled')+'>'+T('💬 Messenger')+'</button></div><span style="width:64px;flex:none"></span></div>';
+}
 function pageHTML(b,t){
   var c=copyFor(b),cat=catOf(b),br=brandOf(b)||{},photos=br.i||[],svcs=br.s||[],hero=photos[0]||'',gal=photos.slice(1,4);
   var wad=waDigits(b),bpx=bestPhone(b);
@@ -2027,8 +2047,8 @@ $('brandOn').onchange=function(){
 function renderFrame(){$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
 /* ===== Send the preview to the business by WhatsApp (outreach mode only) ===== */
 var sendLang=LANG,sendEdited=false,sendDrafts={};   // the message follows the site language (EN/ES switch)
-var sendCh=store('elx_sendch')||'wa';if(!/^(wa|ig|mail|sms)$/.test(sendCh))sendCh='wa';
-var CHANNELS=['wa','ig','mail','sms'];
+var sendCh=store('elx_sendch')||'wa';if(!/^(wa|ig|fb|mail|sms)$/.test(sendCh))sendCh='wa';
+var CHANNELS=['wa','ig','fb','mail','sms'];
 // ---- Message templates: one per channel x category x language. Tags: {name} {category} {address} {link} {example} {order} {note}
 var TPL_VARS=[['name','Business name'],['category','Category'],['address','Address'],['link','Preview link'],['example','Example site'],['order','WhatsApp order link'],['note','Link note']];
 var TPL_DEF={
@@ -2045,6 +2065,7 @@ var TPL_DEF={
   es:'Hola! Preparé una propuesta gratis de web para {name}: {link} Si le gusta, la hacemos en 24 h sin compromiso. — EasyLandX',
   en:'Hi! I made a free website concept for {name}: {link} If you like it, we build it in 24 h, no commitment. — EasyLandX'}
 };
+TPL_DEF.fb=TPL_DEF.ig;   // Messenger uses the same short chat-style message as Instagram until you edit its own template
 function tplAll(){try{return JSON.parse(store('elx_tpl')||'{}')||{};}catch(e){return {};}}
 function tplKey(ch,cat,lang){return ch+'|'+(cat||'*')+'|'+lang;}
 // which template is used: this category's own, the all-categories one, or the built-in default
@@ -2060,15 +2081,17 @@ function buildChannelMsg(b,ch,lang){return fillTpl(getTpl(ch,b.cat,lang),b,lang)
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
 function igHandleOf(b){var m=String((b&&b.social)||(b&&b.guess&&b.guess.ig)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
 function splitMail(txt){var m=String(txt).match(/^\s*(?:Subject|Asunto)\s*:\s*(.*)\n+/i);return m?{subject:m[1].trim(),body:txt.slice(m[0].length)}:{subject:'',body:String(txt)};}
-var GO_LABEL={wa:'💬 Open WhatsApp with this message',ig:'📸 Copy message and open Instagram',mail:'✉️ Open email app',sms:'💬 Open SMS app'};
+var GO_LABEL={wa:'💬 Open WhatsApp with this message',ig:'📸 Copy message and open Instagram',fb:'💬 Copy message and open Messenger',mail:'✉️ Open email app',sms:'💬 Open SMS app'};
 function refreshSend(force){
   var box=$('sendBox');
-  if(!CANSEND||!pvB||pvB.id==='shared'){box.hidden=true;$('pSend').hidden=true;return;}
+  if(!CANSEND||!pvB||pvB.id==='shared'){box.hidden=true;$('pSend').hidden=true;$('pSend2').hidden=true;return;}
   $('pSend').hidden=false;
+  var hasIg=!!igHandleOf(pvB),hasFb=!!fbOf(pvB);
+  $('pSend2').hidden=!(hasIg||hasFb);$('pSendIg').disabled=!hasIg;$('pSendFb').disabled=!hasFb;
   box.hidden=false;
   if(force){sendDrafts={};sendEdited=false;}
   $('sEs').classList.toggle('on',sendLang==='es');$('sEn').classList.toggle('on',sendLang==='en');
-  CHANNELS.forEach(function(c){$('ch'+(c==='wa'?'Wa':c==='ig'?'Ig':c==='mail'?'Mail':'Sms')).classList.toggle('on',sendCh===c);});
+  CHANNELS.forEach(function(c){$('ch'+({wa:'Wa',ig:'Ig',fb:'Fb',mail:'Mail',sms:'Sms'}[c])).classList.toggle('on',sendCh===c);});
   $('sMsg').value=sendDrafts[sendCh]!=null?sendDrafts[sendCh]:buildChannelMsg(pvB,sendCh,sendLang);
   $('sMsg').setAttribute('aria-label',T('Message'));
   $('sGo').textContent=T(GO_LABEL[sendCh]);
@@ -2079,27 +2102,31 @@ function refreshSend(force){
     to=n?(T('To: {0}',ph)+(land?T(sendCh==='wa'?' (looks like a landline, so WhatsApp may not reach it)':' (looks like a landline, so it may not receive texts)'):'')):T(sendCh==='wa'?'No phone number listed for this business. The message will be copied so you can paste it in their chat.':'No phone number listed for this business. The message will be copied.');
   }else if(sendCh==='ig'){
     var h=igHandleOf(pvB);to=h?T('To: {0}','@'+h):T('No Instagram listed for this business. The message will be copied so you can paste it in their DM.');
+  }else if(sendCh==='fb'){
+    var fp=fbMe(pvB);to=fp?T('To: {0}','m.me/'+fp):T('No Facebook page known for this business. The message will be copied so you can paste it in their chat.');
   }else{
     to=T('Opens your email app with the subject and message filled in.');
   }
   $('sTo').textContent=to;
-  var ct=$('sCount');ct.hidden=sendCh!=='sms'&&sendCh!=='ig';
+  var ct=$('sCount');ct.hidden=sendCh!=='sms'&&sendCh!=='ig'&&sendCh!=='fb';
   if(!ct.hidden)updSendCount();
 }
 function updSendCount(){
   var len=$('sMsg').value.length,ct=$('sCount');
   if(sendCh==='sms'){var parts=Math.max(1,Math.ceil(len/153));ct.textContent=T('{0} characters',len)+(len>160?' · '+T('about {0} texts',parts):'');}
-  else if(sendCh==='ig'){ct.textContent=T('{0} characters',len);}
+  else if(sendCh==='ig'||sendCh==='fb'){ct.textContent=T('{0} characters',len);}
 }
 function setSendCh(c){
   if(sendCh===c)return;
   sendCh=c;store('elx_sendch',c);refreshSend();
 }
-$('chWa').onclick=function(){setSendCh('wa');};$('chIg').onclick=function(){setSendCh('ig');};$('chMail').onclick=function(){setSendCh('mail');};$('chSms').onclick=function(){setSendCh('sms');};
+$('chWa').onclick=function(){setSendCh('wa');};$('chIg').onclick=function(){setSendCh('ig');};$('chFb').onclick=function(){setSendCh('fb');};$('chMail').onclick=function(){setSendCh('mail');};$('chSms').onclick=function(){setSendCh('sms');};
 $('sEs').onclick=function(){sendLang='es';store('elx_sendlang','es');refreshSend(true);};
 $('sEn').onclick=function(){sendLang='en';store('elx_sendlang','en');refreshSend(true);};
 $('sMsg').addEventListener('input',function(){sendEdited=true;sendDrafts[sendCh]=this.value;if(!$('sCount').hidden)updSendCount();});
 $('pSendWa').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='wa')setSendCh('wa');$('sGo').click();};
+$('pSendIg').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='ig')setSendCh('ig');$('sGo').click();};
+$('pSendFb').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='fb')setSendCh('fb');$('sGo').click();};
 $('pSendMail').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='mail')setSendCh('mail');$('sGo').click();};
 $('sGo').onclick=function(){
   if(pvB&&!okToSend(pvB))return;
@@ -2114,6 +2141,12 @@ $('sGo').onclick=function(){
   if(sendCh==='ig'){
     var h=igHandleOf(pvB);copyText(msg);
     if(h)window.open('https://ig.me/m/'+encodeURIComponent(h),'_blank','noopener');
+    sent();return;
+  }
+  if(sendCh==='fb'){
+    var pg=fbMe(pvB),fu=fbOf(pvB);copyText(msg);   // copied as a safety net: the prefilled text is not guaranteed in every Messenger version
+    if(pg)window.open('https://m.me/'+encodeURIComponent(pg)+'?text='+encodeURIComponent(msg),'_blank','noopener');
+    else if(fu)window.open(fu,'_blank','noopener');
     sent();return;
   }
   if(sendCh==='mail'){
