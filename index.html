@@ -623,6 +623,13 @@ function applyStatic(){
   $('foot').innerHTML=T(FOOT_EN);
 }
 function toast(){var e=$('toast');e.textContent=T.apply(null,arguments);e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){e.classList.remove('on');},2800);}
+// Instagram: ig.me/m/<handle> opens the chat in the phone app, but on a computer it often fails. On a computer open the profile instead (the message is already copied: press Message and paste).
+ES['Message copied. On their Instagram, press Message and paste it.']='Mensaje copiado. En su Instagram, pulsa Mensaje y pégalo.';
+function openIg(h){
+  if(isMobile()){window.open('https://ig.me/m/'+encodeURIComponent(h),'_blank','noopener');return;}
+  window.open('https://www.instagram.com/'+encodeURIComponent(h)+'/','_blank','noopener');
+  setTimeout(function(){toast('Message copied. On their Instagram, press Message and paste it.');},1300);
+}
 function isMobile(){
   var ua=navigator.userAgent||'';
   if(/Android|iPhone|iPad|iPod|Mobile/i.test(ua))return true;
@@ -2059,7 +2066,7 @@ function renderDetail(b){
     if($('dSendIg'))$('dSendIg').onclick=function(){
       var h=igHandleOf(b);if(!h||!okToSend(b))return;
       track('map_send_business',{category:b.cat,lang:sendLang,channel:'ig',from:'detail'});
-      copyText(buildChannelMsg(b,'ig',sendLang));window.open('https://ig.me/m/'+encodeURIComponent(h),'_blank','noopener');
+      copyText(buildChannelMsg(b,'ig',sendLang));openIg(h);
       if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
     };
     if($('dSendFb'))$('dSendFb').onclick=function(){
@@ -2564,7 +2571,7 @@ $('sGo').onclick=function(){
   }
   if(sendCh==='ig'){
     var h=igHandleOf(pvB);copyText(msg);
-    if(h)window.open('https://ig.me/m/'+encodeURIComponent(h),'_blank','noopener');
+    if(h)openIg(h);
     sent();return;
   }
   if(sendCh==='fb'){
