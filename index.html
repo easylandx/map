@@ -1830,18 +1830,31 @@ function gEnrich(b){
    2) otherwise DuckDuckGo results, read through the free r.jina.ai page reader. Results are cached in this browser. */
 (function(){var X={'💬 Copy message and open Facebook':'💬 Copiar mensaje y abrir Facebook','No Facebook page known for this business. The message will be copied so you can paste it in their chat.':'No hay página de Facebook conocida. El mensaje se copiará para pegarlo en su chat.','Email: {0}':'Email: {0}','No email known: the email app opens without a recipient.':'No hay email conocido: el correo se abre sin destinatario.','No email known. Add the recipient in your email app.':'No hay email conocido. Añade el destinatario en tu app de correo.','Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding details {0} of {1}':'Buscando datos {0} de {1}','Tap to stop':'Toca para detener','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
 STATIC.push(['#btnFind',0,'🔎 Find contacts']);
-var GUESS={};try{GUESS=JSON.parse(store('elx_guess3')||'{}')||{};}catch(e){GUESS={};}
-function saveGuess(){try{store('elx_guess3',JSON.stringify(GUESS));}catch(e){}}
+var GUESS={};try{GUESS=JSON.parse(store('elx_guess4')||'{}')||{};}catch(e){GUESS={};}
+function saveGuess(){try{store('elx_guess4',JSON.stringify(GUESS));}catch(e){}}
 function guessLine(b){var g=b.guess;if(!g)return '';var parts=[];if(g.u&&b.status!=='web')parts.push('🔎 '+hostOf(g.u));if(g.e&&!b.email)parts.push('✉️ '+g.e);if(g.wa&&!hasWa(b))parts.push('💬');if(g.ig)parts.push('📸');if(g.fb)parts.push('👍');return parts.length?'<small style="color:var(--teal);font-weight:700">'+esc(parts.join(' · '))+'</small>':'';}
 function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return String(u||'').replace(/^https?:\/\/(www\.)?/,'').split('/')[0];}}
 var GBLOCK=/(^|\.)(facebook|instagram|tiktok|twitter|x|linkedin|youtube|pinterest|tripadvisor|yelp|foursquare|google|goo|bing|duckduckgo|wikipedia|paginasamarillas|infobel|cylex|europages|guiaempresas|einforma|axesor|infoempresa|telefonos|11870|opentable|thefork|eltenedor|booksy|treatwell|fresha|doctoralia|wallapop|milanuncios|idealista|fotocasa|airbnb|booking|expedia|trustpilot|mapquest|waze|apple|openstreetmap|yellowpages|pagesjaunes|linktr|linktree|beacons|wa|whatsapp|tumblr|blogspot|wordpress|tiendanube|todoexpertos|habitissimo|dondeir|cybo|nicelocal|streetdir|hotfrog|brownbook|tupalo|vymaps|restaurantguru|menupix|sluurpy)\.[a-z.]+$/i;
 function nameTokens(n){return String(n||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').split(/[^a-z0-9]+/).filter(function(w){return w.length>2&&!/^(the|and|los|las|del|que|por|con|para|spa|slc|sl)$/.test(w);});}
+// Does the host / handle text h contain the name word w as a whole word (optionally with generic words like "madrid" or "studio")?
+// "premier" must NOT match "premierleague": a short name inside a longer unrelated word is a wrong match.
+var GENW=/^(?:the|el|la|los|las|madrid|spain|espana|es|estetica|beauty|salon|peluqueria|barberia|barber|clinica|clinic|studio|estudio|centro|center|spa|nails|unas|hair|official|oficial|shop|tienda|group|grupo|[0-9]+)+$/;
+function nameHit(h,w){
+  if(!h||!w)return false;
+  if(h===w)return true;
+  var i=h.indexOf(w);if(i<0)return false;
+  if(w.length>=9)return true;
+  var pre=h.slice(0,i),post=h.slice(i+w.length);
+  return (pre===''||GENW.test(pre))&&(post===''||GENW.test(post));
+}
 function scoreHit(b,r){
   var host=hostOf(r.u);if(GBLOCK.test(host))return 0;
   var toks=nameTokens(b.name);if(!toks.length)return 0;
   var hn=normName(host.split('.')[0]),all=normName(b.name),hay=normName((r.t||'')+' '+(r.s||'')),sc=0;
-  if(all.length>3&&(hn===all||hn.indexOf(all)>-1||(hn.length>3&&all.indexOf(hn)>-1)))sc+=3;
-  var inHost=toks.filter(function(w){return hn.indexOf(w)>-1;}).length,inTxt=toks.filter(function(w){return hay.indexOf(w)>-1;}).length;
+  var strong=all.length>3&&(nameHit(hn,all)||(hn.length>4&&all.indexOf(hn)===0));
+  if(toks.length===1&&!strong)return 0;   // one-word names (e.g. "Premier") need the site name to match it exactly
+  if(strong)sc+=3;
+  var inHost=toks.filter(function(w){return nameHit(hn,w);}).length,inTxt=toks.filter(function(w){return hay.indexOf(w)>-1;}).length;
   sc+=inHost/toks.length*2+inTxt/toks.length;
   var city=String(b.addr||'').split(',').pop().trim();if(city.length>2&&hay.indexOf(normName(city))>-1)sc+=0.5;
   return sc;
@@ -1907,8 +1920,8 @@ function searchSocial(b,needIg,needFb){
     var out={},toks=nameTokens(b.name),all=normName(b.name);
     function ok(handle,r){
       var h=normName(handle);if(h.length<3)return false;
-      var inH=toks.filter(function(w){return h.indexOf(w)>-1;}).length;
-      return (all.length>3&&(h.indexOf(all)>-1||all.indexOf(h)>-1))||(toks.length&&inH/toks.length>=0.6)||(toks.length&&inH>=1&&normName((r.t||'')+' '+(r.s||'')).indexOf(all)>-1);
+      var inH=toks.filter(function(w){return nameHit(h,w);}).length;
+      return (all.length>3&&(nameHit(h,all)||(h.length>4&&all.indexOf(h)===0)))||(toks.length>1&&(inH/toks.length>=0.6||(inH>=1&&normName((r.t||'')+' '+(r.s||'')).indexOf(all)>-1)));
     }
     list.forEach(function(r){
       var so=extractSocial(r.u);
@@ -2372,7 +2385,7 @@ function previewLink(b,l){
   var fbL=fbOf(b);if(fbL)o.f=fbL.replace(/^https:\/\/(www\.)?facebook\.com\//i,'').slice(0,80);
   var wuL=b.web||(b.guess&&b.guess.u)||'';wuL=wuL?siteUrl(wuL):'';if(safeUrl(wuL)&&wuL.length<=120)o.u=wuL;
   var sh=shortFor(b,o);if(sh)return sh;
-  if(o.i&&JSON.stringify(o.i).length>500){delete o.i;if(o.l&&o.l.length>200)delete o.l;}   // keep the long (untracked) link a reasonable size
+  delete o.i;if(o.l&&o.l.length>120)delete o.l;   // the long (untracked) link keeps no photos, so it stays short
   return location.origin+location.pathname+'#preview='+b64(o);
 }
 function buildThemes(){
