@@ -1058,6 +1058,7 @@ function doSearch(fromChip){
   if(!map){toast('The map is not ready.');return;}
   if(busy)return;
   if(showLeads){showLeads=false;renderLeadbar();}
+  if(!$('qWhat').value.trim()){selCats=CATS.map(function(c){return c.id;});syncWhat();}   // nothing chosen: search all categories
   var what=$('qWhat').value.trim(),where=$('qWhere').value.trim(),cats=selCats.map(function(id){return CAT[id];});
   if(!what){emptyMsg('Pick what to look for','Choose a category above or type something like "bakery" or "yoga".');return;}
   var my=++searchTok;busy=true;setBusy(true);openSheet();skeleton();$('here').hidden=true;
