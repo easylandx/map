@@ -370,7 +370,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
     <span class="n" id="count"></span>
   </div>
   <div class="leadbar" id="leadbar"></div>
-  <div class="clearrow" id="clearRow" hidden><button type="button" id="btnClear">🗑 Clear all</button> <button type="button" id="btnFind" style="color:var(--teal)">🔎 Find websites</button></div>
+  <div class="clearrow" id="clearRow" hidden><button type="button" id="btnClear">🗑 Clear all</button> <button type="button" id="btnFind" style="color:var(--teal)">🔎 Find contacts</button></div>
   <section id="list"></section>
   <section id="detail" hidden></section>
   <div class="foot" id="foot">Business data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors. "No website listed" means none is recorded on the map, so it can be incomplete. © 2026 EasyLandX</div>
@@ -890,7 +890,7 @@ function doSearch(fromChip){
       return tileSearch(cats,what,e);});
   }).then(function(list){
     var c=map.getCenter();
-    list.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id]&&GUESS[b.id].u)b.guess=GUESS[b.id];});
+    list.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];});
     if(list.partial)toast('Part of the area did not load. Press "Search this area" to retry.');capped=!!list.capped;results=list;setSel(null);pushData();renderList();scrollToResults();
     if(!list.length)emptyMsg('Nothing found here','Try zooming out, moving the map, or another category. OpenStreetMap does not list every business.');
   }).catch(function(e){
@@ -972,7 +972,7 @@ function fmtDate(v){
   try{return d.toLocaleDateString(LANG==='es'?'es-ES':'en-GB',o);}catch(e){return String(v);}
 }
 function saveLeads(){store('elx_leads',JSON.stringify(LEADS));LIX=null;}
-function snap(b){var o={};['id','name','cat','addr','phone','wa','hours','lat','lon','web','social','status','custom','rating','ratingN','gmaps','gsrc','guess'].forEach(function(k){if(b[k]!=null&&b[k]!=='')o[k]=b[k];});return o;}
+function snap(b){var o={};['id','name','cat','addr','phone','wa','hours','lat','lon','web','social','status','custom','rating','ratingN','gmaps','gsrc','guess','email'].forEach(function(k){if(b[k]!=null&&b[k]!=='')o[k]=b[k];});return o;}
 function reindex(){
   LIX={ph:{},nm:{}};
   Object.keys(LEADS).forEach(function(k){var x=LEADS[k].b||{},wk=waPick(x),ph=wk?wk.d:'',nn=normName(x.name);
@@ -1199,7 +1199,7 @@ function trackNoteL(lang,isShort){return isShort?(lang==='es'?' El enlace solo c
 function sharedBiz(o){
   var br=null,k=hex6(o.k);
   if(k||o.l||(o.s&&o.s.length)||(o.i&&o.i.length))br={k:k,logo:safeUrl(o.l),s:(Array.isArray(o.s)?o.s:[]).slice(0,6).map(function(x){return String(x).slice(0,60);}),i:(Array.isArray(o.i)?o.i:[]).slice(0,3).map(safeUrl).filter(Boolean),h:''};
-  return{id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:/^[\w.]{1,30}$/.test(String(o.ig||''))?'https://www.instagram.com/'+o.ig+'/':'',status:'noweb',wa:String(o.w||'').slice(0,20),brand:br};
+  return{id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:/^[\w.]{1,30}$/.test(String(o.ig||''))?'https://www.instagram.com/'+o.ig+'/':'',status:'noweb',wa:String(o.w||'').slice(0,20),brand:br,email:/^[^\s@<>"']+@[^\s@<>"']+\.[A-Za-z]{2,}$/.test(String(o.e||''))?String(o.e).slice(0,80):'',guess:{fb:/^[\w.\-\/?=%]{1,80}$/.test(String(o.f||''))?'https://www.facebook.com/'+o.f:'',u:safeUrl(o.u)}};
 }
 function openShortLink(raw){
   var id=String(raw||'').replace(/[^A-Za-z0-9]/g,'');
@@ -1283,11 +1283,11 @@ function exportCSV(rows){
   if(!rows||!rows.length){toast('Nothing to export yet.');return;}
   var sep=LANG==='es'?';':',';   // Spanish Excel expects semicolons
   var WL={noweb:'No website listed',social:'Social only',web:'Has website',unk:'Website unknown'};
-  var head=['Name','Category','Lead status','Follow-up date','Notes','Phone','WhatsApp link','Website','Social','Address','Google Maps','First contacted','Last updated','Website status','Possible website'].map(function(x){return csvCell(T(x),sep);}).join(sep);
+  var head=['Name','Category','Lead status','Follow-up date','Notes','Phone','WhatsApp link','Website','Social','Address','Google Maps','First contacted','Last updated','Website status','Possible website','Email (found on the web)','Instagram (found on the web)','Facebook (found on the web)','WhatsApp (found on the web)'].map(function(x){return csvCell(T(x),sep);}).join(sep);
   var lines=[head];
   rows.forEach(function(b){
     var l=leadOf(b)||{st:'new',notes:'',fu:'',at:0,upd:0},wk=waPick(b),n=wk?wk.d:'';
-    lines.push([[b.name],[lbl(catOf(b))],[T(LLAB[l.st])],[l.fu||''],[l.notes||''],[b.phone||'',1],[n?'https://wa.me/'+n:''],[b.web||''],[b.social||''],[b.addr||''],[gMapsUrl(b)],[isoDay(l.at)],[isoDay(l.upd)],[T(WL[b.status]||WL.unk)],[b.guess&&b.guess.u||'']]
+    lines.push([[b.name],[lbl(catOf(b))],[T(LLAB[l.st])],[l.fu||''],[l.notes||''],[b.phone||'',1],[n?'https://wa.me/'+n:''],[b.web||''],[b.social||''],[b.addr||''],[gMapsUrl(b)],[isoDay(l.at)],[isoDay(l.upd)],[T(WL[b.status]||WL.unk)],[b.guess&&b.guess.u||''],[b.email||(b.guess&&b.guess.e)||''],[b.guess&&b.guess.ig||''],[b.guess&&b.guess.fb||''],[b.guess&&b.guess.wa&&!hasWa(b)?'https://wa.me/'+b.guess.wa:'']]
       .map(function(c){return csvCell(c[0],sep,c[1]);}).join(sep));
   });
   var blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
@@ -1375,7 +1375,7 @@ function renderList(){
   var h=showLeads?leadHeader(rows):'';
   rows.forEach(function(b){
     var c=catOf(b),lab=T({noweb:'No website listed',social:'Social only',web:'Has website',unk:'Website unknown'}[b.status]);
-    h+='<button class="biz'+(b.id===selId?' on':'')+'" data-id="'+esc(b.id)+'"><span class="ico">'+c.emoji+'</span><span class="tx"><b>'+esc(b.name)+'</b><small>'+esc(lbl(c))+' · '+fmtDist(b.d)+(hasWa(b)?' · 📱 '+esc(T('Mobile')):'')+'</small><small>'+esc(b.addr||T('Address not listed'))+'</small>'+(b.guess&&b.guess.u&&b.status!=='web'?'<small style="color:var(--teal);font-weight:700">🔎 '+esc(hostOf(b.guess.u))+'</small>':'')+leadLine(b)+'</span><span class="badge '+b.status+'">'+lab+'</span></button>';
+    h+='<button class="biz'+(b.id===selId?' on':'')+'" data-id="'+esc(b.id)+'"><span class="ico">'+c.emoji+'</span><span class="tx"><b>'+esc(b.name)+'</b><small>'+esc(lbl(c))+' · '+fmtDist(b.d)+(hasWa(b)?' · 📱 '+esc(T('Mobile')):'')+'</small><small>'+esc(b.addr||T('Address not listed'))+'</small>'+guessLine(b)+leadLine(b)+'</span><span class="badge '+b.status+'">'+lab+'</span></button>';
   });
   if(capped&&!showSaved)h+='<div class="empty" style="margin:4px 0 0;padding:12px;border-style:solid">'+T('Showing the first {0}. Zoom in or move the map and press <b style="display:inline">Search this area</b> to see more.',rows.length)+'</div>';
   $('list').innerHTML=h;
@@ -1446,10 +1446,11 @@ function gEnrich(b){
 /* ===== Find the possible website of a business on the web (not Maps) =====
    1) Google Custom Search API if CONFIG.GCSE_KEY + GCSE_CX are set (real Google results)
    2) otherwise DuckDuckGo results, read through the free r.jina.ai page reader. Results are cached in this browser. */
-(function(){var X={'Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find websites':'🔎 Buscar webs','Finding websites {0} of {1}':'Buscando webs {0} de {1}','Websites found: {0} of {1}':'Webs encontradas: {0} de {1}','Stopped. Websites found: {0}':'Detenido. Webs encontradas: {0}','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
-STATIC.push(['#btnFind',0,'🔎 Find websites']);
-var GUESS={};try{GUESS=JSON.parse(store('elx_guess')||'{}')||{};}catch(e){GUESS={};}
-function saveGuess(){try{store('elx_guess',JSON.stringify(GUESS));}catch(e){}}
+(function(){var X={'Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding websites {0} of {1}':'Buscando webs {0} de {1}','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
+STATIC.push(['#btnFind',0,'🔎 Find contacts']);
+var GUESS={};try{GUESS=JSON.parse(store('elx_guess3')||'{}')||{};}catch(e){GUESS={};}
+function saveGuess(){try{store('elx_guess3',JSON.stringify(GUESS));}catch(e){}}
+function guessLine(b){var g=b.guess;if(!g)return '';var parts=[];if(g.u&&b.status!=='web')parts.push('🔎 '+hostOf(g.u));if(g.e&&!b.email)parts.push('✉️ '+g.e);if(g.wa&&!hasWa(b))parts.push('💬');if(g.ig)parts.push('📸');if(g.fb)parts.push('👍');return parts.length?'<small style="color:var(--teal);font-weight:700">'+esc(parts.join(' · '))+'</small>':'';}
 function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,'');}catch(e){return String(u||'').replace(/^https?:\/\/(www\.)?/,'').split('/')[0];}}
 var GBLOCK=/(^|\.)(facebook|instagram|tiktok|twitter|x|linkedin|youtube|pinterest|tripadvisor|yelp|foursquare|google|goo|bing|duckduckgo|wikipedia|paginasamarillas|infobel|cylex|europages|guiaempresas|einforma|axesor|infoempresa|telefonos|11870|opentable|thefork|eltenedor|booksy|treatwell|fresha|doctoralia|wallapop|milanuncios|idealista|fotocasa|airbnb|booking|expedia|trustpilot|mapquest|waze|apple|openstreetmap|yellowpages|pagesjaunes|linktr|linktree|beacons|wa|whatsapp|tumblr|blogspot|wordpress|tiendanube|todoexpertos|habitissimo|dondeir|cybo|nicelocal|streetdir|hotfrog|brownbook|tupalo|vymaps|restaurantguru|menupix|sluurpy)\.[a-z.]+$/i;
 function nameTokens(n){return String(n||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').split(/[^a-z0-9]+/).filter(function(w){return w.length>2&&!/^(the|and|los|las|del|que|por|con|para|spa|slc|sl)$/.test(w);});}
@@ -1481,35 +1482,109 @@ function searchDDG(q){
     return out;
   });
 }
-// Resolves true when something new was stored on b
+var EMJUNK=/(sentry|wixpress|wix\.com|example\.|domain\.com|your-?e?mail|email@|name@|user@|@2x|@3x|godaddy|squarespace|cloudflare|schema\.org|\.(png|jpe?g|gif|webp|svg|css|js|woff2?))/i;
+function pickEmail(txt,host){
+  var all=String(txt||'').replace(/%40/g,'@').replace(/\s*\[at\]\s*|\s*\(at\)\s*/gi,'@').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g)||[];
+  var seen={},ok=[];
+  all.forEach(function(e){e=e.toLowerCase().replace(/^[._%+-]+/,'');if(seen[e]||EMJUNK.test(e)||e.length>60)return;seen[e]=1;ok.push(e);});
+  if(!ok.length)return '';
+  var base=String(host||'').toLowerCase().replace(/^www\./,'');
+  for(var k=0;k<ok.length;k++){if(base&&ok[k].split('@')[1]===base)return ok[k];}
+  for(var k2=0;k2<ok.length;k2++){if(base&&ok[k2].split('@')[1].indexOf(base.split('.')[0])>-1)return ok[k2];}
+  return ok[0];
+}
+var IGBAD=/^(p|reel|reels|explore|stories|tv|accounts|about|legal|developer|directory|web|sharer|share|oauth|privacy|direct)$/i;
+var FBBAD=/^(sharer|share|sharer\.php|tr|dialog|plugins|login|policies|policy|groups|events|watch|help|privacy|terms|l\.php|hashtag|photo|photos|ads|business|about|legal|public|pages|people|marketplace|gaming|reel|reels|stories|permalink\.php|story\.php|home\.php|r\.php|recover|dialog)$/i;
+function extractSocial(txt){
+  var t=String(txt||''),o={},m,re;
+  re=/instagram\.com\/([A-Za-z0-9._]{2,30})/gi;
+  while((m=re.exec(t))){if(!IGBAD.test(m[1])&&!/\.(png|jpe?g|svg|ico)$/i.test(m[1])){o.ig='https://www.instagram.com/'+m[1].replace(/\.+$/,'')+'/';break;}}
+  re=/facebook\.com\/(profile\.php\?id=\d+|pages\/[^\s)"'\/?#]+\/\d+|[A-Za-z0-9.\-]{3,80})/gi;
+  while((m=re.exec(t))){var f=m[1];if(/^profile\.php|^pages\//.test(f)||!FBBAD.test(f.split('?')[0])){if(/\.(png|jpe?g|svg|ico)$/i.test(f))continue;o.fb='https://www.facebook.com/'+f.replace(/\.+$/,'');break;}}
+  re=/(?:wa\.me\/|api\.whatsapp\.com\/send\/?\?(?:[^\s)"']*?&)?phone=|whatsapp:\/\/send\?phone=|web\.whatsapp\.com\/send\?phone=)\+?(\d{8,15})/gi;
+  m=re.exec(t);if(m)o.wa=m[1];
+  return o;
+}
+// Reads the business site (home, then /contacto, /contact) through the r.jina.ai page reader: email, Instagram, Facebook, WhatsApp
+function findContacts(site,needMail){
+  var out={};if(!site)return Promise.resolve(out);
+  var m=String(site).match(/^(https?:\/\/[^\/]+)/i),root=m?m[1]:site,host=hostOf(root);
+  function get(u){return fetchText('https://r.jina.ai/'+u,14000).catch(function(){return '';});}
+  function take(t){var so=extractSocial(t);['ig','fb','wa'].forEach(function(k){if(so[k]&&!out[k])out[k]=so[k];});if(needMail&&!out.e){var e=pickEmail(t,host);if(e)out.e=e;}}
+  return get(root).then(function(t){
+    take(t);if(!needMail||out.e)return out;
+    return get(root+'/contacto').then(function(t2){take(t2);if(out.e)return out;
+      return get(root+'/contact').then(function(t3){take(t3);return out;});});
+  });
+}
+// Looks for the business Instagram / Facebook page through web search when the site did not give them
+function searchSocial(b,needIg,needFb){
+  var city=String(b.addr||'').split(',').pop().trim(),q='"'+b.name+'" '+(city||$('qWhere').value.trim()||'')+' instagram facebook';
+  var tg=(CONFIG.GCSE_KEY&&CONFIG.GCSE_CX)?searchGoogleAPI(q).catch(function(){return searchDDG(q);}):searchDDG(q);
+  return tg.then(function(list){
+    var out={},toks=nameTokens(b.name),all=normName(b.name);
+    function ok(handle,r){
+      var h=normName(handle);if(h.length<3)return false;
+      var inH=toks.filter(function(w){return h.indexOf(w)>-1;}).length;
+      return (all.length>3&&(h.indexOf(all)>-1||all.indexOf(h)>-1))||(toks.length&&inH/toks.length>=0.6)||(toks.length&&inH>=1&&normName((r.t||'')+' '+(r.s||'')).indexOf(all)>-1);
+    }
+    list.forEach(function(r){
+      var so=extractSocial(r.u);
+      if(needIg&&so.ig&&!out.ig){var hi=so.ig.match(/instagram\.com\/([^\/]+)/i);if(hi&&ok(hi[1],r))out.ig=so.ig;}
+      if(needFb&&so.fb&&!out.fb){var hf=so.fb.match(/facebook\.com\/([^\/?]+)/i);if(hf&&ok(hf[1],r))out.fb=so.fb;}
+    });
+    return out;
+  },function(){return {};});
+}
+// Resolves true when something was stored on b (possible website and/or email)
 function guessWeb(b,force){
-  if(!b||b.id==='shared'||b.web||b.status==='web')return Promise.resolve(false);
-  var key=b.id;
-  if(!force&&GUESS[key]!==undefined){var g=GUESS[key];b.guess=g&&g.u?g:0;return Promise.resolve(false);}
-  if(b.guess&&b.guess.u&&!force)return Promise.resolve(false);
-  var q=webQuery(b),p=(CONFIG.GCSE_KEY&&CONFIG.GCSE_CX)?searchGoogleAPI(q).catch(function(){return searchDDG(q);}):searchDDG(q);
-  return p.then(function(list){
-    var best=null,bs=0;
-    list.forEach(function(r){var s=scoreHit(b,r);if(s>bs){bs=s;best=r;}});
-    if(best&&bs>=1.6){
-      var m=best.u.match(/^(https?:\/\/[^\/]+)/i);var root=m?m[1]:best.u;
-      b.guess={u:root,t:String(best.t||'').slice(0,70),sc:+bs.toFixed(1)};
-    }else b.guess=0;
-    GUESS[key]=b.guess;saveGuess();
-    return true;
-  },function(){return false;});   // search failed: not cached, can retry later
+  if(!b||b.id==='shared')return Promise.resolve(false);
+  var key=b.id,hasSite=!!(b.web||b.status==='web');
+  if(!force&&GUESS[key]!==undefined){var g=GUESS[key];b.guess=g||0;return Promise.resolve(false);}
+  if(b.guess&&!force)return Promise.resolve(false);
+  var failed=false,pw;
+  if(hasSite)pw=Promise.resolve(null);
+  else{
+    var q=webQuery(b),ps=(CONFIG.GCSE_KEY&&CONFIG.GCSE_CX)?searchGoogleAPI(q).catch(function(){return searchDDG(q);}):searchDDG(q);
+    pw=ps.then(function(list){
+      var best=null,bs=0;
+      list.forEach(function(r){var sc=scoreHit(b,r);if(sc>bs){bs=sc;best=r;}});
+      if(best&&bs>=1.6){var m=best.u.match(/^(https?:\/\/[^\/]+)/i);return{u:m?m[1]:best.u,t:String(best.t||'').slice(0,70),sc:+bs.toFixed(1)};}
+      return null;
+    },function(){failed=true;return null;});
+  }
+  return pw.then(function(g){
+    if(failed)return false;   // search failed: not cached, can retry later
+    var site=hasSite?(b.web||''):(g&&g.u);
+    var needMail=!b.email,haveIg=/instagram\.com/i.test(b.social||''),haveFb=/facebook\.com/i.test(b.social||'');
+    var pc=site?findContacts(site,needMail):Promise.resolve({});
+    return pc.then(function(c){
+      var o=g||{};
+      if(c.e&&needMail)o.e=c.e;
+      if(c.ig&&!haveIg)o.ig=c.ig;
+      if(c.fb&&!haveFb)o.fb=c.fb;
+      if(c.wa&&!hasWa(b))o.wa=c.wa;
+      var nIg=!o.ig&&!haveIg,nFb=!o.fb&&!haveFb;
+      return (nIg||nFb?searchSocial(b,nIg,nFb):Promise.resolve({})).then(function(sc){
+        if(sc.ig)o.ig=sc.ig;if(sc.fb)o.fb=sc.fb;
+        b.guess=(o.u||o.e||o.ig||o.fb||o.wa)?o:0;
+        GUESS[key]=b.guess;saveGuess();
+        return true;
+      });
+    });
+  });
 }
 var findBusy=false,findStop=false;
 function findWebsites(){
   if(findBusy){findStop=true;return;}
-  var rows=visibleRows().filter(function(b){return b.status!=='web'&&b.guess===undefined&&GUESS[b.id]===undefined;});
+  var rows=visibleRows().filter(function(b){return b.id!=='shared'&&b.guess===undefined&&GUESS[b.id]===undefined});
   if(!rows.length){toast('Nothing to search here.');return;}
   findBusy=true;findStop=false;var i=0,found=0,total=rows.length,btn=$('btnFind');
-  function done(){findBusy=false;btn.textContent=T('🔎 Find websites');renderList();pushData();toast(findStop?'Stopped. Websites found: {0}':'Websites found: {0} of {1}',found,total);}
+  function done(){findBusy=false;btn.textContent=T('🔎 Find contacts');renderList();pushData();toast(findStop?'Stopped. Found: {0}':'Found (website, email or social): {0} of {1}',found,total);}
   function step(){
     if(findStop||i>=total){done();return;}
     var b=rows[i];btn.textContent='⏹ '+T('Finding websites {0} of {1}',i+1,total);
-    guessWeb(b).then(function(){if(b.guess&&b.guess.u)found++;}).then(function(){i++;if(i%5===0)renderList();setTimeout(step,1200);});
+    guessWeb(b).then(function(){if(b.guess&&(b.guess.u||b.guess.e||b.guess.ig||b.guess.fb||b.guess.wa))found++;}).then(function(){i++;if(i%5===0)renderList();setTimeout(step,2500);});
   }
   step();
 }
@@ -1544,6 +1619,13 @@ function renderDetail(b){
     if(b.guess&&b.guess.u)facts+='<div><span>🔎</span><span><b>'+T('Possible website')+':</b> <a href="'+esc(b.guess.u)+'" target="_blank" rel="noopener">'+esc(hostOf(b.guess.u))+'</a><br><small style="color:var(--mute)">'+esc(b.guess.t||'')+' · '+T('Verify before contacting')+'</small></span></div>';
     else if(b.guess===0)facts+='<div><span>🔎</span><span>'+T('No website found on the web')+'</span></div>';
     facts+='<div><span>🔍</span><a href="'+esc(gq)+'" target="_blank" rel="noopener">'+T('Search on Google')+'</a></div>';
+  }
+  if(b.guess&&b.guess.e&&!b.email)facts+='<div><span>✉️</span><span><a href="mailto:'+esc(b.guess.e)+'">'+esc(b.guess.e)+'</a><br><small style="color:var(--mute)">'+T('Email (found on the web)')+' · '+T('Verify before contacting')+'</small></span></div>';
+  if(b.guess){
+    var gg=b.guess,vf=' · '+T('Verify before contacting');
+    if(gg.wa&&!hasWa(b))facts+='<div><span>💬</span><span><a href="https://wa.me/'+esc(gg.wa)+'" target="_blank" rel="noopener">WhatsApp +'+esc(gg.wa)+'</a><br><small style="color:var(--mute)">'+T('WhatsApp (found on the web)')+vf+'</small></span></div>';
+    if(gg.ig)facts+='<div><span>📸</span><span><a href="'+esc(gg.ig)+'" target="_blank" rel="noopener">'+esc(gg.ig.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</a><br><small style="color:var(--mute)">'+T('Instagram (found on the web)')+vf+'</small></span></div>';
+    if(gg.fb)facts+='<div><span>👍</span><span><a href="'+esc(gg.fb)+'" target="_blank" rel="noopener">'+esc(gg.fb.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</a><br><small style="color:var(--mute)">'+T('Facebook (found on the web)')+vf+'</small></span></div>';
   }
   facts+='<div><span>🗺️</span><a href="'+esc(gMapsUrl(b))+'" target="_blank" rel="noopener">'+T('Open in Google Maps')+'</a></div>';
   facts+='<div><span>🧭</span><a href="https://www.openstreetmap.org/?mlat='+b.lat+'&mlon='+b.lon+'#map=19/'+b.lat+'/'+b.lon+'" target="_blank" rel="noopener">'+T('View on OpenStreetMap')+'</a></div>';
@@ -1782,7 +1864,7 @@ function enrichBrand(b){
 function brandOf(b){if(!b||!b.brand)return null;if(b.id==='shared')return b.brand;return pvBrandOn?b.brand:null;}
 function safeUrl(u){u=String(u||'');return /^https:\/\/[^\s"'<>()]+$/i.test(u)&&u.length<=600?u:'';}
 function px(u,w,fmt){return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&fit=cover&output='+(fmt||'jpg');}
-function waDigits(b){var t=toIntl(b.wa);if(t)return t;var x=String(b.wa||'').replace(/\D/g,'');if(x.length>=8&&x.length<=15)return x;var bp=bestPhone(b);return bp&&bp.m?bp.d:'';}
+function waDigits(b){var t=toIntl(b.wa);if(t)return t;var x=String(b.wa||'').replace(/\D/g,'');if(x.length>=8&&x.length<=15)return x;var bp=bestPhone(b);return bp&&bp.m?bp.d:(b.guess&&/^\d{8,15}$/.test(b.guess.wa||'')?b.guess.wa:'');}
 var DAYSH={Mo:['Lun','Mon'],Tu:['Mar','Tue'],We:['Mié','Wed'],Th:['Jue','Thu'],Fr:['Vie','Fri'],Sa:['Sáb','Sat'],Su:['Dom','Sun']};
 // OpenStreetMap "opening_hours" (Mo-Fr 09:00-20:00; Sa 10:00-14:00) -> [[days,time],...]; null when it cannot be read
 function parseHours(h,lang){
@@ -1804,12 +1886,15 @@ function parseHours(h,lang){
   });
   return ok&&rows.length?rows:null;
 }
+function emailOf(b){var e=String((b&&(b.email||(b.guess&&b.guess.e)))||'');return /^[^\s@<>"']+@[^\s@<>"']+\.[A-Za-z]{2,}$/.test(e)&&e.length<=80?e:'';}
+function fbOf(b){var sc=String((b&&b.social)||'');if(/^https:\/\/(www\.)?facebook\.com\/[\w.\-\/?=%]+$/i.test(sc))return sc;var g=String((b&&b.guess&&b.guess.fb)||'');return /^https:\/\/www\.facebook\.com\/[\w.\-\/?=%]+$/.test(g)?g:'';}
 function pageHTML(b,t){
   var c=copyFor(b),cat=catOf(b),br=brandOf(b)||{},photos=br.i||[],svcs=br.s||[],hero=photos[0]||'',gal=photos.slice(1,4);
   var wad=waDigits(b),bpx=bestPhone(b);
   var waUrl=wad?waLink(T('Hi! I would like more information about {0}.',b.name),wad):'';   // phones: WhatsApp app straight away; computers: WhatsApp Web (no wa.me page in between)
   var igH=igHandleOf(b),igUrl=igH?'https://www.instagram.com/'+igH+'/':'';
-  var webUrl=b.web?siteUrl(b.web):'';if(!/^https?:\/\/[^\s"'<>]+$/i.test(webUrl))webUrl='';
+  var webRaw=b.web||(b.guess&&b.guess.u)||'',webUrl=webRaw?siteUrl(webRaw):'';if(!/^https?:\/\/[^\s"'<>]+$/i.test(webUrl))webUrl='';
+  var emU=emailOf(b),fbU=fbOf(b);
   var webTxt=webUrl.replace(/^https?:\/\/(www\.)?/i,'').replace(/\/$/,'');
   var tel=igUrl||waUrl||(bpx?'tel:+'+bpx.d:'#visit');
   var map=gMapsUrl(b);
@@ -1837,12 +1922,12 @@ function pageHTML(b,t){
   '</style></head><body>'+
   '<div class="ban">'+esc(T('Concept preview by EasyLandX. Not the official website of {0}.',b.name))+'</div>'+
   '<nav><b>'+logo+'<span>'+esc(b.name)+'</span></b></nav>'+
-  '<section class="hero'+(hero?' ph':'')+'"'+heroStyle+'>'+(hero?'':'<div class="em">'+cat.emoji+'</div>')+'<h1>'+esc(b.name)+'</h1>'+(igUrl?'<p class="ig"><a href="'+esc(igUrl)+'">📸 @'+esc(igH)+'</a></p>':'')+'<div class="b"><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a><a class="btn o" href="'+esc(map)+'">'+esc(T('Find us'))+'</a></div></section>'+
+  '<section class="hero'+(hero?' ph':'')+'"'+heroStyle+'>'+(hero?'':'<div class="em">'+cat.emoji+'</div>')+'<h1>'+esc(b.name)+'</h1>'+((igUrl||fbU)?'<p class="ig">'+(igUrl?'<a href="'+esc(igUrl)+'">📸 @'+esc(igH)+'</a>':'')+(igUrl&&fbU?' &nbsp; ':'')+(fbU?'<a href="'+esc(fbU)+'">👍 '+esc(T('Facebook'))+'</a>':'')+'</p>':'')+'<div class="b"><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a><a class="btn o" href="'+esc(map)+'">'+esc(T('Find us'))+'</a></div></section>'+
   (gal.length?'<section class="gal">'+gal.map(function(u){return '<div style="background-image:url(\''+esc(px(u,500))+'\')"></div>';}).join('')+'</section>':'')+
   (svcs.length?'<h2 class="sh">'+esc(c.f1)+'</h2>':'')+
   '<section class="feat">'+featCards+'</section>'+
-  '<section class="visit" id="visit"><h2>'+esc(T('Visit us'))+'</h2>'+(b.addr?'<p>📍 '+esc(b.addr)+'</p>':'')+(hoursHTML?'<p><b>'+esc(T('Opening hours'))+'</b></p>'+hoursHTML:'')+(b.phone?'<p>📞 '+esc(b.phone)+'</p>':'')+(webUrl?'<p>🌐 <a href="'+esc(webUrl)+'" style="color:inherit;font-weight:700">'+esc(webTxt)+'</a></p>':'')+
-    '<p>'+(webUrl?'<a class="btn" href="'+esc(webUrl)+'" style="margin:10px 6px 0">🌐 '+esc(T('Website'))+'</a>':'')+(waUrl?'<a class="btn wa" href="'+esc(waUrl)+'" style="margin:10px 6px 0">💬 '+esc(T('Chat on WhatsApp'))+'</a>':'')+(igUrl?'<a class="btn o" href="'+esc(igUrl)+'" style="margin:10px 6px 0">📸 @'+esc(igH)+'</a>':'')+'<a class="btn o" href="'+esc(map)+'" style="margin:10px 6px 0">'+esc(T('Open map'))+'</a></p></section>'+
+  '<section class="visit" id="visit"><h2>'+esc(T('Visit us'))+'</h2>'+(b.addr?'<p>📍 '+esc(b.addr)+'</p>':'')+(hoursHTML?'<p><b>'+esc(T('Opening hours'))+'</b></p>'+hoursHTML:'')+(b.phone?'<p>📞 '+esc(b.phone)+'</p>':'')+(emU?'<p>✉️ <a href="mailto:'+esc(emU)+'" style="color:inherit;font-weight:700">'+esc(emU)+'</a></p>':'')+(fbU?'<p>👍 <a href="'+esc(fbU)+'" style="color:inherit;font-weight:700">'+esc(fbU.replace(/^https?:\/\/(www\.)?/i,'').replace(/\/$/,''))+'</a></p>':'')+(webUrl?'<p>🌐 <a href="'+esc(webUrl)+'" style="color:inherit;font-weight:700">'+esc(webTxt)+'</a></p>':'')+
+    '<p>'+(webUrl?'<a class="btn" href="'+esc(webUrl)+'" style="margin:10px 6px 0">🌐 '+esc(T('Website'))+'</a>':'')+(waUrl?'<a class="btn wa" href="'+esc(waUrl)+'" style="margin:10px 6px 0">💬 '+esc(T('Chat on WhatsApp'))+'</a>':'')+(igUrl?'<a class="btn o" href="'+esc(igUrl)+'" style="margin:10px 6px 0">📸 @'+esc(igH)+'</a>':'')+(fbU?'<a class="btn o" href="'+esc(fbU)+'" style="margin:10px 6px 0">👍 '+esc(T('Facebook'))+'</a>':'')+(emU?'<a class="btn o" href="mailto:'+esc(emU)+'" style="margin:10px 6px 0">✉️ '+esc(T('Email us'))+'</a>':'')+'<a class="btn o" href="'+esc(map)+'" style="margin:10px 6px 0">'+esc(T('Open map'))+'</a></p></section>'+
   '<section class="cta"><h2>'+esc(T('Ready when you are'))+'</h2><a class="btn" href="'+esc(tel)+'">'+esc(c.cta)+'</a></section>'+
   '<footer>'+esc(T("Concept preview built from public map data. Real pages use the owner's own photos, prices and booking."))+' · <a href="'+CONFIG.SITE+'">EasyLandX</a> © 2026</footer>'+
   (waUrl?'<a class="fwa" href="'+esc(waUrl)+'" aria-label="WhatsApp">💬</a>':'')+
@@ -1859,7 +1944,10 @@ function previewLink(b,l){
     if(br.s&&br.s.length)o.s=br.s.slice(0,6).map(function(x){return String(x).slice(0,40);});
     var im=(br.i||[]).filter(safeUrl).slice(0,3);if(im.length)o.i=im;
   }
-  if(b.wa)o.w=String(b.wa).slice(0,20);
+  if(b.wa)o.w=String(b.wa).slice(0,20);else if(b.guess&&/^\d{8,15}$/.test(b.guess.wa||''))o.w=b.guess.wa;
+  var emL=emailOf(b);if(emL)o.e=emL;
+  var fbL=fbOf(b);if(fbL)o.f=fbL.replace(/^https:\/\/(www\.)?facebook\.com\//i,'').slice(0,80);
+  var wuL=b.web||(b.guess&&b.guess.u)||'';wuL=wuL?siteUrl(wuL):'';if(safeUrl(wuL)&&wuL.length<=120)o.u=wuL;
   var sh=shortFor(b,o);if(sh)return sh;
   if(o.i&&JSON.stringify(o.i).length>500){delete o.i;if(o.l&&o.l.length>200)delete o.l;}   // keep the long (untracked) link a reasonable size
   return location.origin+location.pathname+'#preview='+b64(o);
@@ -1882,7 +1970,7 @@ function brandNote(b){
   note.textContent=parts.length?T('Found: {0}',parts.join(', ')):T('Nothing usable found on their page or Instagram.');
 }
 function openPreview(b,themeId){
-  pvB=b;sendEdited=false;sendDrafts={};$('sMailTo').value=b.email||'';
+  pvB=b;sendEdited=false;sendDrafts={};$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
   pvBrandOn=true;pvPicked=false;$('brandOn').checked=true;
   setBrandTheme(brandOf(b));
   pvT=themeById(themeId||'sun');
@@ -1960,7 +2048,7 @@ function fillTpl(t,b,lang){
 }
 function buildChannelMsg(b,ch,lang){return fillTpl(getTpl(ch,b.cat,lang),b,lang);}
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
-function igHandleOf(b){var m=String((b&&b.social)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
+function igHandleOf(b){var m=String((b&&b.social)||(b&&b.guess&&b.guess.ig)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
 function splitMail(txt){var m=String(txt).match(/^\s*(?:Subject|Asunto)\s*:\s*(.*)\n+/i);return m?{subject:m[1].trim(),body:txt.slice(m[0].length)}:{subject:'',body:String(txt)};}
 var GO_LABEL={wa:'💬 Open WhatsApp with this message',ig:'📸 Copy message and open Instagram',mail:'✉️ Open email app',sms:'💬 Open SMS app'};
 function refreshSend(force){
@@ -1975,7 +2063,7 @@ function refreshSend(force){
   $('sMsg').setAttribute('aria-label',T('Message'));
   $('sGo').textContent=T(GO_LABEL[sendCh]);
   $('sMailBox').hidden=sendCh!=='mail';
-  if(sendCh==='mail'&&!$('sMailTo').value&&pvB.email)$('sMailTo').value=pvB.email;
+  if(sendCh==='mail'&&!$('sMailTo').value&&(pvB.email||(pvB.guess&&pvB.guess.e)))$('sMailTo').value=pvB.email||pvB.guess.e;
   var bp=sendCh==='wa'?waPick(pvB):bestPhone(pvB),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m,to='';
   if(sendCh==='wa'||sendCh==='sms'){
     to=n?(T('To: {0}',ph)+(land?T(sendCh==='wa'?' (looks like a landline, so WhatsApp may not reach it)':' (looks like a landline, so it may not receive texts)'):'')):T(sendCh==='wa'?'No phone number listed for this business. The message will be copied so you can paste it in their chat.':'No phone number listed for this business. The message will be copied.');
