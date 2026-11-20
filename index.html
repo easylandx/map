@@ -315,6 +315,19 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
 .clearrow button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:.8rem;color:#b43a15;white-space:nowrap}
 .clearrow button:active{transform:translateY(1px)}
 #side.indetail .clearrow{display:none}
+/* Find contacts: animated while searching */
+#btnFind{position:relative;overflow:hidden}
+#btnFind.busy{display:inline-flex;align-items:center;gap:8px;color:var(--teal);border-color:var(--teal)}
+#btnFind.busy::before{content:'';position:absolute;left:0;top:0;bottom:0;width:var(--prog,0%);background:var(--soft-teal);transition:width .6s ease}
+#btnFind.busy::after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);animation:fshine 1.6s ease-in-out infinite}
+#btnFind.busy>*{position:relative;z-index:1}
+.fspin{width:13px;height:13px;border:2.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:fspin .8s linear infinite;flex:none}
+.fdots i{font-style:normal;opacity:.2;animation:fdot 1.2s infinite}
+.fdots i:nth-child(2){animation-delay:.2s}.fdots i:nth-child(3){animation-delay:.4s}
+@keyframes fspin{to{transform:rotate(360deg)}}
+@keyframes fdot{0%,80%,100%{opacity:.2}40%{opacity:1}}
+@keyframes fshine{to{left:110%}}
+@media (prefers-reduced-motion:reduce){.fspin,#btnFind.busy::after{animation:none}.fdots i{animation:none;opacity:1}}
 @media (max-width:820px){.clearrow{padding:0 18px 10px}.clearrow button{padding:8px 16px;font-size:.88rem}}
 .lt{display:inline-block;font-size:.66rem;font-weight:800;padding:2px 8px 2px 8px;border-radius:99px;letter-spacing:.02em;white-space:nowrap}
 .lt.s-new{background:#efe9dc;color:var(--mute)}
@@ -1584,7 +1597,7 @@ function gEnrich(b){
 /* ===== Find the possible website of a business on the web (not Maps) =====
    1) Google Custom Search API if CONFIG.GCSE_KEY + GCSE_CX are set (real Google results)
    2) otherwise DuckDuckGo results, read through the free r.jina.ai page reader. Results are cached in this browser. */
-(function(){var X={'💬 Copy message and open Facebook':'💬 Copiar mensaje y abrir Facebook','No Facebook page known for this business. The message will be copied so you can paste it in their chat.':'No hay página de Facebook conocida. El mensaje se copiará para pegarlo en su chat.','Email: {0}':'Email: {0}','No email known: the email app opens without a recipient.':'No hay email conocido: el correo se abre sin destinatario.','No email known. Add the recipient in your email app.':'No hay email conocido. Añade el destinatario en tu app de correo.','Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding websites {0} of {1}':'Buscando webs {0} de {1}','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
+(function(){var X={'💬 Copy message and open Facebook':'💬 Copiar mensaje y abrir Facebook','No Facebook page known for this business. The message will be copied so you can paste it in their chat.':'No hay página de Facebook conocida. El mensaje se copiará para pegarlo en su chat.','Email: {0}':'Email: {0}','No email known: the email app opens without a recipient.':'No hay email conocido: el correo se abre sin destinatario.','No email known. Add the recipient in your email app.':'No hay email conocido. Añade el destinatario en tu app de correo.','Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding details {0} of {1}':'Buscando datos {0} de {1}','Tap to stop':'Toca para detener','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
 STATIC.push(['#btnFind',0,'🔎 Find contacts']);
 var GUESS={};try{GUESS=JSON.parse(store('elx_guess3')||'{}')||{};}catch(e){GUESS={};}
 function saveGuess(){try{store('elx_guess3',JSON.stringify(GUESS));}catch(e){}}
@@ -1718,10 +1731,11 @@ function findWebsites(){
   var rows=visibleRows().filter(function(b){return b.id!=='shared'&&b.guess===undefined&&GUESS[b.id]===undefined});
   if(!rows.length){toast('Nothing to search here.');return;}
   findBusy=true;findStop=false;var i=0,found=0,total=rows.length,btn=$('btnFind');
-  function done(){findBusy=false;btn.textContent=T('🔎 Find contacts');renderList();pushData();toast(findStop?'Stopped. Found: {0}':'Found (website, email or social): {0} of {1}',found,total);}
+  btn.classList.add('busy');btn.title=T('Tap to stop');btn.innerHTML='<span class="fspin" aria-hidden="true"></span><span class="ftxt"></span><span class="fdots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>';
+  function done(){findBusy=false;btn.classList.remove('busy');btn.style.removeProperty('--prog');btn.removeAttribute('title');btn.textContent=T('🔎 Find contacts');renderList();pushData();toast(findStop?'Stopped. Found: {0}':'Found (website, email or social): {0} of {1}',found,total);}
   function step(){
     if(findStop||i>=total){done();return;}
-    var b=rows[i];btn.textContent='⏹ '+T('Finding websites {0} of {1}',i+1,total);
+    var b=rows[i],tx=btn.querySelector('.ftxt');if(tx)tx.textContent=T('Finding details {0} of {1}',i+1,total);btn.style.setProperty('--prog',Math.round(i/total*100)+'%');
     guessWeb(b).then(function(){if(b.guess&&(b.guess.u||b.guess.e||b.guess.ig||b.guess.fb||b.guess.wa))found++;}).then(function(){i++;if(i%5===0)renderList();setTimeout(step,2500);});
   }
   step();
