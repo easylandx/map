@@ -425,7 +425,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
     <div class="t"><span id="pTitle"></span><small>Concept preview · made with EasyLandX</small></div>
     <button class="pill t" id="pAR">📱 View in AR</button>
     <button class="pill" id="pCopy">🔗 Copy link</button>
-    <button class="pill" id="pSend" style="background:var(--green);border-color:var(--green);color:#fff" hidden>📤 Send to business</button>
+    <span id="pSend" title="Send to business" style="display:inline-flex;gap:2px;vertical-align:middle" hidden><button class="pill" id="pSendWa" type="button" style="background:var(--green);border-color:var(--green);color:#fff;border-radius:99px 6px 6px 99px">💬 WhatsApp</button><button class="pill" id="pSendMail" type="button" style="background:var(--teal);border-color:var(--teal);color:#fff;border-radius:6px 99px 99px 6px">✉️ Email</button></span>
     <button class="pill c" id="pWa">💬 I want this page</button>
   </div>
   <div class="stage">
@@ -515,7 +515,7 @@ var STATIC=[
 ['#lblNoWeb',0,'No Web'],['#lblWeb',0,'With Web'],['#lblWa',0,'WhatsApp'],['#here',0,'↻ Search this area'],['#tilt','title','Toggle 2D / 3D'],
 ['#lg1',0,'No website listed'],['#lg2',0,'Social media only'],['#lg3',0,'Has a website'],['#lg4',0,'Website unknown'],
 ['#pBack',0,'← Back'],['#mPrev .mbar .t small',0,'Concept preview · made with EasyLandX'],
-['#pAR',0,'📱 View in AR'],['#pCopy',0,'🔗 Copy link'],['#pSend',0,'📤 Send to business'],['#pWa',0,'💬 I want this page'],
+['#pAR',0,'📱 View in AR'],['#pCopy',0,'🔗 Copy link'],['#pSendWa',0,'💬 WhatsApp'],['#pSendMail',0,'✉️ Email'],['#pWa',0,'💬 I want this page'],
 ['#pFrame','title','Concept preview'],
 ['.panel>h3:nth-of-type(1)',0,'Device'],['.panel>h3:nth-of-type(2)',0,'Colors'],['.panel>h3:nth-of-type(3)',0,'About this preview'],['#hLang',0,'Language'],
 ['#dMob',0,'📱 Phone'],['#dDesk',0,'🖥️ Desktop'],
@@ -1446,7 +1446,7 @@ function gEnrich(b){
 /* ===== Find the possible website of a business on the web (not Maps) =====
    1) Google Custom Search API if CONFIG.GCSE_KEY + GCSE_CX are set (real Google results)
    2) otherwise DuckDuckGo results, read through the free r.jina.ai page reader. Results are cached in this browser. */
-(function(){var X={'Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding websites {0} of {1}':'Buscando webs {0} de {1}','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
+(function(){var X={'Email: {0}':'Email: {0}','No email known: the email app opens without a recipient.':'No hay email conocido: el correo se abre sin destinatario.','No email known. Add the recipient in your email app.':'No hay email conocido. Añade el destinatario en tu app de correo.','Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding websites {0} of {1}':'Buscando webs {0} de {1}','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
 STATIC.push(['#btnFind',0,'🔎 Find contacts']);
 var GUESS={};try{GUESS=JSON.parse(store('elx_guess3')||'{}')||{};}catch(e){GUESS={};}
 function saveGuess(){try{store('elx_guess3',JSON.stringify(GUESS));}catch(e){}}
@@ -1634,7 +1634,7 @@ function renderDetail(b){
   var h=nav+
    '<div class="dhead"><span class="ico">'+c.emoji+'</span><div><h2>'+esc(b.name)+'</h2><p>'+esc(lbl(c))+'</p></div></div>'+stat+
    '<div class="facts">'+facts+'</div>'+(b.gsrc?'<p class="note">'+T('Details completed with Google Maps')+'</p>':'')+
-   (CANSEND?'<div class="row"><button class="btn p" id="dSend" style="flex:1">'+T('💬 Send sample by WhatsApp')+'</button><button class="btn l" id="dLang" style="width:64px;flex:none" title="'+T('Message language')+'"></button></div><p class="note" id="dSendTo"></p>':'')+
+   (CANSEND?'<div class="row"><div style="flex:1;display:flex;gap:3px;min-width:0;margin-bottom:8px"><button class="btn p" id="dSend" style="flex:1;margin:0;border-radius:14px 5px 5px 14px;white-space:nowrap">'+T('💬 WhatsApp')+'</button><button class="btn t" id="dSendMail" style="flex:1;margin:0;border-radius:5px 14px 14px 5px;white-space:nowrap">'+T('✉️ Email')+'</button></div><button class="btn l" id="dLang" style="width:64px;flex:none;margin-bottom:8px" title="'+T('Message language')+'"></button></div><p class="note" id="dSendTo"></p>':'')+
    '<button class="btn p" id="dPrev">'+T('✨ Preview a page for this business')+'</button>'+
    '<button class="btn t" id="dMine">'+T('🙋 This is my business')+'</button>'+
    '<div class="ex"><span>'+esc(T('See what we built for {0}',lbl(c).toLowerCase()))+'</span><button id="dEx">'+T('Open ↗')+'</button></div>';
@@ -1657,10 +1657,20 @@ function renderDetail(b){
       var bp=waPick(b),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m;
       $('dLang').textContent=sendLang.toUpperCase();
       $('dSendTo').textContent=n?(T('Opens WhatsApp to {0} with the link to their sample page and the example for their niche.',ph)+(land?T(' This looks like a landline, so WhatsApp may not reach it.'):'')):T('No phone listed for this business: the message will be copied so you can paste it in their chat.');
+      var emN=emailOf(b);$('dSendTo').textContent+=' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
     };
     refreshDSend();
     enrichBrand(b).then(function(){if(cur&&cur.id===b.id&&$('dSendTo'))refreshDSend();});
     $('dLang').onclick=function(){sendLang=sendLang==='es'?'en':'es';store('elx_sendlang',sendLang);refreshDSend();};
+    $('dSendMail').onclick=function(){
+      if(!okToSend(b))return;
+      var to=emailOf(b),m=splitMail(buildChannelMsg(b,'mail',sendLang));
+      track('map_send_business',{category:b.cat,lang:sendLang,channel:'mail',has_email:!!to,from:'detail'});
+      if(!to)toast('No email known. Add the recipient in your email app.');
+      else if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
+      if(!to)markSent(b);
+      window.location.href='mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(m.body);
+    };
     $('dSend').onclick=function(){
       if(!okToSend(b))return;
       var wk=waPick(b),n=wk?wk.d:'',msg=buildMsg(b,sendLang);
@@ -2089,7 +2099,8 @@ $('chWa').onclick=function(){setSendCh('wa');};$('chIg').onclick=function(){setS
 $('sEs').onclick=function(){sendLang='es';store('elx_sendlang','es');refreshSend(true);};
 $('sEn').onclick=function(){sendLang='en';store('elx_sendlang','en');refreshSend(true);};
 $('sMsg').addEventListener('input',function(){sendEdited=true;sendDrafts[sendCh]=this.value;if(!$('sCount').hidden)updSendCount();});
-$('pSend').onclick=function(){if(!$('sendBox').hidden){$('sGo').click();}};
+$('pSendWa').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='wa')setSendCh('wa');$('sGo').click();};
+$('pSendMail').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='mail')setSendCh('mail');$('sGo').click();};
 $('sGo').onclick=function(){
   if(pvB&&!okToSend(pvB))return;
   var msg=$('sMsg').value,bp=sendCh==='wa'?waPick(pvB):bestPhone(pvB),n=bp?bp.d:'';
