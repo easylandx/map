@@ -487,6 +487,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
 var CONFIG={
   STYLE:'https://tiles.openfreemap.org/styles/liberty',   // free vector tiles with 3D buildings, no key
   OVERPASS:['https://overpass-api.de/api/interpreter','https://overpass.private.coffee/api/interpreter','https://overpass.kumi.systems/api/interpreter'],
+  OVERPASS_PROXY:'',   // optional: URL of your own caching proxy (Cloudflare Worker, see overpass-proxy-worker.js). Tried first, the public servers stay as backup.
   NOMINATIM:'https://nominatim.openstreetmap.org/search',
   REVERSE:'https://nominatim.openstreetmap.org/reverse',
   GCSE_KEY:'',   // Google Programmable Search (Custom Search JSON API) key: real Google web search, 100 free searches/day. Needs GCSE_CX too (create a search engine set to 'Search the entire web').
@@ -634,41 +635,102 @@ function catForTags(t){
 }
 
 /* ================= DATA LAYER (OpenStreetMap; swappable provider) ================= */
-var GEO_CACHE={},SEARCH_CACHE={},CACHE_MS=10*60*1000;
+/* ===== Reliability layer: saved results (IndexedDB), request queue, mirror health, retry, optional proxy =====
+   - every search area is saved in this browser for 12 h and reused (stale copies up to 14 days are shown if the free servers are down)
+   - at most 2 requests at a time, at least 0.6 s apart (the public servers ask for this)
+   - a server that just failed is tried last for a minute; one automatic retry with a short wait
+   - a part of the map that fails is split in 4 smaller parts and tried again (fewer "too big" / timeout errors)
+   - search areas are snapped to a 0.005 degree grid (about 500 m) so nearby searches share saved results */
+var FRESH_MS=12*3600*1000,STALE_MS=14*86400*1000;
+var PC=(function(){
+  var dbp=null;
+  function open(){
+    if(dbp)return dbp;
+    dbp=new Promise(function(res){
+      try{var r=indexedDB.open('elx_map',1);r.onupgradeneeded=function(){r.result.createObjectStore('q',{keyPath:'k'});};r.onsuccess=function(){res(r.result);};r.onerror=function(){res(null);};r.onblocked=function(){res(null);};}catch(e){res(null);}
+    });
+    return dbp;
+  }
+  function get(k){return open().then(function(db){return new Promise(function(res){if(!db)return res(null);try{var q=db.transaction('q').objectStore('q').get(k);q.onsuccess=function(){res(q.result||null);};q.onerror=function(){res(null);};}catch(e){res(null);}});});}
+  function put(k,v,capped){return open().then(function(db){if(!db)return;try{db.transaction('q','readwrite').objectStore('q').put({k:k,t:Date.now(),v:v,c:!!capped});}catch(e){}});}
+  function prune(){open().then(function(db){if(!db)return;try{var st=db.transaction('q','readwrite').objectStore('q'),cur=st.openCursor();cur.onsuccess=function(){var c=cur.result;if(!c)return;if(Date.now()-c.value.t>STALE_MS)c.delete();c.continue();};}catch(e){}});}
+  setTimeout(prune,4000);
+  return{get:get,put:put};
+})();
+var NET={active:0,max:2,gap:600,last:0,q:[]};
+function netRun(fn){return new Promise(function(res,rej){NET.q.push({fn:fn,res:res,rej:rej});netPump();});}
+function netPump(){
+  if(NET.active>=NET.max||!NET.q.length)return;
+  var wait=NET.last+NET.gap-Date.now();
+  if(wait>0){setTimeout(netPump,wait);return;}
+  var j=NET.q.shift();NET.active++;NET.last=Date.now();
+  j.fn().then(j.res,j.rej).then(function(){NET.active--;netPump();});
+  if(NET.q.length)setTimeout(netPump,NET.gap);
+}
+var BAD={};   // server url -> time of its last failure
+function mirrorOrder(){
+  var list=(CONFIG.OVERPASS_PROXY?[CONFIG.OVERPASS_PROXY]:[]).concat(CONFIG.OVERPASS),now=Date.now();
+  return list.map(function(u,i){return{u:u,i:i,bad:(BAD[u]&&now-BAD[u]<60000)?1:0};}).sort(function(a,b){return a.bad-b.bad||a.i-b.i;}).map(function(x){return x.u;});
+}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+var staleToastAt=0;
+function staleNote(){if(Date.now()-staleToastAt<30000)return;staleToastAt=Date.now();toast('The free map servers are busy. Showing your saved results from earlier.');}
+var GEO_CACHE={};try{GEO_CACHE=JSON.parse(store('elx_geo')||'{}')||{};}catch(e){GEO_CACHE={};}
+function geoPut(k,g){GEO_CACHE[k]=g;var ks=Object.keys(GEO_CACHE);if(ks.length>150)delete GEO_CACHE[ks[0]];store('elx_geo',JSON.stringify(GEO_CACHE));}
+var SEARCH_CACHE={},CACHE_MS=10*60*1000;
 var provider={
   geocode:function(q){
     var key=q.toLowerCase();
     if(GEO_CACHE[key])return Promise.resolve(GEO_CACHE[key]);
     var ctl=new AbortController(),to=setTimeout(function(){ctl.abort();},8000);
     return fetch(CONFIG.NOMINATIM+'?format=jsonv2&limit=1&q='+encodeURIComponent(q),{headers:{'Accept':'application/json'},signal:ctl.signal}).then(function(r){clearTimeout(to);if(!r.ok)throw new Error('geocode');return r.json();}).then(function(a){
-      if(!a.length)return null;var b=a[0].boundingbox;var g={lat:+a[0].lat,lon:+a[0].lon,name:a[0].display_name,bbox:b?[+b[2],+b[0],+b[3],+b[1]]:null};GEO_CACHE[key]=g;return g;
+      if(!a.length)return null;var b=a[0].boundingbox;var g={lat:+a[0].lat,lon:+a[0].lon,name:a[0].display_name,bbox:b?[+b[2],+b[0],+b[3],+b[1]]:null};geoPut(key,g);return g;
     },function(e){clearTimeout(to);throw e;});
   },
-  // Big searches are split into a grid of smaller areas, fetched 3 at a time and merged. One slow part no longer kills everything.
-  search:function(cats,text,bounds){
-    var self=this,h=bounds.n-bounds.s,w=bounds.e-bounds.w;
+  // Big searches are split into a grid of smaller areas, fetched 2 at a time and merged. One slow part no longer kills everything:
+  // a part that fails is split in 4 and retried, and saved results are used when the free servers are down.
+  search:function(cats,text,bounds0){
+    var self=this,STEP=0.005;
+    var bounds={s:Math.floor(bounds0.s/STEP+1e-9)*STEP,n:Math.ceil(bounds0.n/STEP-1e-9)*STEP,w:Math.floor(bounds0.w/STEP+1e-9)*STEP,e:Math.ceil(bounds0.e/STEP-1e-9)*STEP};
+    var h=bounds.n-bounds.s,w=bounds.e-bounds.w;
     var g=cats.length>=CATS.length?3:((cats.length>2||h>0.03||w>0.04)?2:1);
-    if(g===1)return self.searchOne(cats,text,bounds,300);
-    var lim=cats.length>=CATS.length?450:500,jobs=[],i,j;
+    var lim=g===1?300:(cats.length>=CATS.length?450:500),jobs=[],i,j;
     for(i=0;i<g;i++)for(j=0;j<g;j++)jobs.push({s:bounds.s+h*i/g,n:bounds.s+h*(i+1)/g,w:bounds.w+w*j/g,e:bounds.w+w*(j+1)/g});
-    var out=[],seen={},fails=0,firstErr=null,capped=false,idx=0,finished=0;
+    var out=[],seen={},fails=0,okN=0,firstErr=null,capped=false,stale=false,idx=0,finished=0;
+    var skey='S|'+(cats.length?cats.map(function(c){return c.id;}).sort().join('+'):'t:'+text.toLowerCase())+'|'+bounds.s.toFixed(5)+','+bounds.w.toFixed(5)+','+bounds.n.toFixed(5)+','+bounds.e.toFixed(5)+'|'+lim;
     return new Promise(function(resolve,reject){
       function next(){
         if(idx>=jobs.length)return;
-        self.searchOne(cats,text,jobs[idx++],lim).then(function(l){
+        var job=jobs[idx++];
+        self.searchOne(cats,text,job,lim).then(function(l){
+          okN++;if(l.stale)stale=true;
           l.forEach(function(b){if(!seen[b.id]){seen[b.id]=1;out.push(b);}});if(l.capped)capped=true;
-        },function(e){fails++;firstErr=firstErr||e;}).then(function(){
+        },function(e){
+          firstErr=firstErr||e;
+          if(!job.sub&&(job.n-job.s)>0.004&&!/\b429\b|Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message))){   // split only when the area was too heavy, not when we are rate-limited or offline
+            var mh=(job.s+job.n)/2,mw=(job.w+job.e)/2;
+            [{s:job.s,n:mh,w:job.w,e:mw},{s:job.s,n:mh,w:mw,e:job.e},{s:mh,n:job.n,w:job.w,e:mw},{s:mh,n:job.n,w:mw,e:job.e}].forEach(function(q){q.sub=1;jobs.push(q);});
+            console.info('[EasyLandX Map] part failed, splitting it in 4');
+            next();
+          }else fails++;
+        }).then(function(){
           finished++;
-          if(finished===jobs.length){if(fails===jobs.length)reject(firstErr);else{out.capped=capped;out.partial=fails>0;resolve(out);}}
+          if(finished===jobs.length){
+            if(okN===0){   // nothing could be loaded: use the last complete copy of this whole search if there is one
+              PC.get(skey).then(function(row){
+                if(row&&Date.now()-row.t<STALE_MS){var o=row.v;o.capped=row.c;o.stale=true;staleNote();resolve(o);}else reject(firstErr);
+              });
+            }else{out.capped=capped;out.partial=fails>0;out.stale=stale;if(!out.partial&&!stale)PC.put(skey,out.slice(),capped);resolve(out);}
+          }
           else next();
         });
       }
-      for(var k=0;k<3;k++)next();
+      for(var k=0;k<Math.min(2,jobs.length);k++)next();
     });
   },
   searchOne:function(cats,text,bounds,LIM){
     var bb=[bounds.s,bounds.w,bounds.n,bounds.e].map(function(x){return x.toFixed(5);}).join(',');
-    var cacheKey=(cats.length?cats.map(function(c){return c.id;}).sort().join('+'):'t:'+text.toLowerCase())+'|'+bb;
+    var cacheKey=(cats.length?cats.map(function(c){return c.id;}).sort().join('+'):'t:'+text.toLowerCase())+'|'+bb+'|'+(LIM||300);
     var hit=SEARCH_CACHE[cacheKey];
     if(hit&&Date.now()-hit.t<CACHE_MS){console.info('[EasyLandX Map] cache hit');return Promise.resolve(hit.v);}
     var parts=[];
@@ -686,33 +748,47 @@ var provider={
     }
     var LIMIT=LIM||300;
     var q='[out:json][timeout:12];('+parts.join('')+');out center tags qt '+LIMIT+';';
-    // Race the mirrors: start the first now, and add the next ones only if it is slow (2.5 s apart).
-    // The first valid answer wins and the others are cancelled.
-    return new Promise(function(resolve,reject){
-      var ctls=[],timers=[],failed=0,done=false,lastErr=null,N=CONFIG.OVERPASS.length;
-      function finish(fn,v){if(done)return;done=true;timers.forEach(clearTimeout);ctls.forEach(function(c){try{c.abort();}catch(e){}});fn(v);}
-      function launch(i){
-        if(done)return;
-        var ctl=new AbortController();ctls.push(ctl);
-        var to=setTimeout(function(){ctl.abort();},13000);timers.push(to);
-        fetch(CONFIG.OVERPASS[i],{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'},signal:ctl.signal})
-          .then(function(r){if(!r.ok)throw new Error('overpass '+r.status);return r.json();})
-          .then(function(j){
-            if(j&&j.remark&&/error|timed out|out of memory|too busy/i.test(j.remark)&&!(j.elements&&j.elements.length))throw new Error('overpass remark: '+j.remark);
-            var out=normalize(j.elements||[],cats.length===1?cats[0]:null);out.capped=(j.elements||[]).length>=LIMIT;
-            SEARCH_CACHE[cacheKey]={t:Date.now(),v:out};
-            console.info('[EasyLandX Map] '+out.length+' businesses found (server '+i+')');
-            finish(resolve,out);
-          })
-          .catch(function(e){
-            if(done)return;
-            lastErr=e;failed++;console.warn('[EasyLandX Map] Overpass server '+i+' failed:',e&&e.message);
-            if(failed>=N)finish(reject,lastErr);
-            else if(i+1<N&&!launched[i+1]){launched[i+1]=1;launch(i+1);}   // failed fast: bring the next one in right away
-          });
+    // One attempt: the best server first; the next one only if it fails or is slow (5 s apart). First valid answer wins.
+    function rawFetch(){
+      return new Promise(function(resolve,reject){
+        var order=mirrorOrder(),ctls=[],timers=[],failed=0,done=false,lastErr=null,N=order.length,launched={0:1};
+        function finish(fn,v){if(done)return;done=true;timers.forEach(clearTimeout);ctls.forEach(function(c){try{c.abort();}catch(e){}});fn(v);}
+        function launch(i){
+          if(done)return;
+          var ctl=new AbortController();ctls.push(ctl);
+          var to=setTimeout(function(){ctl.abort();},13000);timers.push(to);
+          fetch(order[i],{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'},signal:ctl.signal})
+            .then(function(r){if(!r.ok)throw new Error('overpass '+r.status);return r.json();})
+            .then(function(j){
+              if(j&&j.remark&&/error|timed out|out of memory|too busy/i.test(j.remark)&&!(j.elements&&j.elements.length))throw new Error('overpass remark: '+j.remark);
+              var out=normalize(j.elements||[],cats.length===1?cats[0]:null);out.capped=(j.elements||[]).length>=LIMIT;
+              delete BAD[order[i]];
+              console.info('[EasyLandX Map] '+out.length+' businesses found ('+order[i].replace(/^https?:\/\//,'').split('/')[0]+')');
+              finish(resolve,out);
+            })
+            .catch(function(e){
+              if(done)return;
+              BAD[order[i]]=Date.now();
+              lastErr=e;failed++;console.warn('[EasyLandX Map] Overpass server failed:',order[i],e&&e.message);
+              if(failed>=N)finish(reject,lastErr);
+              else if(i+1<N&&!launched[i+1]){launched[i+1]=1;launch(i+1);}   // failed fast: bring the next one in right away
+            });
+        }
+        launch(0);
+        for(var k=1;k<N;k++)(function(k){timers.push(setTimeout(function(){if(!launched[k]){launched[k]=1;launch(k);}},5000*k));})(k);
+      });
+    }
+    return PC.get(cacheKey).then(function(row){
+      if(row&&Date.now()-row.t<FRESH_MS){
+        var o=row.v;o.capped=row.c;SEARCH_CACHE[cacheKey]={t:Date.now(),v:o};
+        console.info('[EasyLandX Map] saved results used');return o;
       }
-      var launched={0:1};launch(0);
-      for(var k=1;k<N;k++)(function(k){timers.push(setTimeout(function(){if(!launched[k]){launched[k]=1;launch(k);}},2500*k));})(k);
+      return netRun(rawFetch)
+        .catch(function(e){if(/\b429\b/.test(String(e&&e.message)))throw e;return sleep(2500+Math.random()*1500).then(function(){return netRun(rawFetch);});})   // one retry after a short wait (not when the server says too many requests)
+        .then(function(out){SEARCH_CACHE[cacheKey]={t:Date.now(),v:out};PC.put(cacheKey,out.slice(),out.capped);return out;},function(e){
+          if(row&&Date.now()-row.t<STALE_MS){var o2=row.v;o2.capped=row.c;o2.stale=true;staleNote();return o2;}   // servers down: show the last saved copy
+          throw e;
+        });
     });
   }
 };
