@@ -938,7 +938,7 @@ var FALLBACK={version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'ba
 var STATUS_COL=['match',['get','status'],'noweb','#f59e0b','social','#3b82f6','unk','#8b5cf6','#16a34a'];
 function initMap(){
   if(typeof maplibregl==='undefined'){toast('The map library could not load. Check your connection.');return;}
-  map=new maplibregl.Map({container:'map',style:CONFIG.STYLE,center:CONFIG.CENTER,zoom:15.2,pitch:62,bearing:-18,maxPitch:78,attributionControl:{compact:true}});
+  map=new maplibregl.Map({container:'map',style:CONFIG.STYLE,center:CONFIG.CENTER,zoom:16,pitch:62,bearing:-18,maxPitch:78,attributionControl:{compact:true}});
   map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
   map.on('style.load',ensureLayers);
   map.once('load',function(){styleOk=true;});
@@ -1004,6 +1004,13 @@ function haversine(a,b,c,d){var R=6371000,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Ma
 function fmtDist(m){return m<950?Math.round(m/10)*10+' m':(m/1000).toFixed(1)+' km';}
 function viewBounds(){
   var b=map.getBounds(),c=map.getCenter(),n=b.getNorth(),s=b.getSouth(),e=b.getEast(),w=b.getWest();
+  if(map.getPitch()>5){
+    // Tilted (3D) camera: getBounds() also covers the far horizon, tens of km away, and the free data service refuses that.
+    // Use the flat area under the centre of the view instead.
+    var cv=map.getCanvas(),cl=Math.cos(c.lat*Math.PI/180),mpp=156543.03*cl/Math.pow(2,map.getZoom());
+    var hw=cv.clientWidth/2*mpp/(111320*cl),hh=cv.clientHeight/2*mpp/110540;
+    n=c.lat+hh;s=c.lat-hh;e=c.lng+hw;w=c.lng-hw;
+  }
   var maxLat=0.11,maxLon=0.15;   // about 12 x 12 km around the centre of the view
   if(n-s>maxLat){n=c.lat+maxLat/2;s=c.lat-maxLat/2;}
   if(e-w>maxLon){e=c.lng+maxLon/2;w=c.lng-maxLon/2;}
@@ -1054,7 +1061,7 @@ function doSearch(fromChip){
       var fin=false;function done(){if(fin)return;fin=true;setTimeout(function(){delete $('here').dataset.lock;},60);}
       map.once('moveend',done);setTimeout(done,3500);
       map.flyTo({center:[g.lon,g.lat],zoom:15.4,pitch:60,bearing:-15,duration:1600,essential:true});
-      doSearch._target={n:g.lat+0.016,s:g.lat-0.016,e:g.lon+0.022,w:g.lon-0.022};
+      doSearch._target={n:g.lat+0.0145,s:g.lat-0.0145,e:g.lon+0.0195,w:g.lon-0.0195};
     });
   }
   step.then(function(){
