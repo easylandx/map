@@ -1575,8 +1575,8 @@ function setupTracking(){
 }
 function followMsg(b,lang){
   return lang==='es'
-    ?'Hola! Vi que echó un vistazo a la propuesta de página web para '+b.name+' 😊 ¿Qué le ha parecido? Si quiere cambiar algo (colores, textos, fotos), se lo ajusto sin compromiso.\n— EasyLandX'
-    :'Hi! I noticed you took a look at the website concept for '+b.name+' 😊 What did you think? If you would like to change anything (colours, text, photos), I will adjust it with no commitment.\n— EasyLandX';
+    ?'Hola! Vi que echó un vistazo a la propuesta de página web para '+b.name+' 😊 ¿Qué le ha parecido? Si quiere cambiar algo (colores, textos, fotos), se lo ajusto sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.\n@EasyLandX'
+    :'Hi! I noticed you took a look at the website concept for '+b.name+' 😊 What did you think? If you would like to change anything (colours, text, photos), I will adjust it with no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.\n@EasyLandX';
 }
 function openInfoHTML(l){
   if(!trackOn()||!l||!l.lids||!l.lids.length)return '';
@@ -2109,8 +2109,8 @@ function copyText(t){
 }
 function pitch(b,lang){
   var l=previewLink(b,lang),unk=b.status==='unk',tn=trackNoteL(lang,l.indexOf('#p=')>-1);
-  if(lang==='es')return 'Hola! Encontré '+b.name+' y '+(unk?'no encontré su web.':'vi que no tiene web registrada.')+' He preparado una propuesta gratuita de cómo podría ser su página: '+l+'\nSi le gusta, la creo en unas 24h, sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.'+tn+' — EasyLandX ('+CONFIG.SITE+')';
-  return 'Hi! I came across '+b.name+' and '+(unk?'could not find a website for it.':'noticed there is no website listed.')+' I put together a free concept of what a page for it could look like: '+l+'\nIf you like it, I can build the real one in about 24h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.'+tn+' — EasyLandX ('+CONFIG.SITE+')';
+  if(lang==='es')return 'Hola! Encontré '+b.name+' y '+(unk?'no encontré su web.':'vi que no tiene web registrada.')+' He preparado una propuesta gratuita de cómo podría ser su página: '+l+'\nSi le gusta, la creo en unas 24h, sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.'+tn+'\n@EasyLandX';
+  return 'Hi! I came across '+b.name+' and '+(unk?'could not find a website for it.':'noticed there is no website listed.')+' I put together a free concept of what a page for it could look like: '+l+'\nIf you like it, I can build the real one in about 24h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.'+tn+'\n@EasyLandX';
 }
 $('side').addEventListener('click',function(){});
 /* ===== Mobile bottom sheet: drag the handle (or the title) to any height ===== */
@@ -2479,19 +2479,19 @@ var CHANNELS=['wa','ig','fb','mail','sms'];
 var TPL_VARS=[['name','Business name'],['category','Category'],['address','Address'],['link','Preview link'],['example','Example site'],['order','WhatsApp order link'],['note','Link note'],['found','Found details line']];
 var TPL_DEF={
  wa:{
-  es:'Hola! Encontré {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este mensaje o escríbanos aquí: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n— EasyLandX',
-  en:'Hi! I found {name} and prepared a free concept of what its website could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this message or message us here: {order}\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n— EasyLandX'},
+  es:'Hola! Encontré {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este mensaje o escríbanos aquí: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n@EasyLandX',
+  en:'Hi! I found {name} and prepared a free concept of what its website could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this message or message us here: {order}\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n@EasyLandX'},
  ig:{
-  es:'Hola! 👋 Vi {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Respóndame por aquí cuando quiera 🙂{note}\n@EasyLandX',
-  en:'Hi! 👋 I came across {name} and made a free concept of what its website could look like:\n{link}\n\nIf you like it, we can build it in about 24 h with no commitment. Just reply here whenever you like 🙂{note}\n@EasyLandX'},
+  es:'Hola! 👋 Vi {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Respóndame por aquí cuando quiera 🙂\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n@EasyLandX',
+  en:'Hi! 👋 I came across {name} and made a free concept of what its website could look like:\n{link}\n\nIf you like it, we can build it in about 24 h with no commitment. Just reply here whenever you like 🙂\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n@EasyLandX'},
  mail:{
-  es:'Asunto: Una propuesta de web gratuita para {name}\n\nHola,\n\nEncontré {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este correo o escríbanos por WhatsApp: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n\nUn saludo,\nEasyLandX',
-  en:'Subject: A free website concept for {name}\n\nHi,\n\nI found {name} and prepared a free concept of what its website could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this email or message us on WhatsApp: {order}\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n\nBest regards,\nEasyLandX'},
+  es:'Asunto: Una propuesta de web gratuita para {name}\n\nHola,\n\nEncontré {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este correo o escríbanos por WhatsApp: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n@EasyLandX',
+  en:'Subject: A free website concept for {name}\n\nHi,\n\nI found {name} and prepared a free concept of what its website could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this email or message us on WhatsApp: {order}\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n@EasyLandX'},
  sms:{
-  es:'Hola! Preparé una propuesta gratis de web para {name}: {link} Si le gusta, la hacemos en 24 h sin compromiso. — EasyLandX',
-  en:'Hi! I made a free website concept for {name}: {link} If you like it, we build it in 24 h, no commitment. — EasyLandX'}
+  es:'Hola! Preparé una propuesta gratis de web para {name}: {link} Si le gusta, la hacemos en 24 h sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n@EasyLandX',
+  en:'Hi! I made a free website concept for {name}: {link} If you like it, we build it in 24 h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n@EasyLandX'}
 };
-TPL_DEF.fb={es:TPL_DEF.ig.es.replace('@EasyLandX','— EasyLandX'),en:TPL_DEF.ig.en.replace('@EasyLandX','— EasyLandX')};   // Messenger uses the same short chat-style message as Instagram until you edit its own template
+TPL_DEF.fb=TPL_DEF.ig;   // Messenger uses the same short chat-style message as Instagram until you edit its own template
 function tplAll(){try{return JSON.parse(store('elx_tpl')||'{}')||{};}catch(e){return {};}}
 function tplKey(ch,cat,lang){return ch+'|'+(cat||'*')+'|'+lang;}
 // which template is used: this category's own, the all-categories one, or the built-in default
