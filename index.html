@@ -2750,7 +2750,46 @@ function zUnpack(s){
   var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
   return JSON.parse(new TextDecoder().decode(ELXZ.i(u,{dictionary:new TextEncoder().encode(ZDICT)})));
 }
-function packLink(o){   // shortest of: compressed (#pz=) or plain (#preview=)
+
+/* Compact preview links (#q=): line-based fields, numbers in base36, own preset dictionary. ZDICT2 is shared by encoder and decoder: NEVER edit it, or links made with it stop opening. */
+var ZDICT2=[
+ 'sun fresh lagoon bloom citrus teal violet brand',
+ 'hair beauty tattoo cafe restaurant bakery pastry choc cheese florist garden fitness yoga pilates dance music therapy wellness health lawyer finance realestate photo art jewelry pottery pets stay outdoor party carrepair bike driving boutique gift books toys interior trades locksmith tailor laundry language coworking herbal escape',
+ 'es en Calle de Avenida de la del los las San Plaza Paseo Camino Carretera Ronda Travesia Madrid Espana Alcobendas Tres Cantos Sebastian de los Reyes Barcelona Valencia Sevilla Malaga Getafe Leganes Mostoles Alcala de Henares Pozuelo Majadahonda Las Rozas Boadilla Torrejon Fuenlabrada Parla Buenos Aires Argentina',
+ 'Mo-Fr 09:00-18:00; Sa 10:00-14:00; Su off',
+ 'Mo-Fr 10:00-14:00,17:00-20:30; Sa 10:00-14:00',
+ 'Mo-Su 09:00-21:00',
+ '+34 6 7 9 8 91',
+ 'info@gmail.com @hotmail.com @outlook.com',
+ 'https://www.facebook.com/ https://www.instagram.com/ .com/ .es/ .com .es .net .org',
+ 'https://static.cdninstagram.com/rsrc.php/',
+ 'https://www..com/wp-content/uploads/logo.png',
+ 'https://www.'
+].join('\n');
+function _zs(v){return String(v==null?'':v).replace(/[\r\n\t]+/g,' ');}
+function zPack2(o){
+  try{
+    var la=Math.round(((+o.la||0)+90)*1e5),lo=Math.round(((+o.lo||0)+180)*1e5);
+    var f=[o.g==='en'?'en':'es',_zs(o.n),_zs(o.c),_zs(o.a),_zs(o.p),_zs(o.h),la.toString(36)+' '+lo.toString(36),_zs(o.t),_zs(o.ig),String(o.k||'').replace('#',''),_zs(o.l),(o.s||[]).map(_zs).join('\t'),_zs(o.w),_zs(o.e),_zs(o.f),_zs(o.u)];
+    while(f.length&&f[f.length-1]==='')f.pop();
+    var raw=new TextEncoder().encode(f.join('\n')),d=ELXZ.d(raw,{level:9,dictionary:new TextEncoder().encode(ZDICT2)}),b='';
+    for(var i=0;i<d.length;i++)b+=String.fromCharCode(d[i]);
+    return btoa(b).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }catch(e){return '';}
+}
+function zUnpack2(s){
+  s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';
+  var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
+  var f=new TextDecoder().decode(ELXZ.i(u,{dictionary:new TextEncoder().encode(ZDICT2)})).split('\n');
+  var ll=(f[6]||'0 0').split(' '),o={g:f[0]==='en'?'en':'es',n:f[1]||'',c:f[2]||'',a:f[3]||'',p:f[4]||'',h:f[5]||'',
+    la:+((parseInt(ll[0],36)/1e5-90).toFixed(5)),lo:+((parseInt(ll[1],36)/1e5-180).toFixed(5))};
+  if(f[7])o.t=f[7];if(f[8])o.ig=f[8];if(f[9])o.k='#'+f[9];if(f[10])o.l=f[10];if(f[11])o.s=f[11].split('\t');
+  if(f[12])o.w=f[12];if(f[13])o.e=f[13];if(f[14])o.f=f[14];if(f[15])o.u=f[15];
+  return o;
+}
+function packLink(o){   // shortest of: compact (#q=), compressed (#pz=) or plain (#preview=)
+  var q=zPack2(o);
+  if(q){try{var chk=zUnpack2(q);if(chk.n===String(o.n||'')&&chk.a===String(o.a||''))return '#q='+q;}catch(e){}}
   var z=zPack(o),p=b64(o);
   return (z&&z.length+4<p.length+9)?'#pz='+z:'#preview='+p;
 }
@@ -3067,7 +3106,7 @@ $('tplReset').onclick=function(){
   store('elx_tpl',JSON.stringify(all));tplFill();toast('Template reset');
 };
 
-$('pBack').onclick=function(){pvPlayStop();$('mPrev').hidden=true;$('pFrame').srcdoc='';if(/^#(preview|p)=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);};
+$('pBack').onclick=function(){pvPlayStop();$('mPrev').hidden=true;$('pFrame').srcdoc='';if(/^#(preview|pz|q|p)=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);};
 $('dMob').onclick=function(){$('device').classList.remove('desk');$('dMob').classList.add('on');$('dDesk').classList.remove('on');fitDesk();};
 $('dDesk').onclick=function(){$('device').classList.add('desk');$('dDesk').classList.add('on');$('dMob').classList.remove('on');fitDesk();};
 /* Mobile: desktop view renders the page at 1100 px wide and scales it to fit */
@@ -3533,6 +3572,14 @@ window.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mAdd').hi
 function geoFromQuery(){}
 function handleHash(){
   var h=location.hash;
+  if(h.indexOf('#q=')===0){
+    try{
+      var oq=zUnpack2(h.slice(3));
+      if(oq.g==='es'||oq.g==='en'){LANG=oq.g;refreshUI();}
+      openPreview(sharedBiz(oq),oq.t);
+    }catch(e){toast('That preview link looks broken.');}
+    return;
+  }
   if(h.indexOf('#pz=')===0){
     try{
       var oz=zUnpack(h.slice(4));
