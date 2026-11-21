@@ -583,9 +583,9 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
       <div class="sw" id="themes"></div>
       <div id="sendBox" hidden>
         <h3>Send to this business</h3>
-        <div class="seg" id="modeSeg"><button id="sModeAsk" type="button">1 · Ask permission</button><button id="sModeDemo" type="button">2 · Send demo</button></div>
+        <div class="seg" id="modeSeg"><button id="sModeAsk" type="button">1 · First contact</button><button id="sModeDemo" type="button">2 · Send demo</button></div>
         <p class="modeNote" id="sModeNote"></p>
-        <div class="modeActs"><button class="btn l sm" id="sYes" type="button" hidden>✅ Permission given</button><button class="btn l sm" id="sNo" type="button">🚫 Do not contact</button></div>
+        <div class="modeActs"><button class="btn l sm" id="sNo" type="button">🚫 Do not contact</button></div>
         <div class="seg" id="chSeg"><button id="chWa" type="button">WhatsApp</button><button id="chIg" type="button">Instagram</button><button id="chFb" type="button">Facebook</button><button id="chMail" type="button">Email</button><button id="chSms" type="button">SMS</button></div>
         <div class="seg" id="langSeg"><button id="sEs" type="button">🇪🇸 Español</button><button id="sEn" type="button">🇬🇧 English</button></div>
         <div id="sMailBox" hidden><input id="sMailTo" type="email" inputmode="email" placeholder="email@business.com" aria-label="Recipient email" autocapitalize="off" spellcheck="false"></div>
@@ -1698,38 +1698,37 @@ $('btnClear').onclick=function(){
 };
 
 /* ================= LEAD TRACKER =================
-   Remembers who you already contacted. Status (new / sent / replied / sold), notes and a follow-up date
+   Remembers who you already contacted. Status (new / first contact / demo sent), notes and a follow-up date
    per business, saved in this browser (localStorage 'elx_leads'). CSV export doubles as a backup. */
-var LSTAT=['new','ask','ok','sent','replied','sold','dnc'];
-var LLAB={new:'New',ask:'Permission asked',ok:'Permission given',sent:'Demo sent',replied:'Replied',sold:'Sold',dnc:'Do not contact'};
-var LORD={replied:1,ok:2,ask:3,sent:4,new:5,sold:6,dnc:7};
-Object.assign(ES,{'Showing the permission message again (no link). Their status stays "Permission given". Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de permiso (sin enlace). Su estado sigue en "Permiso dado". Pulsa el paso 2 para volver a la demo.','Permission message sent again. The status stays as it is.':'Mensaje de permiso enviado de nuevo. El estado se queda como está.','Permission asked':'Permiso pedido','Permission given':'Permiso dado','Demo sent':'Demo enviada','Do not contact':'No contactar',
- '1 · Ask permission':'1 · Pedir permiso','2 · Send demo':'2 · Enviar demo','✅ Permission given':'✅ Permiso dado','🚫 Do not contact':'🚫 No contactar','↩ Allow contact again':'↩ Permitir contacto de nuevo',
- 'Step 1: ask permission. This message has no link. The demo unlocks when you mark them as "Permission given".':'Paso 1: pedir permiso. Este mensaje no lleva enlace. La demo se desbloquea cuando los marques como "Permiso dado".',
+var LSTAT=['new','ask','sent','dnc'];
+var LLAB={new:'New',ask:'First contact',sent:'Demo sent',dnc:'Do not contact'};
+var LORD={ask:3,sent:4,new:5,dnc:7};
+Object.assign(ES,{'Showing the first-contact message again (no link). Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de primer contacto (sin enlace). Pulsa el paso 2 para volver a la demo.','First-contact message sent again. The status stays as it is.':'Mensaje de primer contacto enviado de nuevo. El estado se queda como está.','First contact':'Primer contacto','Demo sent':'Demo enviada','Do not contact':'No contactar',
+ '1 · First contact':'1 · Primer contacto','2 · Send demo':'2 · Enviar demo','🚫 Do not contact':'🚫 No contactar','↩ Allow contact again':'↩ Permitir contacto de nuevo',
+ 'Step 1: first contact. This message has no link. The demo unlocks once you have sent it.':'Paso 1: primer contacto. Este mensaje no lleva enlace. La demo se desbloquea cuando lo hayas enviado.',
  'Higher risk for a first message: try Instagram or Facebook first.':'Más riesgo para un primer mensaje: prueba antes con Instagram o Facebook.',
- 'Step 2: they gave permission, so this message includes the demo link.':'Paso 2: dieron permiso, así que este mensaje incluye el enlace a la demo.',
+ 'Step 2: first contact is done, so this message includes the demo link.':'Paso 2: el primer contacto ya está hecho, así que este mensaje incluye el enlace a la demo.',
  'Do not contact: this business asked not to be contacted. Sending is blocked.':'No contactar: este negocio pidió no ser contactado. El envío está bloqueado.',
  'Do not contact: sending is blocked for this business.':'No contactar: el envío está bloqueado para este negocio.',
- 'The demo unlocks when you mark them as "Permission given".':'La demo se desbloquea cuando los marques como "Permiso dado".',
- 'Permission requests today: {0}':'Permisos pedidos hoy: {0}','That is a lot for one day. Slow down to protect your accounts.':'Son muchos para un día. Baja el ritmo para proteger tus cuentas.',
- 'Marked as "Permission asked". Wait for their answer before sending the demo.':'Marcado como "Permiso pedido". Espera su respuesta antes de enviar la demo.',
+ 'The demo unlocks once you have sent the first contact.':'La demo se desbloquea cuando hayas enviado el primer contacto.',
+ 'First contacts today: {0}':'Primeros contactos hoy: {0}','That is a lot for one day. Slow down to protect your accounts.':'Son muchos para un día. Baja el ritmo para proteger tus cuentas.',
+ 'Marked as "First contact". The demo is unlocked.':'Marcado como "Primer contacto". La demo está desbloqueada.',
  'Marked as "Demo sent". You can change it in the lead tracker.':'Marcado como "Demo enviada". Puedes cambiarlo en el seguimiento.',
- 'Marked as "Permission given". The demo is unlocked.':'Marcado como "Permiso dado". La demo está desbloqueada.',
  'Marked as "Do not contact". Sending is blocked.':'Marcado como "No contactar". El envío está bloqueado.',
- 'Step 1: these buttons send a short message asking permission, with no link. The demo unlocks after you mark them as "Permission given".':'Paso 1: estos botones envían un mensaje corto pidiendo permiso, sin enlace. La demo se desbloquea cuando los marques como "Permiso dado".',
- 'You asked this business for permission on {0}. Wait for their answer. Do not send the demo or write again until they reply.':'Pediste permiso a este negocio el {0}. Espera su respuesta. No envíes la demo ni escribas de nuevo hasta que respondan.',
- 'They gave permission (marked {0}). You can now send the demo.':'Dieron permiso (marcado el {0}). Ya puedes enviar la demo.',
+ 'Step 1: these buttons send a short first message with no link. The demo unlocks once you have sent it.':'Paso 1: estos botones envían un primer mensaje corto, sin enlace. La demo se desbloquea cuando lo hayas enviado.',
+ 'You made first contact on {0}. The demo is unlocked.':'Hiciste el primer contacto el {0}. La demo está desbloqueada.',
  'Do not contact. Sending is blocked for this business.':'No contactar. El envío está bloqueado para este negocio.'});
 var LEADS={};try{LEADS=JSON.parse(store('elx_leads')||'{}')||{};}catch(e){LEADS={};}
+for(var _lk in LEADS){if(!LEADS[_lk])continue;var _s=LEADS[_lk].st;if(_s==='ok')LEADS[_lk].st='ask';else if(_s==='replied'||_s==='sold')LEADS[_lk].st='sent';}   // old statuses: "Permission given" = first contact, "Replied"/"Sold" = demo sent
 var LIX=null,showLeads=false,leadFilter='all';
 (function(){var X={
- 'Lead tracker':'Seguimiento de contactos','Lead status':'Estado','Status':'Estado','New':'Nuevo','Sent':'Enviado','Replied':'Respondió','Sold':'Vendido',
+ 'Lead tracker':'Seguimiento de contactos','Lead status':'Estado','Status':'Estado','New':'Nuevo','Sent':'Enviado',
  'Follow-up date':'Fecha de seguimiento','+3 days':'+3 días','+1 week':'+1 semana','Clear date':'Borrar fecha','Notes':'Notas',
  'E.g. Spoke to the owner, call back on Monday':'Ej.: hablé con la persona encargada, llamar de nuevo el lunes',
  'Updated {0}':'Actualizado: {0}',
  'You messaged this business on {0}. Only message again as a planned follow-up.':'Ya escribiste a este negocio el {0}. Vuelve a escribirle solo como seguimiento planificado.',
- 'This business replied (first contacted {0}). Continue that conversation instead of sending a new first message.':'Este negocio ha respondido (primer contacto: {0}). Sigue esa conversación en vez de enviar un primer mensaje nuevo.',
- 'Sold ✓ (first contacted {0}). No more cold messages to this one.':'Vendido ✓ (primer contacto: {0}). No hace falta enviarle más mensajes en frío.',
+
+
  'You already contacted {0} on {1} (status: {2}). Send another message?':'Ya contactaste con {0} el {1} (estado: {2}). ¿Enviar otro mensaje?',
  'Marked as sent. You can change it in the lead tracker.':'Marcado como enviado. Puedes cambiarlo en el seguimiento.',
  'Leads':'Seguimiento','Filter by status':'Filtrar por estado','All statuses':'Todos los estados','Not contacted yet':'Sin contactar','Follow-up due':'Seguimiento pendiente','{0} due':'{0} pendientes',
@@ -1774,7 +1773,7 @@ function leadKeyOf(b){
 }
 function leadOf(b){var k=leadKeyOf(b);return k?LEADS[k]:null;}
 function stOf(b){var l=leadOf(b);return l?l.st:'new';}
-function isDue(l){return !!(l&&l.fu&&l.fu<=todayStr()&&l.st!=='sold'&&l.st!=='dnc');}
+function isDue(l){return !!(l&&l.fu&&l.fu<=todayStr()&&l.st!=='dnc');}
 function setLead(b,patch){
   var k=leadKeyOf(b)||b.id,l=LEADS[k]||{st:'new',notes:'',fu:'',at:0,upd:0};
   for(var p in patch)l[p]=patch[p];
@@ -1794,7 +1793,7 @@ function leadPass(b){
   var l=leadOf(b);if(leadFilter==='due')return isDue(l);
   return (l?l.st:'new')===leadFilter;
 }
-// Pipeline order: follow-ups due first (oldest first), then replied, sent, new, sold
+// Pipeline order: follow-ups due first (oldest first), then first contact, demo sent, new
 function leadSort(a,b){
   var x=leadOf(a),y=leadOf(b);if(!x||!y)return 0;
   var dx=isDue(x),dy=isDue(y);
@@ -1843,7 +1842,7 @@ function clearLeads(rows){
 function renderLeadbar(){
   var el=$('leadbar');if(!el)return;
   var n=Object.keys(LEADS).length,due=0;Object.keys(LEADS).forEach(function(k){if(isDue(LEADS[k]))due++;});
-  var opts=[['all','All statuses'],['new','Not contacted yet'],['ask','Permission asked'],['ok','Permission given'],['sent','Demo sent'],['replied','Replied'],['sold','Sold'],['dnc','Do not contact'],['due','Follow-up due']];
+  var opts=[['all','All statuses'],['new','Not contacted yet'],['ask','First contact'],['sent','Demo sent'],['dnc','Do not contact'],['due','Follow-up due']];
   var h='<button type="button" class="lb'+(showLeads?' on':'')+'" id="btnLeads">'+(showLeads?'✕ '+esc(T('Close leads')):'📋 '+esc(T('Leads')))+' ('+n+')</button>';
   if(due)h+='<button type="button" class="lb due" id="btnDue">📅 '+esc(T('{0} due',due))+'</button>';
   h+='<select id="fLead" aria-label="'+esc(T('Filter by status'))+'">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(leadFilter===o[0]?' selected':'')+'>'+esc(T(o[1]))+'</option>';}).join('')+'</select>';
@@ -1872,12 +1871,10 @@ function fitLeads(){
 function leadWarnText(l){
   if(!l||l.st==='new')return '';
   var d=fmtDate(l.at||l.upd);
-  if(l.st==='ask')return T('You asked this business for permission on {0}. Wait for their answer. Do not send the demo or write again until they reply.',d);
-  if(l.st==='ok')return T('They gave permission (marked {0}). You can now send the demo.',fmtDate(l.upd||l.at));
+  if(l.st==='ask')return T('You made first contact on {0}. The demo is unlocked.',d);
   if(l.st==='dnc')return T('Do not contact. Sending is blocked for this business.');
   if(l.st==='sent')return T('You messaged this business on {0}. Only message again as a planned follow-up.',d);
-  if(l.st==='replied')return T('This business replied (first contacted {0}). Continue that conversation instead of sending a new first message.',d);
-  return T('Sold ✓ (first contacted {0}). No more cold messages to this one.',d);
+  return '';
 }
 function leadBoxHTML(b){
   if(!b||b.id==='shared')return '';
@@ -1893,7 +1890,7 @@ function refreshLeadBox(b){
   var box=$('leadBox');if(!box)return;
   var l=leadOf(b),st=l?l.st:'new';
   [].forEach.call(box.querySelectorAll('.lseg button'),function(x){x.classList.toggle('on',x.dataset.s===st);});
-  var w=$('leadWarn'),t=leadWarnText(l);w.hidden=!t;w.textContent=t;w.classList.toggle('ok',st==='sold'||st==='ok');w.classList.toggle('bad',st==='dnc');
+  var w=$('leadWarn'),t=leadWarnText(l);w.hidden=!t;w.textContent=t;w.classList.toggle('ok',st==='ask');w.classList.toggle('bad',st==='dnc');
   $('leadFuBox').classList.toggle('due',isDue(l));
   $('leadUpd').textContent=l&&l.upd?T('Updated {0}',fmtDate(l.upd)):'';
 }
@@ -1908,7 +1905,7 @@ function wireLeadBox(b){
   ta.onchange=function(){clearTimeout(tm);setLead(b,{notes:ta.value});};
 }
 // Before sending: warn if this business was already contacted. After sending: mark it as "sent".
-function canDemo(b){var x=stOf(b);return x==='ok'||x==='sent'||x==='replied'||x==='sold';}
+function canDemo(b){var x=stOf(b);return x==='ask'||x==='sent';}
 function isDnc(b){return stOf(b)==='dnc';}
 var dsRefresh=null;
 function askCount(){try{var o=JSON.parse(store('elx_askday')||'{}');return o.d===todayStr()?(o.n||0):0;}catch(e){return 0;}}
@@ -1917,20 +1914,21 @@ function askBump(){store('elx_askday',JSON.stringify({d:todayStr(),n:askCount()+
 function okToSend(b){
   var l=leadOf(b),st=l?l.st:'new';
   if(st==='dnc'){toast('Do not contact: sending is blocked for this business.');return false;}
-  if(st==='new'||st==='ok')return true;
+  if(st==='new')return true;
+  if(st==='ask'&&!(pvB&&pvB.id===b.id&&sendView==='ask'))return true;   // demo after first contact: no warning
   return confirm(T('You already contacted {0} on {1} (status: {2}). Send another message?',b.name,fmtDate(l.at||l.upd),T(LLAB[st])));
 }
-// After sending: first message (no link) -> "Permission asked"; demo message -> "Demo sent". Shows its own toast.
+// After sending: first message (no link) -> "First contact"; demo message -> "Demo sent". Shows its own toast.
 function markSent(b){
   if(!b||b.id==='shared')return;
   var st=stOf(b);
-  if(canDemo(b)&&pvB&&pvB.id===b.id&&!$('mPrev').hidden&&sendView==='ask'){askBump();toast('Permission message sent again. The status stays as it is.');if(pvB&&!$('mPrev').hidden)refreshSend();return false;}
+  if(canDemo(b)&&pvB&&pvB.id===b.id&&!$('mPrev').hidden&&sendView==='ask'){askBump();toast('First-contact message sent again. The status stays as it is.');if(pvB&&!$('mPrev').hidden)refreshSend();return false;}
   if(canDemo(b)){
-    if(st!=='ok')return;
+    if(st!=='ask')return;
     setLead(b,{st:'sent'});toast('Marked as "Demo sent". You can change it in the lead tracker.');
   }else{
     if(st==='ask'||st==='dnc')return;
-    setLead(b,{st:'ask'});askBump();toast('Marked as "Permission asked". Wait for their answer before sending the demo.');
+    setLead(b,{st:'ask'});askBump();toast('Marked as "First contact". The demo is unlocked.');
   }
   if($('leadBox')&&cur)refreshLeadBox(cur);
   if(dsRefresh)dsRefresh();
@@ -2431,7 +2429,7 @@ function renderDetail(b){
       var emN=emailOf(b);$('dSendTo').textContent+=' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
       var dnc=isDnc(b),ask=!canDemo(b);
       if(dnc)$('dSendTo').textContent=T('Do not contact: sending is blocked for this business.');
-      else if(ask)$('dSendTo').textContent=T('Step 1: these buttons send a short message asking permission, with no link. The demo unlocks after you mark them as "Permission given".')+' '+(n?T('To: {0}',ph):T('No phone number listed for this business. The message will be copied so you can paste it in their chat.'))+' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
+      else if(ask)$('dSendTo').textContent=T('Step 1: these buttons send a short first message with no link. The demo unlocks once you have sent it.')+' '+(n?T('To: {0}',ph):T('No phone number listed for this business. The message will be copied so you can paste it in their chat.'))+' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
       ['dSend','dSendMail','dSendIg','dSendFb'].forEach(function(id){var e=$(id);if(e)e.disabled=dnc;});
     };
     refreshDSend();dsRefresh=refreshDSend;
@@ -2967,7 +2965,7 @@ function buildChannelMsg(b,ch,lang,found){
   return addOptOut(fillTpl(t,b,lang,line),lang);
 }
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
-// ---- Step 1 messages: ask permission, no link, with sender and opt-out
+// ---- Step 1 messages: first contact, no link, with sender and opt-out
 var TPL_ASK={
  wa:{
   es:'Hola! 👋 Soy de EasyLandX. Vi {name} y he preparado un boceto visual gratuito de cómo podría ser su página web, sin compromiso. ¿Le parece bien que se lo envíe por aquí?\n\nSi prefiere que no le escriba más, dígamelo o escriba a {mail} y no volveré a contactarle.\n@EasyLandX (propuesta comercial)',
@@ -3003,16 +3001,15 @@ function refreshSend(force){
   if(md!==sendModeLast){sendDrafts={};sendEdited=false;sendModeLast=md;}
   if(force){sendDrafts={};sendEdited=false;}
   $('sModeAsk').classList.toggle('on',md==='ask');$('sModeAsk').setAttribute('aria-pressed',md==='ask');$('sModeDemo').classList.toggle('on',md==='demo');$('sModeDemo').classList.toggle('lock',!dm);
-  $('sModeAsk').textContent=T('1 · Ask permission');$('sModeDemo').textContent=(dm?'':'🔒 ')+T('2 · Send demo');
+  $('sModeAsk').textContent=T('1 · First contact');$('sModeDemo').textContent=(dm?'':'🔒 ')+T('2 · Send demo');
   var mn=$('sModeNote'),tx='';
   if(md==='dnc')tx=T('Do not contact: this business asked not to be contacted. Sending is blocked.');
-  else if(md==='ask'&&dm)tx=T('Showing the permission message again (no link). Their status stays "Permission given". Press step 2 to go back to the demo.');
-  else if(md==='ask'){tx=T('Step 1: ask permission. This message has no link. The demo unlocks when you mark them as "Permission given".');if(sendCh==='wa'||sendCh==='mail'||sendCh==='sms')tx+=' '+T('Higher risk for a first message: try Instagram or Facebook first.');}
-  else tx=T('Step 2: they gave permission, so this message includes the demo link.');
+  else if(md==='ask'&&dm)tx=T('Showing the first-contact message again (no link). Press step 2 to go back to the demo.');
+  else if(md==='ask'){tx=T('Step 1: first contact. This message has no link. The demo unlocks once you have sent it.');if(sendCh==='wa'||sendCh==='mail'||sendCh==='sms')tx+=' '+T('Higher risk for a first message: try Instagram or Facebook first.');}
+  else tx=T('Step 2: first contact is done, so this message includes the demo link.');
   mn.textContent=tx;mn.className='modeNote '+(md==='dnc'?'bad':(md==='ask'?'warn':'ok'));
-  $('sYes').hidden=!(md==='ask'&&!dm);
-  $('sYes').textContent=T('✅ Permission given');$('sNo').textContent=T(dnc0?'↩ Allow contact again':'🚫 Do not contact');
-  var sd=$('sDay');sd.hidden=md!=='ask';if(!sd.hidden){var ac=askCount();sd.textContent=T('Permission requests today: {0}',ac)+(ac>=15?' · '+T('That is a lot for one day. Slow down to protect your accounts.'):'');}
+  $('sNo').textContent=T(dnc0?'↩ Allow contact again':'🚫 Do not contact');
+  var sd=$('sDay');sd.hidden=md!=='ask';if(!sd.hidden){var ac=askCount();sd.textContent=T('First contacts today: {0}',ac)+(ac>=15?' · '+T('That is a lot for one day. Slow down to protect your accounts.'):'');}
   $('sEs').classList.toggle('on',sendLang==='es');$('sEn').classList.toggle('on',sendLang==='en');
   CHANNELS.forEach(function(c){$('ch'+({wa:'Wa',ig:'Ig',fb:'Fb',mail:'Mail',sms:'Sms'}[c])).classList.toggle('on',sendCh===c);});
   $('sFoundBox').hidden=!foundLine(pvB,sendLang)||sendCh==='sms';$('sFound').checked=sendFound;
@@ -3046,9 +3043,8 @@ function setSendCh(c){
 }
 $('chWa').onclick=function(){setSendCh('wa');};$('chIg').onclick=function(){setSendCh('ig');};$('chFb').onclick=function(){setSendCh('fb');};$('chMail').onclick=function(){setSendCh('mail');};$('chSms').onclick=function(){setSendCh('sms');};
 $('sFound').onchange=function(){sendFound=this.checked;sendDrafts={};sendEdited=false;refreshSend();};
-$('sModeDemo').onclick=function(){if(!pvB||isDnc(pvB))return;if(!canDemo(pvB)){toast('The demo unlocks when you mark them as "Permission given".');return;}sendView='demo';refreshSend(true);};
+$('sModeDemo').onclick=function(){if(!pvB||isDnc(pvB))return;if(!canDemo(pvB)){toast('The demo unlocks once you have sent the first contact.');return;}sendView='demo';refreshSend(true);};
 $('sModeAsk').onclick=function(){if(!pvB||isDnc(pvB))return;if(canDemo(pvB)){sendView='ask';refreshSend(true);}};
-$('sYes').onclick=function(){if(!pvB)return;setLead(pvB,{st:'ok'});if($('leadBox')&&cur)refreshLeadBox(cur);if(dsRefresh)dsRefresh();refreshSend(true);toast('Marked as "Permission given". The demo is unlocked.');};
 $('sNo').onclick=function(){if(!pvB)return;var was=isDnc(pvB);setLead(pvB,{st:was?'new':'dnc'});if($('leadBox')&&cur)refreshLeadBox(cur);if(dsRefresh)dsRefresh();refreshSend(true);if(!was)toast('Marked as "Do not contact". Sending is blocked.');};
 $('sEs').onclick=function(){sendLang='es';store('elx_sendlang','es');refreshSend(true);};
 $('sEn').onclick=function(){sendLang='en';store('elx_sendlang','en');refreshSend(true);};
