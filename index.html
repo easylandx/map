@@ -138,6 +138,27 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 .helpbtn:hover{border-color:var(--teal2)}
 #mHelp{position:fixed;inset:0;z-index:61;background:rgba(29,43,42,.5);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 #mHelp[hidden]{display:none}
+.legalLink{font-weight:700;color:var(--teal)!important;white-space:nowrap}
+#mLegal{position:fixed;inset:0;z-index:62;background:rgba(29,43,42,.5);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+#mLegal[hidden]{display:none}
+#legalBox{background:#fff;border-radius:22px;padding:20px 22px;width:min(680px,100%);max-height:100%;overflow:auto;box-shadow:var(--shadow);display:grid;gap:12px;align-content:start;overscroll-behavior:contain}
+#legalBox .lgHead{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:-20px;background:#fff;padding:2px 0 8px;margin-top:-2px;z-index:1}
+#legalBox h3{margin:0;font-size:1.15rem}
+#legalX{border:0;background:var(--bg);width:32px;height:32px;border-radius:50%;font-size:.9rem;font-weight:800;color:var(--mute)}
+#legalBody{display:grid;gap:8px;font-size:.86rem;line-height:1.55;color:var(--ink)}
+#legalBody h4{margin:14px 0 2px;font-size:1.02rem;color:var(--teal)}
+#legalBody h5{margin:8px 0 0;font-size:.9rem}
+#legalBody p{margin:0;color:#34413f}
+#legalBody ul{margin:0;padding-left:20px;display:grid;gap:4px;color:#34413f}
+#legalBody .lgDate{font-size:.78rem;color:var(--mute)}
+#legalBox .btn{margin:4px 0 0}
+#cookieBar{position:fixed;z-index:75;left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));max-width:520px;max-height:calc(100dvh - 32px);overflow:auto;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px 18px;display:grid;gap:12px}
+#cookieBar[hidden]{display:none}
+#cookieBar p{margin:0;font-size:.86rem;line-height:1.5;color:var(--ink)}
+#cookieBar p a{font-weight:700;color:var(--teal);text-decoration:underline;cursor:pointer}
+#cookieBar .row{margin:0}
+#cookieBar .row .btn{flex:1;margin:0}
+@media (min-width:821px){#cookieBar{left:440px}}
 #helpBox{background:#fff;border-radius:22px;padding:20px;width:min(480px,100%);max-height:100%;overflow:auto;box-shadow:var(--shadow);display:grid;gap:12px;align-content:start;overscroll-behavior:contain}
 #helpBox h3{margin:0;font-size:1.15rem}
 #helpBox .btn{margin:4px 0 0}
@@ -381,6 +402,24 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
 .lseg button.on.s-sold{background:#e0f6e8;color:#13703a}
 .lwarn{background:var(--soft-amber);color:#6b4300;border-radius:12px;padding:9px 11px 9px 11px;font-size:.8rem;line-height:1.45;margin-bottom:10px}
 .lwarn.ok{background:#e0f6e8;color:#0f5a2e}
+.lwarn.bad{background:#fde2e2;color:#8a1c1c}
+.lt.s-ask{background:#efe7ff;color:#5b34b0}
+.lt.s-ok{background:var(--soft-teal);color:var(--teal)}
+.lt.s-dnc{background:#fde2e2;color:#a31d1d}
+.lseg{flex-wrap:wrap}
+.lseg button{flex:1 1 30%;font-size:.76rem}
+.lseg button.on.s-ask{background:#efe7ff;color:#5b34b0}
+.lseg button.on.s-ok{background:var(--soft-teal);color:var(--teal)}
+.lseg button.on.s-dnc{background:#fde2e2;color:#a31d1d}
+#sendBox .modeNote{margin:0 0 10px;padding:9px 11px;border-radius:12px;font-size:.78rem;line-height:1.45;font-weight:600}
+#sendBox .modeNote.warn{background:var(--soft-amber);color:#6b4300}
+#sendBox .modeNote.ok{background:#e0f6e8;color:#0f5a2e}
+#sendBox .modeNote.bad{background:#fde2e2;color:#8a1c1c}
+#sendBox .modeDay{margin:8px 0 10px;font-size:.78rem;color:var(--mute);font-weight:600}
+#sendBox .modeActs{display:flex;gap:8px;margin:0 0 10px}
+#sendBox .modeActs .btn{flex:1;margin:0}
+#sendBox .seg button.lock{opacity:.6}
+#sendBox .seg button:disabled,#sGo:disabled,.row .btn:disabled{opacity:.45;cursor:not-allowed}
 .lfu{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .lfu label,.lnotes label{display:block;width:100%;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
 .lfu input[type=date]{flex:1;min-width:130px;border:1.5px solid var(--line);border-radius:12px;padding:9px 10px 9px 10px;font-size:.9rem;font-weight:600;background:#fff;outline:none}
@@ -490,6 +529,14 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
 </div>
 
 <!-- Help -->
+<div id="mLegal" hidden role="dialog" aria-modal="true" aria-labelledby="legalT">
+  <div id="legalBox">
+    <div class="lgHead"><h3 id="legalT">Legal notice and privacy</h3><button type="button" id="legalX" aria-label="Close">✕</button></div>
+    <div id="legalBody"></div>
+    <button type="button" class="btn p" id="legalClose">Close</button>
+  </div>
+</div>
+
 <div id="mHelp" hidden role="dialog" aria-modal="true" aria-labelledby="helpT">
   <div id="helpBox">
     <h3 id="helpT">Help</h3>
@@ -536,12 +583,16 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
       <div class="sw" id="themes"></div>
       <div id="sendBox" hidden>
         <h3>Send to this business</h3>
+        <div class="seg" id="modeSeg"><button id="sModeAsk" type="button">1 · Ask permission</button><button id="sModeDemo" type="button">2 · Send demo</button></div>
+        <p class="modeNote" id="sModeNote"></p>
+        <div class="modeActs"><button class="btn l sm" id="sYes" type="button" hidden>✅ Permission given</button><button class="btn l sm" id="sNo" type="button">🚫 Do not contact</button></div>
         <div class="seg" id="chSeg"><button id="chWa" type="button">WhatsApp</button><button id="chIg" type="button">Instagram</button><button id="chFb" type="button">Facebook</button><button id="chMail" type="button">Email</button><button id="chSms" type="button">SMS</button></div>
         <div class="seg" id="langSeg"><button id="sEs" type="button">🇪🇸 Español</button><button id="sEn" type="button">🇬🇧 English</button></div>
         <div id="sMailBox" hidden><input id="sMailTo" type="email" inputmode="email" placeholder="email@business.com" aria-label="Recipient email" autocapitalize="off" spellcheck="false"></div>
         <label id="sFoundBox" hidden><input type="checkbox" id="sFound"> <span id="sFoundLbl">Mention what I found (Instagram, website)</span></label>
         <textarea id="sMsg" aria-label="Message"></textarea>
         <div id="sCount" hidden></div>
+        <p class="modeDay" id="sDay" hidden></p>
         <p id="sTo"></p>
         <button class="btn p sm" id="sGo" type="button">💬 Open WhatsApp with this message</button>
         <button class="btn l sm" id="sTplBtn" type="button">✏️ Edit templates</button>
@@ -575,8 +626,6 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
 </div>
 
 <script>/* fflate (MIT) deflate/inflate, used to shorten preview links */(()=>{var I=Uint8Array,H=Uint16Array,mr=Int32Array,fr=new I([0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,0,0,0]),hr=new I([0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,0,0]),pr=new I([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]),Sr=function(r,n){for(var t=new H(31),e=0;e<31;++e)t[e]=n+=1<<r[e-1];for(var i=new mr(t[30]),e=1;e<30;++e)for(var a=t[e];a<t[e+1];++a)i[a]=a-t[e]<<5|e;return{b:t,r:i}},Ur=Sr(fr,2),Fr=Ur.b,gr=Ur.r;Fr[28]=258,gr[258]=28;var Dr=Sr(hr,0),Er=Dr.b,zr=Dr.r,yr=new H(32768);for(l=0;l<32768;++l)j=(l&43690)>>1|(l&21845)<<1,j=(j&52428)>>2|(j&13107)<<2,j=(j&61680)>>4|(j&3855)<<4,yr[l]=((j&65280)>>8|(j&255)<<8)>>1;var j,l,X=(function(r,n,t){for(var e=r.length,i=0,a=new H(n);i<e;++i)r[i]&&++a[r[i]-1];var h=new H(n);for(i=1;i<n;++i)h[i]=h[i-1]+a[i-1]<<1;var c;if(t){c=new H(1<<n);var p=15-n;for(i=0;i<e;++i)if(r[i])for(var x=i<<4|r[i],o=n-r[i],s=h[r[i]-1]++<<o,u=s|(1<<o)-1;s<=u;++s)c[yr[s]>>p]=x}else for(c=new H(e),i=0;i<e;++i)r[i]&&(c[i]=yr[h[r[i]-1]++]>>15-r[i]);return c}),k=new I(288);for(l=0;l<144;++l)k[l]=8;var l;for(l=144;l<256;++l)k[l]=9;var l;for(l=256;l<280;++l)k[l]=7;var l;for(l=280;l<288;++l)k[l]=8;var l,ar=new I(32);for(l=0;l<32;++l)ar[l]=5;var l,Gr=X(k,9,0),Or=X(k,9,1),qr=X(ar,5,0),Lr=X(ar,5,1),lr=function(r){for(var n=r[0],t=1;t<r.length;++t)r[t]>n&&(n=r[t]);return n},V=function(r,n,t){var e=n/8|0;return(r[e]|r[e+1]<<8)>>(n&7)&t},vr=function(r,n){var t=n/8|0;return(r[t]|r[t+1]<<8|r[t+2]<<16)>>(n&7)},xr=function(r){return(r+7)/8|0},Tr=function(r,n,t){return(n==null||n<0)&&(n=0),(t==null||t>r.length)&&(t=r.length),new I(r.subarray(n,t))};var Pr=["unexpected EOF","invalid block type","invalid length/literal","invalid distance","stream finished","no stream handler",,"no callback","invalid UTF-8 data","extra field too long","date not in range 1980-2099","filename too long","stream finishing","invalid zip data"],K=function(r,n,t){var e=new Error(n||Pr[r]);if(e.code=r,Error.captureStackTrace&&Error.captureStackTrace(e,K),!t)throw e;return e},$r=function(r,n,t,e){var i=r.length,a=e?e.length:0;if(!i||n.f&&!n.l)return t||new I(0);var h=!t,c=h||n.i!=2,p=n.i;h&&(t=new I(i*3));var x=function(nr){var tr=t.length;if(nr>tr){var _=new I(Math.max(tr*2,nr));_.set(t),t=_}},o=n.f||0,s=n.p||0,u=n.b||0,g=n.l,D=n.d,y=n.m,E=n.n,R=i*8;do{if(!g){o=V(r,s,1);var q=V(r,s+1,3);if(s+=3,q)if(q==1)g=Or,D=Lr,y=9,E=5;else if(q==2){var Z=V(r,s,31)+257,M=V(r,s+10,15)+4,v=Z+V(r,s+5,31)+1;s+=14;for(var f=new I(v),S=new I(19),z=0;z<M;++z)S[pr[z]]=V(r,s+z*3,7);s+=M*3;for(var C=lr(S),Q=(1<<C)-1,L=X(S,C,1),z=0;z<v;){var G=L[V(r,s,Q)];s+=G&15;var A=G>>4;if(A<16)f[z++]=A;else{var U=0,w=0;for(A==16?(w=3+V(r,s,3),s+=2,U=f[z-1]):A==17?(w=3+V(r,s,7),s+=3):A==18&&(w=11+V(r,s,127),s+=7);w--;)f[z++]=U}}var O=f.subarray(0,Z),F=f.subarray(Z);y=lr(O),E=lr(F),g=X(O,y,1),D=X(F,E,1)}else K(1);else{var A=xr(s)+4,B=r[A-4]|r[A-3]<<8,T=A+B;if(T>i){p&&K(0);break}c&&x(u+B),t.set(r.subarray(A,T),u),n.b=u+=B,n.p=s=T*8,n.f=o;continue}if(s>R){p&&K(0);break}}c&&x(u+131072);for(var rr=(1<<y)-1,N=(1<<E)-1,Y=s;;Y=s){var U=g[vr(r,s)&rr],P=U>>4;if(s+=U&15,s>R){p&&K(0);break}if(U||K(2),P<256)t[u++]=P;else if(P==256){Y=s,g=null;break}else{var $=P-254;if(P>264){var z=P-257,m=fr[z];$=V(r,s,(1<<m)-1)+Fr[z],s+=m}var W=D[vr(r,s)&N],d=W>>4;W||K(3),s+=W&15;var F=Er[d];if(d>3){var m=hr[d];F+=vr(r,s)&(1<<m)-1,s+=m}if(s>R){p&&K(0);break}c&&x(u+131072);var b=u+$;if(u<F){var or=a-F,sr=Math.min(F,b);for(or+u<0&&K(3);u<sr;++u)t[u]=e[or+u]}for(;u<b;++u)t[u]=t[u-F]}}n.l=g,n.p=Y,n.b=u,n.f=o,g&&(o=1,n.m=y,n.d=D,n.n=E)}while(!o);return u!=t.length&&h?Tr(t,0,u):t.subarray(0,u)},J=function(r,n,t){t<<=n&7;var e=n/8|0;r[e]|=t,r[e+1]|=t>>8},er=function(r,n,t){t<<=n&7;var e=n/8|0;r[e]|=t,r[e+1]|=t>>8,r[e+2]|=t>>16},cr=function(r,n){for(var t=[],e=0;e<r.length;++e)r[e]&&t.push({s:e,f:r[e]});var i=t.length,a=t.slice();if(!i)return{t:Ir,l:0};if(i==1){var h=new I(t[0].s+1);return h[t[0].s]=1,{t:h,l:1}}t.sort(function(T,Z){return T.f-Z.f}),t.push({s:-1,f:25001});var c=t[0],p=t[1],x=0,o=1,s=2;for(t[0]={s:-1,f:c.f+p.f,l:c,r:p};o!=i-1;)c=t[t[x].f<t[s].f?x++:s++],p=t[x!=o&&t[x].f<t[s].f?x++:s++],t[o++]={s:-1,f:c.f+p.f,l:c,r:p};for(var u=a[0].s,e=1;e<i;++e)a[e].s>u&&(u=a[e].s);var g=new H(u+1),D=wr(t[o-1],g,0);if(D>n){var e=0,y=0,E=D-n,R=1<<E;for(a.sort(function(Z,M){return g[M.s]-g[Z.s]||Z.f-M.f});e<i;++e){var q=a[e].s;if(g[q]>n)y+=R-(1<<D-g[q]),g[q]=n;else break}for(y>>=E;y>0;){var A=a[e].s;g[A]<n?y-=1<<n-g[A]++-1:++e}for(;e>=0&&y;--e){var B=a[e].s;g[B]==n&&(--g[B],++y)}D=n}return{t:new I(g),l:D}},wr=function(r,n,t){return r.s==-1?Math.max(wr(r.l,n,t+1),wr(r.r,n,t+1)):n[r.s]=t},Ar=function(r){for(var n=r.length;n&&!r[--n];);for(var t=new H(++n),e=0,i=r[0],a=1,h=function(p){t[e++]=p},c=1;c<=n;++c)if(r[c]==i&&c!=n)++a;else{if(!i&&a>2){for(;a>138;a-=138)h(32754);a>2&&(h(a>10?a-11<<5|28690:a-3<<5|12305),a=0)}else if(a>3){for(h(i),--a;a>6;a-=6)h(8304);a>2&&(h(a-3<<5|8208),a=0)}for(;a--;)h(i);a=1,i=r[c]}return{c:t.subarray(0,e),n}},ir=function(r,n){for(var t=0,e=0;e<n.length;++e)t+=r[e]*n[e];return t},Cr=function(r,n,t){var e=t.length,i=xr(n+2);r[i]=e&255,r[i+1]=e>>8,r[i+2]=r[i]^255,r[i+3]=r[i+1]^255;for(var a=0;a<e;++a)r[i+a+4]=t[a];return(i+4+e)*8},Mr=function(r,n,t,e,i,a,h,c,p,x,o){J(n,o++,t),++i[256];for(var s=cr(i,15),u=s.t,g=s.l,D=cr(a,15),y=D.t,E=D.l,R=Ar(u),q=R.c,A=R.n,B=Ar(y),T=B.c,Z=B.n,M=new H(19),v=0;v<q.length;++v)++M[q[v]&31];for(var v=0;v<T.length;++v)++M[T[v]&31];for(var f=cr(M,7),S=f.t,z=f.l,C=19;C>4&&!S[pr[C-1]];--C);var Q=x+5<<3,L=ir(i,k)+ir(a,ar)+h,G=ir(i,u)+ir(a,y)+h+14+3*C+ir(M,S)+2*M[16]+3*M[17]+7*M[18];if(p>=0&&Q<=L&&Q<=G)return Cr(n,o,r.subarray(p,p+x));var U,w,O,F;if(J(n,o,1+(G<L)),o+=2,G<L){U=X(u,g,0),w=u,O=X(y,E,0),F=y;var rr=X(S,z,0);J(n,o,A-257),J(n,o+5,Z-1),J(n,o+10,C-4),o+=14;for(var v=0;v<C;++v)J(n,o+3*v,S[pr[v]]);o+=3*C;for(var N=[q,T],Y=0;Y<2;++Y)for(var P=N[Y],v=0;v<P.length;++v){var $=P[v]&31;J(n,o,rr[$]),o+=S[$],$>15&&(J(n,o,P[v]>>5&127),o+=P[v]>>12)}}else U=Gr,w=k,O=qr,F=ar;for(var v=0;v<c;++v){var m=e[v];if(m>255){var $=m>>18&31;er(n,o,U[$+257]),o+=w[$+257],$>7&&(J(n,o,m>>23&31),o+=fr[$]);var W=m&31;er(n,o,O[W]),o+=F[W],W>3&&(er(n,o,m>>5&8191),o+=hr[W])}else er(n,o,U[m]),o+=w[m]}return er(n,o,U[256]),o+w[256]},Hr=new mr([65540,131080,131088,131104,262176,1048704,1048832,2114560,2117632]),Ir=new I(0),Nr=function(r,n,t,e,i,a){var h=a.z||r.length,c=new I(e+h+5*(1+Math.ceil(h/7e3))+i),p=c.subarray(e,c.length-i),x=a.l,o=(a.r||0)&7;if(n){o&&(p[0]=a.r>>3);for(var s=Hr[n-1],u=s>>13,g=s&8191,D=(1<<t)-1,y=a.p||new H(32768),E=a.h||new H(D+1),R=Math.ceil(t/3),q=2*R,A=function(ur){return(r[ur]^r[ur+1]<<R^r[ur+2]<<q)&D},B=new mr(25e3),T=new H(288),Z=new H(32),M=0,v=0,f=a.i||0,S=0,z=a.w||0,C=0;f+2<h;++f){var Q=A(f),L=f&32767,G=E[Q];if(y[L]=G,E[Q]=L,z<=f){var U=h-f;if((M>7e3||S>24576)&&(U>423||!x)){o=Mr(r,p,0,B,T,Z,v,S,C,f-C,o),S=M=v=0,C=f;for(var w=0;w<286;++w)T[w]=0;for(var w=0;w<30;++w)Z[w]=0}var O=2,F=0,rr=g,N=L-G&32767;if(U>2&&Q==A(f-N))for(var Y=Math.min(u,U)-1,P=Math.min(32767,f),$=Math.min(258,U);N<=P&&--rr&&L!=G;){if(r[f+O]==r[f+O-N]){for(var m=0;m<$&&r[f+m]==r[f+m-N];++m);if(m>O){if(O=m,F=N,m>Y)break;for(var W=Math.min(N,m-2),d=0,w=0;w<W;++w){var b=f-N+w&32767,or=y[b],sr=b-or&32767;sr>d&&(d=sr,G=b)}}}L=G,G=y[L],N+=L-G&32767}if(F){B[S++]=268435456|gr[O]<<18|zr[F];var nr=gr[O]&31,tr=zr[F]&31;v+=fr[nr]+hr[tr],++T[257+nr],++Z[tr],z=f+O,++M}else B[S++]=r[f],++T[r[f]]}}for(f=Math.max(f,z);f<h;++f)B[S++]=r[f],++T[r[f]];o=Mr(r,p,x,B,T,Z,v,S,C,f-C,o),x||(a.r=o&7|p[o/8|0]<<3,o-=7,a.h=E,a.p=y,a.i=f,a.w=z)}else{for(var f=a.w||0;f<h+x;f+=65535){var _=f+65535;_>=h&&(p[o/8|0]=x,_=h),o=Cr(p,o+1,r.subarray(f,_))}a.i=h}return Tr(c,0,e+xr(o)+i)};var Rr=function(r,n,t,e,i){if(!i&&(i={l:1},n.dictionary)){var a=n.dictionary.subarray(-32768),h=new I(a.length+r.length);h.set(a),h.set(r,a.length),r=h,i.w=a.length}return Nr(r,n.level==null?6:n.level,n.mem==null?i.l?Math.ceil(Math.max(8,Math.min(13,Math.log(r.length)))*1.5):20:12+n.mem,t,e,i)};function Br(r,n){return Rr(r,n||{},0,0)}function Zr(r,n){return $r(r,{i:2},n&&n.out,n&&n.dictionary)}var Vr=typeof TextDecoder<"u"&&new TextDecoder,Wr=0;try{Vr.decode(Ir,{stream:!0}),Wr=1}catch{}window.ELXZ={d:Br,i:Zr};})();</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-C32H6BV2R3"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-C32H6BV2R3');</script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
 (function(){
@@ -633,7 +682,7 @@ var STATIC=[
 function applyStatic(){
   STATIC.forEach(function(r){var el=document.querySelector(r[0]);if(!el)return;var v=T(r[2]);if(r[1])el.setAttribute(r[1],v);else el.textContent=v;});
   if(typeof updPlayBtn==='function')updPlayBtn();
-  $('foot').innerHTML=T(FOOT_EN);
+  $('foot').innerHTML=T(FOOT_EN)+' · <a href="#" id="legalLink" class="legalLink">'+esc(T('Legal notice and privacy'))+'</a>';
 }
 function toast(){var e=$('toast');e.textContent=T.apply(null,arguments);e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){e.classList.remove('on');},2800);}
 // Instagram: ig.me/m/<handle> opens the chat in the phone app, but on a computer it often fails. On a computer open the profile instead (the message is already copied: press Message and paste).
@@ -1633,9 +1682,26 @@ $('btnClear').onclick=function(){
 /* ================= LEAD TRACKER =================
    Remembers who you already contacted. Status (new / sent / replied / sold), notes and a follow-up date
    per business, saved in this browser (localStorage 'elx_leads'). CSV export doubles as a backup. */
-var LSTAT=['new','sent','replied','sold'];
-var LLAB={new:'New',sent:'Sent',replied:'Replied',sold:'Sold'};
-var LORD={replied:1,sent:2,new:3,sold:4};
+var LSTAT=['new','ask','ok','sent','replied','sold','dnc'];
+var LLAB={new:'New',ask:'Permission asked',ok:'Permission given',sent:'Demo sent',replied:'Replied',sold:'Sold',dnc:'Do not contact'};
+var LORD={replied:1,ok:2,ask:3,sent:4,new:5,sold:6,dnc:7};
+Object.assign(ES,{'Showing the permission message again (no link). Their status stays "Permission given". Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de permiso (sin enlace). Su estado sigue en "Permiso dado". Pulsa el paso 2 para volver a la demo.','Permission message sent again. The status stays as it is.':'Mensaje de permiso enviado de nuevo. El estado se queda como está.','Permission asked':'Permiso pedido','Permission given':'Permiso dado','Demo sent':'Demo enviada','Do not contact':'No contactar',
+ '1 · Ask permission':'1 · Pedir permiso','2 · Send demo':'2 · Enviar demo','✅ Permission given':'✅ Permiso dado','🚫 Do not contact':'🚫 No contactar','↩ Allow contact again':'↩ Permitir contacto de nuevo',
+ 'Step 1: ask permission. This message has no link. The demo unlocks when you mark them as "Permission given".':'Paso 1: pedir permiso. Este mensaje no lleva enlace. La demo se desbloquea cuando los marques como "Permiso dado".',
+ 'Higher risk for a first message: try Instagram or Facebook first.':'Más riesgo para un primer mensaje: prueba antes con Instagram o Facebook.',
+ 'Step 2: they gave permission, so this message includes the demo link.':'Paso 2: dieron permiso, así que este mensaje incluye el enlace a la demo.',
+ 'Do not contact: this business asked not to be contacted. Sending is blocked.':'No contactar: este negocio pidió no ser contactado. El envío está bloqueado.',
+ 'Do not contact: sending is blocked for this business.':'No contactar: el envío está bloqueado para este negocio.',
+ 'The demo unlocks when you mark them as "Permission given".':'La demo se desbloquea cuando los marques como "Permiso dado".',
+ 'Permission requests today: {0}':'Permisos pedidos hoy: {0}','That is a lot for one day. Slow down to protect your accounts.':'Son muchos para un día. Baja el ritmo para proteger tus cuentas.',
+ 'Marked as "Permission asked". Wait for their answer before sending the demo.':'Marcado como "Permiso pedido". Espera su respuesta antes de enviar la demo.',
+ 'Marked as "Demo sent". You can change it in the lead tracker.':'Marcado como "Demo enviada". Puedes cambiarlo en el seguimiento.',
+ 'Marked as "Permission given". The demo is unlocked.':'Marcado como "Permiso dado". La demo está desbloqueada.',
+ 'Marked as "Do not contact". Sending is blocked.':'Marcado como "No contactar". El envío está bloqueado.',
+ 'Step 1: these buttons send a short message asking permission, with no link. The demo unlocks after you mark them as "Permission given".':'Paso 1: estos botones envían un mensaje corto pidiendo permiso, sin enlace. La demo se desbloquea cuando los marques como "Permiso dado".',
+ 'You asked this business for permission on {0}. Wait for their answer. Do not send the demo or write again until they reply.':'Pediste permiso a este negocio el {0}. Espera su respuesta. No envíes la demo ni escribas de nuevo hasta que respondan.',
+ 'They gave permission (marked {0}). You can now send the demo.':'Dieron permiso (marcado el {0}). Ya puedes enviar la demo.',
+ 'Do not contact. Sending is blocked for this business.':'No contactar. El envío está bloqueado para este negocio.'});
 var LEADS={};try{LEADS=JSON.parse(store('elx_leads')||'{}')||{};}catch(e){LEADS={};}
 var LIX=null,showLeads=false,leadFilter='all';
 (function(){var X={
@@ -1690,7 +1756,7 @@ function leadKeyOf(b){
 }
 function leadOf(b){var k=leadKeyOf(b);return k?LEADS[k]:null;}
 function stOf(b){var l=leadOf(b);return l?l.st:'new';}
-function isDue(l){return !!(l&&l.fu&&l.fu<=todayStr()&&l.st!=='sold');}
+function isDue(l){return !!(l&&l.fu&&l.fu<=todayStr()&&l.st!=='sold'&&l.st!=='dnc');}
 function setLead(b,patch){
   var k=leadKeyOf(b)||b.id,l=LEADS[k]||{st:'new',notes:'',fu:'',at:0,upd:0};
   for(var p in patch)l[p]=patch[p];
@@ -1728,8 +1794,8 @@ function leadLine(b){
   return s+'</small>';
 }
 function leadHeader(rows){
-  var cnt={new:0,sent:0,replied:0,sold:0},due=0,k,h='<div class="lview">';
-  for(k in LEADS){cnt[LEADS[k].st]++;if(isDue(LEADS[k]))due++;}
+  var cnt={},due=0,k,h='<div class="lview">';
+  LSTAT.forEach(function(x){cnt[x]=0;});for(k in LEADS){cnt[LEADS[k].st]=(cnt[LEADS[k].st]||0)+1;if(isDue(LEADS[k]))due++;}
   LSTAT.forEach(function(s){h+='<button type="button" class="lt s-'+s+(leadFilter===s?' on':'')+'" data-f="'+s+'">'+esc(T(LLAB[s]))+' '+cnt[s]+'</button>';});
   if(due)h+='<button type="button" class="lt s-due'+(leadFilter==='due'?' on':'')+'" data-f="due">📅 '+due+'</button>';
   var fl={due:'Follow-up due'}[leadFilter]||LLAB[leadFilter],
@@ -1759,7 +1825,7 @@ function clearLeads(rows){
 function renderLeadbar(){
   var el=$('leadbar');if(!el)return;
   var n=Object.keys(LEADS).length,due=0;Object.keys(LEADS).forEach(function(k){if(isDue(LEADS[k]))due++;});
-  var opts=[['all','All statuses'],['new','Not contacted yet'],['sent','Sent'],['replied','Replied'],['sold','Sold'],['due','Follow-up due']];
+  var opts=[['all','All statuses'],['new','Not contacted yet'],['ask','Permission asked'],['ok','Permission given'],['sent','Demo sent'],['replied','Replied'],['sold','Sold'],['dnc','Do not contact'],['due','Follow-up due']];
   var h='<button type="button" class="lb'+(showLeads?' on':'')+'" id="btnLeads">'+(showLeads?'✕ '+esc(T('Close leads')):'📋 '+esc(T('Leads')))+' ('+n+')</button>';
   if(due)h+='<button type="button" class="lb due" id="btnDue">📅 '+esc(T('{0} due',due))+'</button>';
   h+='<select id="fLead" aria-label="'+esc(T('Filter by status'))+'">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(leadFilter===o[0]?' selected':'')+'>'+esc(T(o[1]))+'</option>';}).join('')+'</select>';
@@ -1788,6 +1854,9 @@ function fitLeads(){
 function leadWarnText(l){
   if(!l||l.st==='new')return '';
   var d=fmtDate(l.at||l.upd);
+  if(l.st==='ask')return T('You asked this business for permission on {0}. Wait for their answer. Do not send the demo or write again until they reply.',d);
+  if(l.st==='ok')return T('They gave permission (marked {0}). You can now send the demo.',fmtDate(l.upd||l.at));
+  if(l.st==='dnc')return T('Do not contact. Sending is blocked for this business.');
   if(l.st==='sent')return T('You messaged this business on {0}. Only message again as a planned follow-up.',d);
   if(l.st==='replied')return T('This business replied (first contacted {0}). Continue that conversation instead of sending a new first message.',d);
   return T('Sold ✓ (first contacted {0}). No more cold messages to this one.',d);
@@ -1806,14 +1875,14 @@ function refreshLeadBox(b){
   var box=$('leadBox');if(!box)return;
   var l=leadOf(b),st=l?l.st:'new';
   [].forEach.call(box.querySelectorAll('.lseg button'),function(x){x.classList.toggle('on',x.dataset.s===st);});
-  var w=$('leadWarn'),t=leadWarnText(l);w.hidden=!t;w.textContent=t;w.classList.toggle('ok',st==='sold');
+  var w=$('leadWarn'),t=leadWarnText(l);w.hidden=!t;w.textContent=t;w.classList.toggle('ok',st==='sold'||st==='ok');w.classList.toggle('bad',st==='dnc');
   $('leadFuBox').classList.toggle('due',isDue(l));
   $('leadUpd').textContent=l&&l.upd?T('Updated {0}',fmtDate(l.upd)):'';
 }
 function wireLeadBox(b){
   var box=$('leadBox');if(!box)return;
   refreshLeadBox(b);
-  [].forEach.call(box.querySelectorAll('.lseg button'),function(bt){bt.onclick=function(){setLead(b,{st:bt.dataset.s});refreshLeadBox(b);};});
+  [].forEach.call(box.querySelectorAll('.lseg button'),function(bt){bt.onclick=function(){setLead(b,{st:bt.dataset.s});refreshLeadBox(b);if(dsRefresh)dsRefresh();};});
   $('leadFu').onchange=function(){setLead(b,{fu:this.value||''});refreshLeadBox(b);};
   [].forEach.call(box.querySelectorAll('.q'),function(bt){bt.onclick=function(){var v=bt.dataset.d==='x'?'':plusDays(+bt.dataset.d);$('leadFu').value=v;setLead(b,{fu:v});refreshLeadBox(b);};});
   var tm,ta=$('leadNotes');
@@ -1821,16 +1890,34 @@ function wireLeadBox(b){
   ta.onchange=function(){clearTimeout(tm);setLead(b,{notes:ta.value});};
 }
 // Before sending: warn if this business was already contacted. After sending: mark it as "sent".
+function canDemo(b){var x=stOf(b);return x==='ok'||x==='sent'||x==='replied'||x==='sold';}
+function isDnc(b){return stOf(b)==='dnc';}
+var dsRefresh=null;
+function askCount(){try{var o=JSON.parse(store('elx_askday')||'{}');return o.d===todayStr()?(o.n||0):0;}catch(e){return 0;}}
+function askBump(){store('elx_askday',JSON.stringify({d:todayStr(),n:askCount()+1}));}
+// Before sending: blocked for "Do not contact"; warns if this business was already contacted.
 function okToSend(b){
-  var l=leadOf(b);if(!l||l.st==='new')return true;
-  return confirm(T('You already contacted {0} on {1} (status: {2}). Send another message?',b.name,fmtDate(l.at||l.upd),T(LLAB[l.st])));
+  var l=leadOf(b),st=l?l.st:'new';
+  if(st==='dnc'){toast('Do not contact: sending is blocked for this business.');return false;}
+  if(st==='new'||st==='ok')return true;
+  return confirm(T('You already contacted {0} on {1} (status: {2}). Send another message?',b.name,fmtDate(l.at||l.upd),T(LLAB[st])));
 }
+// After sending: first message (no link) -> "Permission asked"; demo message -> "Demo sent". Shows its own toast.
 function markSent(b){
   if(!b||b.id==='shared')return;
-  var l=leadOf(b);if(l&&l.st!=='new')return;
-  setLead(b,{st:'sent'});
+  var st=stOf(b);
+  if(canDemo(b)&&pvB&&pvB.id===b.id&&!$('mPrev').hidden&&sendView==='ask'){askBump();toast('Permission message sent again. The status stays as it is.');if(pvB&&!$('mPrev').hidden)refreshSend();return false;}
+  if(canDemo(b)){
+    if(st!=='ok')return;
+    setLead(b,{st:'sent'});toast('Marked as "Demo sent". You can change it in the lead tracker.');
+  }else{
+    if(st==='ask'||st==='dnc')return;
+    setLead(b,{st:'ask'});askBump();toast('Marked as "Permission asked". Wait for their answer before sending the demo.');
+  }
   if($('leadBox')&&cur)refreshLeadBox(cur);
-  return true;
+  if(dsRefresh)dsRefresh();
+  if(pvB&&pvB.id===b.id&&!$('mPrev').hidden)refreshSend();
+  return false;
 }
 
 /* Preview links open the preview from the data inside the link */
@@ -2324,38 +2411,42 @@ function renderDetail(b){
       $('dLang').textContent=sendLang.toUpperCase();
       $('dSendTo').textContent=n?(T('Opens WhatsApp to {0} with the link to their sample page and the example for their niche.',ph)+(land?T(' This looks like a landline, so WhatsApp may not reach it.'):'')):T('No phone listed for this business: the message will be copied so you can paste it in their chat.');
       var emN=emailOf(b);$('dSendTo').textContent+=' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
+      var dnc=isDnc(b),ask=!canDemo(b);
+      if(dnc)$('dSendTo').textContent=T('Do not contact: sending is blocked for this business.');
+      else if(ask)$('dSendTo').textContent=T('Step 1: these buttons send a short message asking permission, with no link. The demo unlocks after you mark them as "Permission given".')+' '+(n?T('To: {0}',ph):T('No phone number listed for this business. The message will be copied so you can paste it in their chat.'))+' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
+      ['dSend','dSendMail','dSendIg','dSendFb'].forEach(function(id){var e=$(id);if(e)e.disabled=dnc;});
     };
-    refreshDSend();
+    refreshDSend();dsRefresh=refreshDSend;
     enrichBrand(b).then(function(){if(cur&&cur.id===b.id&&$('dSendTo'))refreshDSend();});
     $('dLang').onclick=function(){sendLang=sendLang==='es'?'en':'es';store('elx_sendlang',sendLang);refreshDSend();};
     $('dSendMail').onclick=function(){
       if(!okToSend(b))return;
-      var to=emailOf(b),m=splitMail(buildChannelMsg(b,'mail',sendLang));
+      var to=emailOf(b),m=splitMail(msgFor(b,'mail',sendLang));
       track('map_send_business',{category:b.cat,lang:sendLang,channel:'mail',has_email:!!to,from:'detail'});
       if(!to)toast('No email known. Add the recipient in your email app.');
-      else if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
+      else if(markSent(b))void 0;
       if(!to)markSent(b);
       openExt('mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(m.body));
     };
     if($('dSendIg'))$('dSendIg').onclick=function(){
       var h=igHandleOf(b);if(!h||!okToSend(b))return;
       track('map_send_business',{category:b.cat,lang:sendLang,channel:'ig',from:'detail'});
-      copyText(buildChannelMsg(b,'ig',sendLang));openIg(h);
-      if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
+      copyText(msgFor(b,'ig',sendLang));openIg(h);
+      if(markSent(b))void 0;
     };
     if($('dSendFb'))$('dSendFb').onclick=function(){
       var fu=fbOf(b);if(!fu||!okToSend(b))return;
-      var msg=buildChannelMsg(b,'fb',sendLang);
+      var msg=msgFor(b,'fb',sendLang);
       track('map_send_business',{category:b.cat,lang:sendLang,channel:'fb',from:'detail'});
       copyText(msg);window.open(fu,'_blank','noopener');
-      if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
+      if(markSent(b))void 0;
     };
     $('dSend').onclick=function(){
       if(!okToSend(b))return;
-      var wk=waPick(b),n=wk?wk.d:'',msg=buildMsg(b,sendLang);
+      var wk=waPick(b),n=wk?wk.d:'',msg=msgFor(b,'wa',sendLang);
       track('map_send_business',{category:b.cat,lang:sendLang,has_phone:!!n,from:'detail'});
       if(!n){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(b);return;}
-      window.open(waLink(msg,n),'_blank','noopener');if(markSent(b))toast('Marked as sent. You can change it in the lead tracker.');
+      window.open(waLink(msg,n),'_blank','noopener');if(markSent(b))void 0;
     };
   }
   if(OUTREACH){
@@ -2698,7 +2789,7 @@ function brandNote(b){
   note.textContent=parts.length?T('Found: {0}',parts.join(', ')):T('Nothing usable found on their page or Instagram.');
 }
 function openPreview(b,themeId){
-  pvB=b;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
+  pvB=b;sendView=null;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
   pvBrandOn=true;pvPicked=false;$('brandOn').checked=true;
   setBrandTheme(brandOf(b));
   pvT=themeById(themeId||'sun');
@@ -2765,7 +2856,7 @@ $('brandOn').onchange=function(){
 };
 function renderFrame(){$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
 /* ===== Send the preview to the business by WhatsApp (outreach mode only) ===== */
-var sendLang=LANG,sendEdited=false,sendDrafts={},sendFound=false;   // the message follows the site language (EN/ES switch)
+var sendLang=LANG,sendEdited=false,sendDrafts={},sendFound=false,sendModeLast='',sendView=null;   // the message follows the site language (EN/ES switch)
 var sendCh=store('elx_sendch')||'wa';if(!/^(wa|ig|fb|mail|sms)$/.test(sendCh))sendCh='wa';
 var CHANNELS=['wa','ig','fb','mail','sms'];
 // ---- Message templates: one per channel x category x language. Tags: {name} {category} {address} {link} {example} {order} {note}
@@ -2816,9 +2907,31 @@ function buildChannelMsg(b,ch,lang,found){
     else t=t+(ch==='sms'?' ':'\n')+ml.replace(/\n$/,'').replace(/^ · /,'');
   }
   if(line&&t.indexOf('{found}')<0)t=t.replace('{link}','{link}{found}');   // templates without the tag get the line right after the preview link
-  return fillTpl(t,b,lang,line);
+  return addOptOut(fillTpl(t,b,lang,line),lang);
 }
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
+// ---- Step 1 messages: ask permission, no link, with sender and opt-out
+var TPL_ASK={
+ wa:{
+  es:'Hola! 👋 Soy de EasyLandX. Vi {name} y he preparado un boceto visual gratuito de cómo podría ser su página web, sin compromiso. ¿Le parece bien que se lo envíe por aquí?\n\nSi prefiere que no le escriba más, dígamelo o escriba a {mail} y no volveré a contactarle.\n@EasyLandX (propuesta comercial)',
+  en:'Hi! 👋 This is EasyLandX. I came across {name} and made a free visual concept of what its website could look like, no commitment. Would it be OK if I send it to you here?\n\nIf you would rather not hear from me, just tell me or write to {mail} and I will not contact you again.\n@EasyLandX (commercial proposal)'},
+ mail:{
+  es:'Asunto: ¿Le puedo enviar un boceto de web para {name}?\n\nHola,\n\nSoy de EasyLandX. He preparado un boceto visual gratuito de cómo podría ser la página web de {name}, sin compromiso. ¿Le parece bien que se lo envíe?\n\nEste es un mensaje comercial de EasyLandX. Encontré su negocio en listados públicos. Si prefiere no recibir más mensajes, escriba a {mail} y no volveré a contactarle.\n\n@EasyLandX',
+  en:'Subject: Can I send you a website concept for {name}?\n\nHi,\n\nThis is EasyLandX. I made a free visual concept of what the website for {name} could look like, no commitment. Would it be OK if I send it to you?\n\nThis is a commercial message from EasyLandX. I found your business in public listings. If you would rather not hear from us again, write to {mail} and I will not contact you again.\n\n@EasyLandX'},
+ sms:{
+  es:'Hola! Soy de EasyLandX. He preparado un boceto gratis de web para {name}, sin compromiso. ¿Se lo envío? Si prefiere no recibir más mensajes: {mail}\n@EasyLandX (propuesta comercial)',
+  en:'Hi! This is EasyLandX. I made a free website concept for {name}, no commitment. Shall I send it? If you would rather not hear from us again: {mail}\n@EasyLandX (commercial proposal)'}
+};
+TPL_ASK.ig=TPL_ASK.wa;TPL_ASK.fb=TPL_ASK.wa;
+function buildAskMsg(b,ch,lang){return fillTpl((TPL_ASK[ch]||TPL_ASK.wa)[lang]||TPL_ASK.wa.en,b,lang,'');}
+function msgFor(b,ch,lang,found){return canDemo(b)?buildChannelMsg(b,ch,lang,found):buildAskMsg(b,ch,lang);}
+// Demo messages also carry the sender and an easy way to say no
+function addOptOut(t,lang){
+  var o=lang==='es'?'Si prefiere no recibir más mensajes, dígamelo o escriba a '+CONFIG.MAIL+' y no volveré a contactarle.':"If you would rather not hear from us again, just tell me or write to "+CONFIG.MAIL+" and I will not contact you again.";
+  if(/no volveré a contactar|will not contact you again|won.t contact you again|no volveré a escribir/i.test(t))return t;
+  var k=t.lastIndexOf('@EasyLandX');
+  return k>-1?t.slice(0,k)+o+'\n'+t.slice(k):t+'\n\n'+o;
+}
 function igHandleOf(b){var m=String((b&&b.ig)||(b&&/instagram\.com/i.test(b.social||'')&&b.social)||(b&&b.guess&&b.guess.ig)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
 function splitMail(txt){var m=String(txt).match(/^\s*(?:Subject|Asunto)\s*:\s*(.*)\n+/i);return m?{subject:m[1].trim(),body:txt.slice(m[0].length)}:{subject:'',body:String(txt)};}
 var GO_LABEL={wa:'💬 Open WhatsApp with this message',ig:'📸 Copy message and open Instagram',fb:'💬 Copy message and open Facebook',mail:'✉️ Open email app',sms:'💬 Open SMS app'};
@@ -2827,13 +2940,26 @@ function refreshSend(force){
   if(!CANSEND||!pvB||pvB.id==='shared'){box.hidden=true;$('pSend').hidden=true;return;}
   $('pSend').hidden=false;
   var hasIg=!!igHandleOf(pvB),hasFb=!!fbOf(pvB);
-  $('pSendIg').disabled=!hasIg;$('pSendFb').disabled=!hasFb;
+  var dnc0=isDnc(pvB),dm=canDemo(pvB),md=dnc0?'dnc':(!dm||sendView==='ask'?'ask':'demo');
+  $('pSendIg').disabled=!hasIg||dnc0;$('pSendFb').disabled=!hasFb||dnc0;$('pSendWa').disabled=dnc0;$('pSendMail').disabled=dnc0;$('sGo').disabled=dnc0;
   box.hidden=false;
+  if(md!==sendModeLast){sendDrafts={};sendEdited=false;sendModeLast=md;}
   if(force){sendDrafts={};sendEdited=false;}
+  $('sModeAsk').classList.toggle('on',md==='ask');$('sModeAsk').setAttribute('aria-pressed',md==='ask');$('sModeDemo').classList.toggle('on',md==='demo');$('sModeDemo').classList.toggle('lock',!dm);
+  $('sModeAsk').textContent=T('1 · Ask permission');$('sModeDemo').textContent=(dm?'':'🔒 ')+T('2 · Send demo');
+  var mn=$('sModeNote'),tx='';
+  if(md==='dnc')tx=T('Do not contact: this business asked not to be contacted. Sending is blocked.');
+  else if(md==='ask'&&dm)tx=T('Showing the permission message again (no link). Their status stays "Permission given". Press step 2 to go back to the demo.');
+  else if(md==='ask'){tx=T('Step 1: ask permission. This message has no link. The demo unlocks when you mark them as "Permission given".');if(sendCh==='wa'||sendCh==='mail'||sendCh==='sms')tx+=' '+T('Higher risk for a first message: try Instagram or Facebook first.');}
+  else tx=T('Step 2: they gave permission, so this message includes the demo link.');
+  mn.textContent=tx;mn.className='modeNote '+(md==='dnc'?'bad':(md==='ask'?'warn':'ok'));
+  $('sYes').hidden=!(md==='ask'&&!dm);
+  $('sYes').textContent=T('✅ Permission given');$('sNo').textContent=T(dnc0?'↩ Allow contact again':'🚫 Do not contact');
+  var sd=$('sDay');sd.hidden=md!=='ask';if(!sd.hidden){var ac=askCount();sd.textContent=T('Permission requests today: {0}',ac)+(ac>=15?' · '+T('That is a lot for one day. Slow down to protect your accounts.'):'');}
   $('sEs').classList.toggle('on',sendLang==='es');$('sEn').classList.toggle('on',sendLang==='en');
   CHANNELS.forEach(function(c){$('ch'+({wa:'Wa',ig:'Ig',fb:'Fb',mail:'Mail',sms:'Sms'}[c])).classList.toggle('on',sendCh===c);});
   $('sFoundBox').hidden=!foundLine(pvB,sendLang)||sendCh==='sms';$('sFound').checked=sendFound;
-  $('sMsg').value=sendDrafts[sendCh]!=null?sendDrafts[sendCh]:buildChannelMsg(pvB,sendCh,sendLang,sendFound);
+  $('sMsg').value=sendDrafts[sendCh]!=null?sendDrafts[sendCh]:(md==='ask'?buildAskMsg(pvB,sendCh,sendLang):buildChannelMsg(pvB,sendCh,sendLang,sendFound));
   $('sMsg').setAttribute('aria-label',T('Message'));
   $('sGo').textContent=T(GO_LABEL[sendCh]);
   $('sMailBox').hidden=sendCh!=='mail';
@@ -2863,6 +2989,10 @@ function setSendCh(c){
 }
 $('chWa').onclick=function(){setSendCh('wa');};$('chIg').onclick=function(){setSendCh('ig');};$('chFb').onclick=function(){setSendCh('fb');};$('chMail').onclick=function(){setSendCh('mail');};$('chSms').onclick=function(){setSendCh('sms');};
 $('sFound').onchange=function(){sendFound=this.checked;sendDrafts={};sendEdited=false;refreshSend();};
+$('sModeDemo').onclick=function(){if(!pvB||isDnc(pvB))return;if(!canDemo(pvB)){toast('The demo unlocks when you mark them as "Permission given".');return;}sendView='demo';refreshSend(true);};
+$('sModeAsk').onclick=function(){if(!pvB||isDnc(pvB))return;if(canDemo(pvB)){sendView='ask';refreshSend(true);}};
+$('sYes').onclick=function(){if(!pvB)return;setLead(pvB,{st:'ok'});if($('leadBox')&&cur)refreshLeadBox(cur);if(dsRefresh)dsRefresh();refreshSend(true);toast('Marked as "Permission given". The demo is unlocked.');};
+$('sNo').onclick=function(){if(!pvB)return;var was=isDnc(pvB);setLead(pvB,{st:was?'new':'dnc'});if($('leadBox')&&cur)refreshLeadBox(cur);if(dsRefresh)dsRefresh();refreshSend(true);if(!was)toast('Marked as "Do not contact". Sending is blocked.');};
 $('sEs').onclick=function(){sendLang='es';store('elx_sendlang','es');refreshSend(true);};
 $('sEn').onclick=function(){sendLang='en';store('elx_sendlang','en');refreshSend(true);};
 $('sMsg').addEventListener('input',function(){sendEdited=true;sendDrafts[sendCh]=this.value;if(!$('sCount').hidden)updSendCount();});
@@ -2874,7 +3004,7 @@ $('sGo').onclick=function(){
   if(pvB&&!okToSend(pvB))return;
   var msg=$('sMsg').value,bp=sendCh==='wa'?waPick(pvB):bestPhone(pvB),n=bp?bp.d:'';
   track('map_send_business',{category:pvB&&pvB.cat,lang:sendLang,channel:sendCh,has_phone:!!n});
-  var sent=function(){if(markSent(pvB))toast('Marked as sent. You can change it in the lead tracker.');};
+  var sent=function(){if(markSent(pvB))void 0;};
   if(sendCh==='wa'){
     var wn=n;
     if(!wn){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(pvB);return;}
@@ -3424,7 +3554,7 @@ function refreshUI(){
   document.documentElement.lang=LANG;sendLang=LANG;
   document.title=T(TITLE_EN);
   var md=document.querySelector('meta[name=description]');if(md)md.setAttribute('content',T(DESC_EN));
-  applyStatic();relabelCats();applyTips();if(!$('mHelp').hidden)buildHelp();
+  applyStatic();relabelCats();applyTips();if(!$('mHelp').hidden)buildHelp();if(!$('mLegal').hidden)buildLegal();cookieRender();
   parseWhat();if(selCats.length)syncWhat();
   chipLab();persistSaved();renderLeadbar();
   [].forEach.call(document.querySelectorAll('[data-l]'),function(b){b.classList.toggle('on',b.dataset.l===LANG);});
@@ -3566,6 +3696,142 @@ function applyTips(){
   new MutationObserver(function(){if(q)return;q=true;requestAnimationFrame(function(){q=false;applyTips();});}).observe(document.body,{childList:true,subtree:true});
   applyTips();
 })();
+
+/* ---- Legal notice and privacy policy (pop-up) ----
+   Fill in LEGAL_ID if you want your legal details to show in the notice (name or company, tax ID, address). Empty fields are not shown. */
+var LEGAL_ID={owner:'',taxId:'',address:''};
+var LEGAL_TXT={
+es:[
+ ['h4','Aviso legal'],
+ ['h5','Titular y contacto'],
+ ['p','Esta herramienta es un servicio de EasyLandX. Contacto para cualquier consulta, baja o ejercicio de derechos: '+CONFIG.MAIL+'.'],
+ ['h5','Qué es esta herramienta'],
+ ['p','EasyLandX Map muestra en un mapa negocios locales a partir de datos públicos y genera vistas previas de concepto de cómo podría ser la página web de cada uno.'],
+ ['h5','Las vistas previas son solo conceptos'],
+ ['p','Una vista previa es un ejemplo ilustrativo hecho con datos públicos. No es la web oficial del negocio ni implica ninguna relación o acuerdo con él. Los nombres, logotipos, colores, textos e imágenes de cada negocio pertenecen a sus titulares.'],
+ ['h5','Exactitud de la información'],
+ ['p','Los datos proceden de fuentes públicas y pueden estar incompletos o desactualizados. No garantizamos la exactitud ni la disponibilidad continua del servicio.'],
+ ['h5','Propiedad intelectual'],
+ ['p','El diseño y los textos de la herramienta son de EasyLandX. Los datos de mapa son © colaboradores de OpenStreetMap (licencia ODbL). Las marcas y contenidos de terceros pertenecen a sus respectivos titulares.'],
+ ['h5','Ley aplicable'],
+ ['p','Este aviso se rige por la legislación española, sin perjuicio de los derechos que la ley imperativa de tu país te reconozca.'],
+ ['h4','Política de privacidad'],
+ ['h5','1. Qué datos tratamos'],
+ ['ul',['De los negocios: datos de contacto y de perfil publicados en fuentes públicas.','De quienes usan la herramienta: datos técnicos y estadísticas de uso (por ejemplo, páginas y acciones, tipo de dispositivo y país aproximado) y una ubicación aproximada, ya sea porque pulsas «usar mi ubicación» o porque se estima a partir de tu IP o zona horaria.','En tu propio navegador: preferencias, negocios guardados, leads, notas y plantillas. Se guardan en tu dispositivo y no se envían a nuestros servidores.']],
+ ['h5','2. Para qué y con qué base'],
+ ['ul',['Mostrar el mapa y las vistas previas: es el servicio que ofrece la herramienta.','Contactar con negocios para ofrecerles una propuesta de página web: nuestro interés legítimo, siempre respetando las normas sobre comunicaciones comerciales.','Estadísticas de uso para mejorar la herramienta: con tu consentimiento, mediante Google Analytics (ver «Cookies y almacenamiento»).']],
+ ['h5','3. De dónde obtenemos los datos'],
+ ['p','De fuentes públicas: OpenStreetMap, Google, y las webs y perfiles públicos de los propios negocios.'],
+ ['h5','4. Con quién se comparten y transferencias'],
+ ['p','No vendemos datos. Para funcionar usamos proveedores de terceros: mapas y datos, búsqueda de lugares y de webs, estadísticas, localización aproximada por IP y plataformas de mensajería. Cada uno trata los datos según sus propias condiciones. Algunos están fuera del Espacio Económico Europeo (por ejemplo, en Estados Unidos) y aplican sus propias garantías para esas transferencias.'],
+ ['h5','5. Cuánto tiempo los conservamos'],
+ ['p','Solo el tiempo necesario para la finalidad indicada. Si pides la baja, dejaremos de contactarte. Los datos guardados en tu navegador los controlas tú y puedes borrarlos cuando quieras.'],
+ ['h5','6. Tus derechos'],
+ ['p','Puedes pedir acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad de tus datos escribiendo a '+CONFIG.MAIL+'. Si crees que no hemos respondido bien, puedes reclamar ante tu autoridad de protección de datos (en España, la Agencia Española de Protección de Datos, www.aepd.es).'],
+ ['h5','7. Cookies y almacenamiento'],
+ ['p','La herramienta usa el almacenamiento del navegador para recordar tus preferencias, negocios guardados, leads y plantillas. Solo si lo aceptas, usa también Google Analytics (cookies de analítica) para medir el uso de forma agregada. Puedes cambiar tu elección en cualquier momento con el botón «Preferencias de cookies» de este aviso, o bloquear y borrar estos datos desde los ajustes de tu navegador.'],
+ ['h5','8. Cambios'],
+ ['p','Podemos actualizar este texto. La versión vigente es la que aparece aquí.'],
+ ['d','Última actualización: noviembre de 2026']
+],
+en:[
+ ['h4','Legal notice'],
+ ['h5','Owner and contact'],
+ ['p','This tool is a service of EasyLandX. For any question, opt-out or request about your rights, write to '+CONFIG.MAIL+'.'],
+ ['h5','What this tool is'],
+ ['p','EasyLandX Map shows local businesses on a map using public data, and generates concept previews of what each one\u2019s website could look like.'],
+ ['h5','Previews are concepts only'],
+ ['p','A preview is an illustration made from public data. It is not the business\u2019s official website and does not imply any relationship or agreement with it. Each business\u2019s name, logo, colours, text and images belong to their owners.'],
+ ['h5','Accuracy of the information'],
+ ['p','Data comes from public sources and may be incomplete or out of date. We do not guarantee accuracy or uninterrupted availability.'],
+ ['h5','Intellectual property'],
+ ['p','The tool\u2019s design and text belong to EasyLandX. Map data is \u00a9 OpenStreetMap contributors (ODbL licence). Third-party brands and content belong to their owners.'],
+ ['h5','Governing law'],
+ ['p','This notice is governed by Spanish law, without prejudice to any mandatory rights you have under the law of your country.'],
+ ['h4','Privacy policy'],
+ ['h5','1. What data we process'],
+ ['ul',['About businesses: contact and profile details published in public sources.','About people using the tool: technical data and usage statistics (for example pages and actions, device type and approximate country) and an approximate location, either because you tap \u201cuse my location\u201d or because it is estimated from your IP address or time zone.','In your own browser: preferences, saved businesses, leads, notes and templates. They are stored on your device and are not sent to our servers.']],
+ ['h5','2. Why and on what basis'],
+ ['ul',['Showing the map and previews: this is the service the tool provides.','Contacting businesses to offer a website proposal: our legitimate interest, always respecting the rules on commercial messages.','Usage statistics to improve the tool: with your consent, through Google Analytics (see \u201cCookies and storage\u201d).']],
+ ['h5','3. Where the data comes from'],
+ ['p','From public sources: OpenStreetMap, Google, and the businesses\u2019 own public websites and profiles.'],
+ ['h5','4. Who it is shared with, and transfers'],
+ ['p','We do not sell data. To work, we use third-party providers: maps and data, place and web search, statistics, approximate IP location and messaging platforms. Each handles data under its own terms. Some are outside the European Economic Area (for example in the United States) and apply their own safeguards for those transfers.'],
+ ['h5','5. How long we keep it'],
+ ['p','Only as long as needed for the stated purpose. If you ask us to stop, we will stop contacting you. Data stored in your browser is under your control and you can delete it at any time.'],
+ ['h5','6. Your rights'],
+ ['p','You can ask for access, correction, deletion, objection, restriction and portability of your data by writing to '+CONFIG.MAIL+'. If you think we have not handled it properly, you can complain to your data protection authority (in Spain, the Spanish Data Protection Agency, www.aepd.es).'],
+ ['h5','7. Cookies and storage'],
+ ['p','The tool uses browser storage to remember your preferences, saved businesses, leads and templates. Only if you accept, it also uses Google Analytics (analytics cookies) to measure usage in aggregate. You can change your choice at any time with the \u201cCookie settings\u201d button in this notice, or block and delete this data in your browser settings.'],
+ ['h5','8. Changes'],
+ ['p','We may update this text. The version shown here is the current one.'],
+ ['d','Last updated: November 2026']
+]};
+function buildLegal(){
+  var L=LEGAL_TXT[LANG==='es'?'es':'en'],h='',o=LEGAL_ID,parts=[];
+  if(o.owner)parts.push((LANG==='es'?'Titular: ':'Owner: ')+o.owner);
+  if(o.taxId)parts.push((LANG==='es'?'NIF/CIF: ':'Tax ID: ')+o.taxId);
+  if(o.address)parts.push((LANG==='es'?'Domicilio: ':'Address: ')+o.address);
+  L.forEach(function(x,i){
+    if(x[0]==='ul')h+='<ul>'+x[1].map(function(t){return '<li>'+esc(t)+'</li>';}).join('')+'</ul>';
+    else if(x[0]==='d')h+='<p class="lgDate">'+esc(x[1])+'</p>';
+    else h+='<'+x[0]+(x[0]==='p'?'':'')+'>'+esc(x[1])+'</'+x[0]+'>';
+    if(i===2&&parts.length)h+='<p>'+esc(parts.join(' · '))+'</p>';
+  });
+  $('legalT').textContent=T('Legal notice and privacy');$('legalClose').textContent=T('Close');$('legalX').setAttribute('aria-label',T('Close'));
+  $('legalBody').innerHTML=h+'<button type="button" class="btn l sm" id="cookieSet">'+esc(T('Cookie settings'))+'</button>';
+}
+ES['Legal notice and privacy']='Aviso legal y privacidad';ES['Close']='Cerrar';
+function openLegal(){buildLegal();$('mLegal').hidden=false;$('legalBox').scrollTop=0;setTimeout(function(){try{$('legalX').focus({preventScroll:true});}catch(e){}$('legalBox').scrollTop=0;},40);}
+function closeLegal(){$('mLegal').hidden=true;}
+document.addEventListener('click',function(e){var a=e.target&&e.target.closest?e.target.closest('#legalLink'):null;if(a){e.preventDefault();openLegal();}});
+$('legalClose').onclick=closeLegal;$('legalX').onclick=closeLegal;
+$('mLegal').addEventListener('click',function(e){if(e.target===this)closeLegal();});
+window.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mLegal').hidden)closeLegal();});
+
+/* ---- Cookie consent: Google Analytics only loads after the visitor accepts ---- */
+var GA_ID='G-C32H6BV2R3';
+ES['We use analytics cookies (Google Analytics) to measure how the tool is used. They only load if you accept.']='Usamos cookies de analítica (Google Analytics) para medir el uso de la herramienta. Solo se activan si las aceptas.';
+ES['Accept']='Aceptar';ES['Reject']='Rechazar';ES['More information']='Más información';ES['Cookie settings']='Preferencias de cookies';ES['Cookie notice']='Aviso de cookies';
+function loadGA(){
+  window['ga-disable-'+GA_ID]=false;
+  if(window.__gaOn)return;window.__gaOn=true;
+  window.dataLayer=window.dataLayer||[];
+  window.gtag=function(){window.dataLayer.push(arguments);};
+  window.gtag('js',new Date());window.gtag('config',GA_ID);
+  var sc=document.createElement('script');sc.async=true;sc.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID;document.head.appendChild(sc);
+}
+function stopGA(){
+  window['ga-disable-'+GA_ID]=true;
+  var names=['_ga','_ga_'+GA_ID.replace('G-',''),'_gid','_gat'],h=location.hostname.split('.'),doms=[''];
+  for(var i=0;i<h.length-1;i++)doms.push('; domain=.'+h.slice(i).join('.'),'; domain='+h.slice(i).join('.'));
+  names.forEach(function(n){doms.forEach(function(d){try{document.cookie=n+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'+d;}catch(e){}});});
+}
+function cookieRender(){
+  var b=$('cookieBar');if(!b)return;
+  b.setAttribute('aria-label',T('Cookie notice'));
+  b.innerHTML='<p>'+esc(T('We use analytics cookies (Google Analytics) to measure how the tool is used. They only load if you accept.'))+' <a id="cookieMore" role="button" tabindex="0">'+esc(T('More information'))+'</a></p>'
+    +'<div class="row"><button type="button" class="btn l sm" id="cookieNo">'+esc(T('Reject'))+'</button><button type="button" class="btn l sm" id="cookieYes">'+esc(T('Accept'))+'</button></div>';
+}
+function cookieShow(){
+  var b=$('cookieBar');
+  if(!b){b=document.createElement('div');b.id='cookieBar';b.setAttribute('role','region');b.hidden=true;document.body.appendChild(b);}
+  cookieRender();b.hidden=false;
+}
+function cookieChoose(v){
+  store('elx_cookies',v);
+  var b=$('cookieBar');if(b)b.hidden=true;
+  if(v==='granted')loadGA();else stopGA();
+}
+document.addEventListener('click',function(e){
+  var t=e.target&&e.target.closest?e.target.closest('#cookieYes,#cookieNo,#cookieMore,#cookieSet'):null;if(!t)return;
+  if(t.id==='cookieYes')cookieChoose('granted');
+  else if(t.id==='cookieNo')cookieChoose('denied');
+  else if(t.id==='cookieMore')openLegal();
+  else if(t.id==='cookieSet'){closeLegal();cookieShow();}
+});
+document.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.id==='cookieMore'){e.preventDefault();openLegal();}});
+(function(){var c=store('elx_cookies');if(c==='granted')loadGA();else if(c!=='denied')cookieShow();})();
 
 var HELP=[
  ['🗺️',E('What is this?','¿Para qué sirve?'),E('Find any local business on the map and see a sample website made just for it. No website yet? See what it could look like. Already have one? See how a fresher, mobile-first version compares. Then send it to the owner in one tap.','Encuentra cualquier negocio local en el mapa y mira una página de muestra hecha a su medida. ¿Aún sin web? Mira cómo podría verse. ¿Ya tiene una? Compárala con una versión más fresca y pensada para el móvil. Luego envíasela al dueño con un toque.'),E('Why? Seeing a real example convinces far more than being told you need a website.','¿Por qué? Ver un ejemplo real convence mucho más que oír que necesitas una web.')],
