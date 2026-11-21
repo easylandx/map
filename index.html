@@ -104,6 +104,12 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 .field input{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:23px 44px 8px 14px;font-size:.98rem;font-weight:600;outline:none;transition:border-color .15s,box-shadow .15s}
 .field input:focus{border-color:var(--teal2);box-shadow:0 0 0 4px rgba(20,184,166,.15)}
 .field input::placeholder{color:#a3aeaa;font-weight:500}
+#whereSug{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:#fff;border:1.5px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow-y:auto;max-height:264px;overscroll-behavior:contain}
+#whereSug div{padding:9px 14px;cursor:pointer;display:grid;gap:1px;line-height:1.25}
+#whereSug div+div{border-top:1px solid var(--line)}
+#whereSug b{font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#whereSug small{color:var(--mute);font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#whereSug div:hover,#whereSug div.on{background:#e6f7f4}
 .loc{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:10px;border:0;background:var(--soft-teal);font-size:1rem}
 .go{border:0;border-radius:14px;padding:13px;font-weight:800;font-size:1rem;color:#fff;background:linear-gradient(135deg,var(--teal),#0d9488);box-shadow:0 6px 16px rgba(15,118,110,.28);transition:transform .1s}
 .go:active{transform:translateY(1px)}
@@ -434,7 +440,7 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
   <form id="form" autocomplete="off">
     <div class="field"><label for="qName">Name</label><input id="qName" placeholder="Business name or word" enterkeyhint="search"></div>
     <div class="field"><label for="qWhat">What</label><input id="qWhat" list="cats" placeholder="Hair salon, café, yoga…"><datalist id="cats"></datalist></div>
-    <div class="field"><label for="qWhere">Where</label><input id="qWhere" placeholder="City or neighbourhood"><button class="loc" type="button" id="btnLoc" title="Use my location" aria-label="Use my location">📍</button></div>
+    <div class="field"><label for="qWhere">Where</label><input id="qWhere" placeholder="City or neighbourhood" role="combobox" aria-autocomplete="list" aria-controls="whereSug" aria-expanded="false" autocapitalize="off" spellcheck="false"><button class="loc" type="button" id="btnLoc" title="Use my location" aria-label="Use my location">📍</button></div>
     <button class="go" id="goBtn" type="submit">Search businesses</button>
   </form>
   <div class="chips" id="chips"></div>
@@ -1093,9 +1099,63 @@ function catOf(b){return CAT[b.cat]||GENERIC;}
 var map=null,results=[],selId=null,lastSearchBounds=null,styleOk=false;
 var FALLBACK={version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':'#e8efe4'}}]};
 var STATUS_COL=['match',['get','status'],'web','#16a34a','social','#3b82f6','#f59e0b'];   // Web = green, Social = blue, Other (no website / unknown) = amber
+/* ---- Opening position: saved spot -> visitor's approximate location (IP) -> capital of their country -> Madrid ---- */
+var CAPITALS={AD:[1.52,42.51],AE:[54.37,24.45],AF:[69.17,34.53],AG:[-61.85,17.12],AL:[19.82,41.33],AM:[44.51,40.18],AO:[13.23,-8.84],AR:[-58.38,-34.60],AT:[16.37,48.21],AU:[149.13,-35.28],AZ:[49.87,40.41],BA:[18.41,43.86],BB:[-59.62,13.10],BD:[90.41,23.81],BE:[4.35,50.85],BF:[-1.52,12.37],BG:[23.32,42.70],BH:[50.58,26.23],BI:[29.36,-3.38],BJ:[2.63,6.50],BN:[114.94,4.89],BO:[-68.15,-16.50],BR:[-47.93,-15.78],BS:[-77.35,25.05],BT:[89.64,27.47],BW:[25.91,-24.65],BY:[27.57,53.90],BZ:[-88.77,17.25],CA:[-75.70,45.42],CD:[15.31,-4.32],CF:[18.56,4.36],CG:[15.28,-4.27],CH:[7.45,46.95],CI:[-4.02,5.35],CL:[-70.65,-33.45],CM:[11.52,3.87],CN:[116.41,39.90],CO:[-74.07,4.71],CR:[-84.09,9.93],CU:[-82.37,23.13],CV:[-23.51,14.93],CY:[33.38,35.17],CZ:[14.42,50.08],DE:[13.40,52.52],DJ:[43.15,11.59],DK:[12.57,55.68],DM:[-61.39,15.30],DO:[-69.93,18.49],DZ:[3.06,36.75],EC:[-78.47,-0.18],EE:[24.75,59.44],EG:[31.24,30.04],ER:[38.93,15.32],ES:[-3.70,40.42],ET:[38.75,9.03],FI:[24.94,60.17],FJ:[178.44,-18.14],FR:[2.35,48.86],GA:[9.45,0.39],GB:[-0.13,51.51],GD:[-61.75,12.05],GE:[44.79,41.72],GH:[-0.19,5.60],GM:[-16.58,13.45],GN:[-13.71,9.64],GQ:[8.78,3.75],GR:[23.73,37.98],GT:[-90.51,14.63],GW:[-15.60,11.86],GY:[-58.16,6.80],HN:[-87.20,14.07],HR:[15.98,45.81],HT:[-72.34,18.54],HU:[19.04,47.50],ID:[106.85,-6.21],IE:[-6.26,53.35],IL:[35.22,31.77],IN:[77.21,28.61],IQ:[44.36,33.31],IR:[51.39,35.69],IS:[-21.94,64.15],IT:[12.50,41.90],JM:[-76.79,18.00],JO:[35.93,31.95],JP:[139.69,35.69],KE:[36.82,-1.29],KG:[74.59,42.87],KH:[104.92,11.56],KM:[43.26,-11.70],KN:[-62.72,17.30],KP:[125.75,39.02],KR:[126.98,37.57],KW:[47.98,29.38],KZ:[71.43,51.17],LA:[102.60,17.97],LB:[35.50,33.89],LC:[-61.00,14.01],LI:[9.52,47.14],LK:[79.86,6.93],LR:[-10.80,6.30],LS:[27.48,-29.31],LT:[25.28,54.69],LU:[6.13,49.61],LV:[24.11,56.95],LY:[13.19,32.89],MA:[-6.84,34.02],MC:[7.42,43.73],MD:[28.83,47.01],ME:[19.26,42.44],MG:[47.52,-18.88],MK:[21.43,42.00],ML:[-8.00,12.64],MM:[96.13,19.76],MN:[106.92,47.89],MR:[-15.98,18.09],MT:[14.51,35.90],MU:[57.50,-20.16],MV:[73.51,4.18],MW:[33.79,-13.96],MX:[-99.13,19.43],MY:[101.69,3.14],MZ:[32.57,-25.97],NA:[17.08,-22.56],NE:[2.11,13.51],NG:[7.49,9.06],NI:[-86.25,12.13],NL:[4.90,52.37],NO:[10.75,59.91],NP:[85.32,27.72],NZ:[174.78,-41.29],OM:[58.41,23.59],PA:[-79.52,8.98],PE:[-77.04,-12.05],PG:[147.18,-9.44],PH:[120.98,14.60],PK:[73.05,33.69],PL:[21.01,52.23],PT:[-9.14,38.72],PY:[-57.58,-25.28],QA:[51.53,25.29],RO:[26.10,44.43],RS:[20.46,44.79],RU:[37.62,55.76],RW:[30.06,-1.95],SA:[46.68,24.71],SB:[159.95,-9.43],SC:[55.45,-4.62],SD:[32.53,15.50],SE:[18.07,59.33],SG:[103.82,1.35],SI:[14.51,46.06],SK:[17.11,48.15],SL:[-13.23,8.48],SM:[12.45,43.94],SN:[-17.47,14.69],SO:[45.34,2.05],SR:[-55.20,5.85],SS:[31.58,4.85],ST:[6.73,0.34],SV:[-89.22,13.69],SY:[36.29,33.51],SZ:[31.14,-26.31],TD:[15.05,12.11],TG:[1.22,6.13],TH:[100.50,13.76],TJ:[68.78,38.56],TL:[125.57,-8.56],TM:[58.38,37.95],TN:[10.18,36.81],TO:[-175.20,-21.14],TR:[32.85,39.93],TT:[-61.52,10.66],TW:[121.56,25.03],TZ:[35.74,-6.16],UA:[30.52,50.45],UG:[32.58,0.35],US:[-77.04,38.91],UY:[-56.16,-34.90],UZ:[69.24,41.30],VA:[12.45,41.90],VC:[-61.23,13.16],VE:[-66.90,10.49],VN:[105.85,21.03],VU:[168.32,-17.73],WS:[-171.75,-13.83],XK:[21.17,42.66],YE:[44.21,15.37],ZA:[28.19,-25.75],ZM:[28.28,-15.39],ZW:[31.05,-17.83]};
+var posUser=false,posAuto=false;
+function langCountry(){
+  var L=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||''],i,m;
+  for(i=0;i<L.length;i++){m=/[-_]([A-Za-z]{2})$/.exec(L[i]||'');if(m&&CAPITALS[m[1].toUpperCase()])return m[1].toUpperCase();}
+  return '';
+}
+function testCountry(){var m=/[?&]cc=([A-Za-z]{2})(?:&|#|$)/.exec(location.search);var c=m?m[1].toUpperCase():'';return CAPITALS[c]?c:'';}   // test helper: ?cc=MX opens on that country's capital
+function startPos(){
+  var tc=testCountry();if(tc)return {c:CAPITALS[tc],z:10.5,saved:true,test:true};
+  var sv=null;try{sv=JSON.parse(store('elx_pos')||'null');}catch(e){}
+  if(sv&&isFinite(sv.lon)&&isFinite(sv.lat)&&Math.abs(sv.lat)<=85)return {c:[sv.lon,sv.lat],z:Math.min(Math.max(sv.z||12,3),16),saved:true};
+  var cc=langCountry();   // instant guess from the browser language region (es-MX -> Mexico City) while the IP lookup runs
+  return cc?{c:CAPITALS[cc],z:10.5,saved:false}:{c:CONFIG.CENTER,z:16,saved:false};
+}
+function fetchJson(url,ms){
+  var ac=window.AbortController?new AbortController():null,t=setTimeout(function(){if(ac)ac.abort();},ms||4500);
+  return fetch(url,ac?{signal:ac.signal}:{}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error('http '+r.status);return r.json();});
+}
+function ipLocate(){
+  return fetchJson('https://ipwho.is/?fields=success,latitude,longitude,country_code').then(function(d){
+    if(!d||d.success===false)throw new Error('ipwho');return {lat:d.latitude,lon:d.longitude,cc:d.country_code};
+  }).catch(function(){
+    return fetchJson('https://ipapi.co/json/').then(function(d){return {lat:d.latitude,lon:d.longitude,cc:d.country_code};});
+  });
+}
+function savePos(){
+  if(!map||posAuto)return;
+  try{var c=map.getCenter();store('elx_pos',JSON.stringify({lon:+c.lng.toFixed(5),lat:+c.lat.toFixed(5),z:+map.getZoom().toFixed(1)}));}catch(e){}
+}
+function trackPos(sp){
+  map.on('movestart',function(e){if(e.originalEvent){posUser=true;doSearch._target=null;}});
+  if(sp.test){posAuto=true;return;}   // ?cc=XX test mode: no lookup, nothing saved
+  map.on('moveend',savePos);
+  ['form','btnLoc'].forEach(function(id){var el=$(id);if(el)el.addEventListener(id==='form'?'submit':'click',function(){posUser=true;},true);});
+  if(sp.saved)return;   // returning visitor: keep the saved spot, no lookup needed
+  var ipCc='';
+  ipLocate().then(function(r){
+    if(posUser||!map)return;
+    ipCc=String(r.cc||'').toUpperCase();
+    var ok=isFinite(r.lat)&&isFinite(r.lon)&&!(r.lat===0&&r.lon===0);
+    if(ok){map.flyTo({center:[r.lon,r.lat],zoom:12,pitch:45,bearing:0,duration:1800,essential:true});return;}
+    throw new Error('no coords');
+  }).catch(function(){
+    // No exact spot: use the capital of the visitor's country (from the IP, else the browser language region); otherwise stay on Madrid
+    if(posUser||!map)return;
+    var cc=CAPITALS[ipCc]?ipCc:langCountry();if(!cc)return;
+    posAuto=true;   // do not save this guess, so the next visit tries the IP lookup again
+    map.once('moveend',function(){posAuto=false;});
+    map.flyTo({center:CAPITALS[cc],zoom:10.5,pitch:45,bearing:0,duration:1800,essential:true});
+  });
+}
 function initMap(){
   if(typeof maplibregl==='undefined'){toast('The map library could not load. Check your connection.');return;}
-  map=new maplibregl.Map({container:'map',style:CONFIG.STYLE,center:CONFIG.CENTER,zoom:16,pitch:62,bearing:-18,maxPitch:78,attributionControl:{compact:true}});
+  var sp=startPos();
+  map=new maplibregl.Map({container:'map',style:CONFIG.STYLE,center:sp.c,zoom:sp.z,pitch:sp.z>=14?62:45,bearing:-18,maxPitch:78,attributionControl:{compact:true}});
   map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-right');
   map.on('style.load',ensureLayers);
   map.once('load',function(){styleOk=true;});
@@ -1105,6 +1165,7 @@ function initMap(){
   map.on('mousemove',function(e){map.getCanvas().style.cursor=bizAt(e.point,true)?'pointer':'';});
   map.on('moveend',function(e){if(e.originalEvent&&!$('here').dataset.lock)$('here').hidden=false;});
   geoFromQuery();
+  trackPos(sp);
 }
 function geojson(){
   return{type:'FeatureCollection',features:visibleRows().map(function(b){return{type:'Feature',properties:{id:b.id,status:b.status,name:b.name,lead:stOf(b)},geometry:{type:'Point',coordinates:[b.lon,b.lat]}};})};
@@ -1430,6 +1491,102 @@ $('btnLoc').onclick=function(){
     map.flyTo({center:[p.coords.longitude,p.coords.latitude],zoom:15.6,pitch:60,duration:1600,essential:true});
   },function(){toast('Location permission was denied. Type a city instead.');},{enableHighAccuracy:false,timeout:9000});
 };
+/* ---- Where: place suggestions while typing (Photon, free and made for search-as-you-type) ----
+   Pick one, or press Return: the map flies there first, and only then does the search run. */
+var PHOTON='https://photon.komoot.io/api/';
+var SUG={q:'',items:[],i:-1,ctl:null,tmr:null,going:false,cache:{}};
+var sugBox=document.createElement('div');sugBox.id='whereSug';sugBox.setAttribute('role','listbox');sugBox.hidden=true;
+$('qWhere').parentNode.appendChild(sugBox);
+function sugParts(f){
+  var p=f.properties||{},n=p.name||p.city||p.county||p.state||p.country||'',out=[n],more=[p.city,p.county,p.state,p.country];
+  more.forEach(function(x){if(x&&out.indexOf(x)<0)out.push(x);});
+  return out.filter(Boolean);
+}
+function sugPlace(f){
+  var c=f.geometry.coordinates,e=f.properties&&f.properties.extent,pa=sugParts(f);
+  return {lat:c[1],lon:c[0],name:pa.join(', '),bbox:e?[e[0],e[3],e[2],e[1]]:null,label:pa.join(', ')};
+}
+function closeSug(){sugBox.hidden=true;SUG.i=-1;$('qWhere').setAttribute('aria-expanded','false');}
+function paintSug(){
+  var kids=sugBox.children,i;for(i=0;i<kids.length;i++){kids[i].classList.toggle('on',i===SUG.i);if(i===SUG.i&&kids[i].scrollIntoView)kids[i].scrollIntoView({block:'nearest'});}
+}
+function renderSug(){
+  if(!SUG.items.length){closeSug();return;}
+  sugBox.innerHTML=SUG.items.map(function(f,i){var pa=sugParts(f);return '<div role="option" data-i="'+i+'"><b>'+esc(pa[0])+'</b>'+(pa.length>1?'<small>'+esc(pa.slice(1).join(', '))+'</small>':'')+'</div>';}).join('');
+  sugBox.hidden=false;sugBox.scrollTop=0;$('qWhere').setAttribute('aria-expanded','true');
+}
+function fetchSug(q){
+  var key=q.toLowerCase();
+  if(SUG.cache[key])return Promise.resolve(SUG.cache[key]);
+  if(SUG.ctl)try{SUG.ctl.abort();}catch(e){}
+  var ctl=SUG.ctl=window.AbortController?new AbortController():null,to=setTimeout(function(){if(ctl)ctl.abort();},6000);
+  var c=map?map.getCenter():null,base=PHOTON+'?limit=6&q='+encodeURIComponent(q)+(c?'&lat='+c.lat.toFixed(3)+'&lon='+c.lng.toFixed(3):'')+(LANG==='en'?'&lang=en':'');
+  function get(u){return fetch(u,ctl?{signal:ctl.signal}:{}).then(function(r){if(!r.ok)throw new Error('sug '+r.status);return r.json();});}
+  return get(base+'&layer=locality&layer=district&layer=city&layer=county&layer=state&layer=country').catch(function(e){
+    if(ctl&&ctl.signal.aborted)throw e;return get(base);   // server without the "layer" filter: ask again without it
+  }).then(function(d){
+    clearTimeout(to);
+    var seen={},a=(d.features||[]).filter(function(f){return f&&f.geometry&&f.geometry.coordinates;}).filter(function(f){var k=sugParts(f).join('|');if(seen[k])return false;seen[k]=1;return true;});
+    SUG.cache[key]=a;return a;
+  },function(e){clearTimeout(to);throw e;});
+}
+function runSearchNow(){if(busy)return;if($('qName').value.trim())doNameSearch();else doSearch();}
+function goPlace(f,thenSearch){
+  var g=sugPlace(f),label=g.label;delete g.label;
+  $('qWhere').value=label;closeSug();
+  geoPut(label.toLowerCase(),g);          // the search that follows reuses this exact place, no second lookup
+  doSearch._lastWhere=label;
+  SUG.going=true;
+  var big=g.bbox&&Math.max(g.bbox[2]-g.bbox[0],g.bbox[3]-g.bbox[1])>0.3;   // country / region: fit it, do not zoom to street level
+  return new Promise(function(res){
+    var fin=false;
+    function done(){if(fin)return;fin=true;setTimeout(function(){delete $('here').dataset.lock;SUG.going=false;res();},60);}
+    $('here').dataset.lock='1';
+    map.once('moveend',done);setTimeout(done,3500);
+    if(big){doSearch._target=null;map.fitBounds([[g.bbox[0],g.bbox[1]],[g.bbox[2],g.bbox[3]]],{padding:40,maxZoom:12,pitch:30,bearing:0,duration:1600,essential:true});}
+    else{doSearch._target={n:g.lat+0.0145,s:g.lat-0.0145,e:g.lon+0.0195,w:g.lon-0.0195};map.flyTo({center:[g.lon,g.lat],zoom:15.4,pitch:60,bearing:-15,duration:1600,essential:true});}
+  }).then(function(){
+    // map has arrived; now the search (after a click on a suggestion only if something to look for is already filled in)
+    if(thenSearch||$('qName').value.trim()||$('qWhat').value.trim()||selCats.length)runSearchNow();
+    else{try{$('qWhat').focus();}catch(e){}}
+  });
+}
+function submitNow(){var f=$('form');if(f.requestSubmit)f.requestSubmit();else f.dispatchEvent(new Event('submit',{cancelable:true}));}
+$('qWhere').addEventListener('input',function(){
+  var v=this.value.trim();clearTimeout(SUG.tmr);
+  if(v.length<3){SUG.items=[];closeSug();return;}
+  SUG.tmr=setTimeout(function(){
+    fetchSug(v).then(function(a){
+      if($('qWhere').value.trim()!==v||document.activeElement!==$('qWhere'))return;
+      SUG.q=v.toLowerCase();SUG.items=a;SUG.i=-1;renderSug();
+    },function(){});
+  },300);
+});
+$('qWhere').addEventListener('focus',function(){var v=this.value.trim().toLowerCase();if(v.length>=3&&SUG.q===v&&SUG.items.length&&v!==String(doSearch._lastWhere||'').toLowerCase())renderSug();});
+$('qWhere').addEventListener('blur',function(){setTimeout(closeSug,180);});
+$('qWhere').addEventListener('keydown',function(e){
+  if(e.isComposing)return;
+  var k=e.key,n=SUG.items.length;
+  if((k==='ArrowDown'||k==='ArrowUp')&&n){
+    e.preventDefault();if(sugBox.hidden)renderSug();
+    SUG.i=k==='ArrowDown'?(SUG.i+1)%n:(SUG.i<=0?n-1:SUG.i-1);paintSug();
+  }else if(k==='Escape'){closeSug();}
+  else if(k==='Enter'){
+    var v=this.value.trim();
+    if(!v||busy||SUG.going||v===doSearch._lastWhere)return;   // nothing new to move to: normal search
+    e.preventDefault();clearTimeout(SUG.tmr);
+    var cur=(SUG.q===v.toLowerCase()&&SUG.items.length)?SUG.items[SUG.i>=0?SUG.i:0]:null;
+    (cur?Promise.resolve(cur):fetchSug(v).then(function(a){return a[0]||null;})).then(function(f){
+      if(!f){submitNow();return;}          // no suggestion: the usual search (finds the place itself)
+      return goPlace(f,true);
+    },function(){submitNow();});
+  }
+});
+sugBox.addEventListener('mousedown',function(e){e.preventDefault();});
+sugBox.addEventListener('click',function(e){
+  var el=e.target.closest?e.target.closest('[data-i]'):null;if(!el||busy||SUG.going)return;
+  var f=SUG.items[+el.dataset.i];if(f)goPlace(f,false);
+});
 // shortlist
 var saved={};try{saved=JSON.parse(store('elx_saved')||'{}');}catch(e){saved={};}
 var showSaved=false;
