@@ -1328,12 +1328,14 @@ function doSearch(fromChip){
       if(my!==searchTok)throw new Error('stopped');
       if(!g)throw new Error('nogeo');
       doSearch._lastWhere=where;
-      // Fly the camera and query the data at the same time (no waiting for the animation)
-      $('here').dataset.lock='1';
-      var fin=false;function done(){if(fin)return;fin=true;setTimeout(function(){delete $('here').dataset.lock;},60);}
-      map.once('moveend',done);setTimeout(done,3500);
-      map.flyTo({center:[g.lon,g.lat],zoom:15.4,pitch:60,bearing:-15,duration:1600,essential:true});
+      // Move the map to the place first; the search starts once the camera has arrived
       doSearch._target={n:g.lat+0.0145,s:g.lat-0.0145,e:g.lon+0.0195,w:g.lon-0.0195};
+      return new Promise(function(res){
+        $('here').dataset.lock='1';
+        var fin=false;function done(){if(fin)return;fin=true;setTimeout(function(){delete $('here').dataset.lock;res();},60);}
+        map.once('moveend',done);setTimeout(done,3500);
+        map.flyTo({center:[g.lon,g.lat],zoom:15.4,pitch:60,bearing:-15,duration:1600,essential:true});
+      });
     });
   }
   step.then(function(){
@@ -1386,11 +1388,12 @@ function nameBounds(where){
   return provider.geocode(where).then(function(g){
     if(!g)throw new Error('nogeo');
     doSearch._lastWhere=where;
-    $('here').dataset.lock='1';var fin=false;function done(){if(fin)return;fin=true;setTimeout(function(){delete $('here').dataset.lock;},60);}
-    map.once('moveend',done);setTimeout(done,3500);
-    map.flyTo({center:[g.lon,g.lat],zoom:13.5,pitch:30,bearing:0,duration:1400,essential:true});
     var bb=g.bbox?{w:g.bbox[0],s:g.bbox[1],e:g.bbox[2],n:g.bbox[3]}:{n:g.lat+0.02,s:g.lat-0.02,e:g.lon+0.03,w:g.lon-0.03};
-    return clamp(bb);
+    return new Promise(function(res){   // map moves first, the name search starts when it has arrived
+      $('here').dataset.lock='1';var fin=false;function done(){if(fin)return;fin=true;setTimeout(function(){delete $('here').dataset.lock;res(clamp(bb));},60);}
+      map.once('moveend',done);setTimeout(done,3500);
+      map.flyTo({center:[g.lon,g.lat],zoom:13.5,pitch:30,bearing:0,duration:1400,essential:true});
+    });
   });
 }
 function googleName(name,where,b){
@@ -1501,13 +1504,14 @@ $('btnLoc').onclick=function(){
   },function(){toast('Location permission was denied. Type a city instead.');},{enableHighAccuracy:false,timeout:9000});
 };
 /* ---- Where: place suggestions while typing (Photon, free and made for search-as-you-type) ----
-   Pick one, or press Return: the map flies there first, and only then does the search run. */
+   Pick one, or press Return: the map flies there. The search starts when the person presses the search button. */
 var PHOTON='https://photon.komoot.io/api/';
 var SUG={q:'',items:[],i:-1,ctl:null,tmr:null,going:false,cache:{}};
 var sugBox=document.createElement('div');sugBox.id='whereSug';sugBox.setAttribute('role','listbox');sugBox.hidden=true;
 $('qWhere').parentNode.appendChild(sugBox);
 function sugParts(f){
   var p=f.properties||{},n=p.name||p.city||p.county||p.state||p.country||'',out=[n],more=[p.city,p.county,p.state,p.country];
+  if(p.type==='state')out[0]=n+' ('+(LANG==='es'?'estado':'state')+')';
   more.forEach(function(x){if(x&&out.indexOf(x)<0)out.push(x);});
   return out.filter(Boolean);
 }
@@ -1535,18 +1539,20 @@ function fetchSug(q){
     if(ctl&&ctl.signal.aborted)throw e;return get(base);   // server without the "layer" filter: ask again without it
   }).then(function(d){
     clearTimeout(to);
-    var seen={},a=(d.features||[]).filter(function(f){return f&&f.geometry&&f.geometry.coordinates;}).filter(function(f){var k=sugParts(f).join('|');if(seen[k])return false;seen[k]=1;return true;});
+    var RK={city:0,district:1,locality:1,county:2,state:3,country:4},seen={};
+    var a=(d.features||[]).filter(function(f){return f&&f.geometry&&f.geometry.coordinates;})
+      .map(function(f,i){return {f:f,i:i,r:(RK[(f.properties||{}).type]!=null?RK[f.properties.type]:2)};})
+      .sort(function(x,y){return x.r-y.r||x.i-y.i;}).map(function(o){return o.f;})   // "new york" -> the city before the state
+      .filter(function(f){var k=sugParts(f).join('|');if(seen[k])return false;seen[k]=1;return true;});
     SUG.cache[key]=a;return a;
   },function(e){clearTimeout(to);throw e;});
 }
-function runSearchNow(){if(busy)return;if($('qName').value.trim())doNameSearch();else doSearch();}
-function goPlace(f,thenSearch){
-  var g=sugPlace(f),label=g.label;delete g.label;
+function goTo(g,label){
   $('qWhere').value=label;closeSug();
-  geoPut(label.toLowerCase(),g);          // the search that follows reuses this exact place, no second lookup
+  geoPut(label.toLowerCase(),g);          // the search button reuses this exact place, no second lookup
   doSearch._lastWhere=label;
   SUG.going=true;
-  var big=g.bbox&&Math.max(g.bbox[2]-g.bbox[0],g.bbox[3]-g.bbox[1])>0.3;   // country / region: fit it, do not zoom to street level
+  var big=g.bbox&&Math.max(g.bbox[2]-g.bbox[0],g.bbox[3]-g.bbox[1])>1.2;   // only state / country sized: fit it. Cities keep the close-up view so the search area stays small
   return new Promise(function(res){
     var fin=false;
     function done(){if(fin)return;fin=true;setTimeout(function(){delete $('here').dataset.lock;SUG.going=false;res();},60);}
@@ -1555,11 +1561,11 @@ function goPlace(f,thenSearch){
     if(big){doSearch._target=null;map.fitBounds([[g.bbox[0],g.bbox[1]],[g.bbox[2],g.bbox[3]]],{padding:40,maxZoom:12,pitch:30,bearing:0,duration:1600,essential:true});}
     else{doSearch._target={n:g.lat+0.0145,s:g.lat-0.0145,e:g.lon+0.0195,w:g.lon-0.0195};map.flyTo({center:[g.lon,g.lat],zoom:15.4,pitch:60,bearing:-15,duration:1600,essential:true});}
   }).then(function(){
-    // map has arrived; now the search (after a click on a suggestion only if something to look for is already filled in)
-    if(thenSearch||$('qName').value.trim()||$('qWhat').value.trim()||selCats.length)runSearchNow();
-    else{try{$('qWhat').focus();}catch(e){}}
+    // the map is there; the search starts only when the person presses the search button
+    if(!$('qWhat').value.trim()&&!selCats.length){try{$('qWhat').focus();}catch(e){}}
   });
 }
+function goPlace(f){var g=sugPlace(f),label=g.label;delete g.label;return goTo(g,label);}
 function submitNow(){var f=$('form');if(f.requestSubmit)f.requestSubmit();else f.dispatchEvent(new Event('submit',{cancelable:true}));}
 $('qWhere').addEventListener('input',function(){
   var v=this.value.trim();clearTimeout(SUG.tmr);
@@ -1585,16 +1591,17 @@ $('qWhere').addEventListener('keydown',function(e){
     if(!v||busy||SUG.going||v===doSearch._lastWhere)return;   // nothing new to move to: normal search
     e.preventDefault();clearTimeout(SUG.tmr);
     var cur=(SUG.q===v.toLowerCase()&&SUG.items.length)?SUG.items[SUG.i>=0?SUG.i:0]:null;
-    (cur?Promise.resolve(cur):fetchSug(v).then(function(a){return a[0]||null;})).then(function(f){
-      if(!f){submitNow();return;}          // no suggestion: the usual search (finds the place itself)
-      return goPlace(f,true);
-    },function(){submitNow();});
+    (cur?Promise.resolve(cur):fetchSug(v).then(function(a){return a[0]||null;},function(){return null;})).then(function(f){
+      if(f)return goPlace(f);
+      // no suggestion: find the place with the map's own lookup and just move there
+      return provider.geocode(v).then(function(g){if(!g){toast('Place not found. Check the spelling and try again.');return;}return goTo(g,v);});
+    }).catch(function(){toast('Could not find that place. Wait a few seconds and try again.');});
   }
 });
 sugBox.addEventListener('mousedown',function(e){e.preventDefault();});
 sugBox.addEventListener('click',function(e){
   var el=e.target.closest?e.target.closest('[data-i]'):null;if(!el||busy||SUG.going)return;
-  var f=SUG.items[+el.dataset.i];if(f)goPlace(f,false);
+  var f=SUG.items[+el.dataset.i];if(f)goPlace(f);
 });
 // shortlist
 var saved={};try{saved=JSON.parse(store('elx_saved')||'{}');}catch(e){saved={};}
