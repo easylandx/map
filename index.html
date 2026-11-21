@@ -1477,7 +1477,7 @@ var LIX=null,showLeads=false,leadFilter='all';
  'First contacted':'Primer contacto','Last updated':'Última actualización','Website status':'Estado de la web'
 };Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
 ES['Options']='Opciones';ES['Show options']='Mostrar opciones';ES['Resize panel']='Cambiar tamaño del panel';
-ES['Other']='Otros';ES['None match the ticked filters']='Ninguno cumple los filtros marcados';ES['Untick some of the boxes to see more, or search another category.']='Desmarca alguna casilla para ver más, o busca otra categoría.';STATIC.push(['#pHandle','aria-label','Resize panel']);STATIC.push(['#pPrev',0,'‹ Prev'],['#pNext',0,'Next ›']);ES['Play']='Reproducir';ES['Stop']='Parar';
+ES['Other']='Otros';ES['Could not read their page right now. It will retry when you open it again.']='No se pudo leer su página ahora. Se reintentará al abrirla de nuevo.';ES['None match the ticked filters']='Ninguno cumple los filtros marcados';ES['Untick some of the boxes to see more, or search another category.']='Desmarca alguna casilla para ver más, o busca otra categoría.';STATIC.push(['#pHandle','aria-label','Resize panel']);STATIC.push(['#pPrev',0,'‹ Prev'],['#pNext',0,'Next ›']);ES['Play']='Reproducir';ES['Stop']='Parar';
 
 function p2(n){return (n<10?'0':'')+n;}
 function dstr(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
@@ -2359,8 +2359,18 @@ function buildBrand(entries){
   return pick.then(function(c){br.k=c||br.k||'';return(br.k||br.logo||br.s.length||br.i.length||br.h)?br:null;});
 }
 function siteUrl(u){u=String(u||'').trim();return u&&!/^https?:\/\//i.test(u)?'https://'+u:u;}
+/* Successful brand reads are saved in this browser for 7 days (small entries, max 250), so the free reader is only used once per business */
+function brandCacheAll(){try{return JSON.parse(store('elx_brand1')||'{}')||{};}catch(e){return {};}}
+function brandCacheGet(id,sig){var e=brandCacheAll()[id];return(e&&e.sig===sig&&Date.now()-e.t<7*86400000)?e.v:null;}
+function brandCachePut(id,sig,v){
+  var all=brandCacheAll();all[id]={sig:sig,t:Date.now(),v:v};
+  var ks=Object.keys(all);if(ks.length>250){ks.sort(function(a,c){return all[a].t-all[c].t;});ks.slice(0,ks.length-250).forEach(function(k){delete all[k];});}
+  try{store('elx_brand1',JSON.stringify(all));}catch(e){}
+}
+function brandRetryable(b){return !!(b&&b.brand===null&&b.brandFail&&Date.now()-b.brandFail>30000);}
 function enrichBrand(b){
   if(!b||b.id==='shared')return Promise.resolve(null);
+  if(brandRetryable(b)){b.brand=undefined;b.brandFail=0;}   // a failed read is retried (at most every 30 s), not remembered forever
   if(b.brand!==undefined)return Promise.resolve(b.brand);
   if(BRANDP[b.id])return BRANDP[b.id];
   var g=b.guess||{},list=[],sc=b.social||'',gi=g.ig||'',wu=b.web||g.u||'';
@@ -2368,8 +2378,11 @@ function enrichBrand(b){
   if(gi&&!/instagram\.com/i.test(sc))list.push({u:siteUrl(gi),kind:'ig'});
   if(wu)list.push({u:siteUrl(wu),kind:'web'});
   if(!list.length){b.brand=null;return Promise.resolve(null);}
+  var sig=list.map(function(x){return x.u;}).join(',');
+  var hit=brandCacheGet(b.id,sig);if(hit){b.brand=hit;return Promise.resolve(hit);}
   BRANDP[b.id]=Promise.all(list.map(function(x){return readPage(x.u,x.kind!=='web').then(function(info){return{info:info,kind:x.kind};});}))
-    .then(function(entries){entries.forEach(function(e){if(!b.wa&&e&&e.info){var w=waFrom(e.info);if(w)b.wa=w;}});return buildBrand(entries);}).then(function(br){b.brand=br;delete BRANDP[b.id];return br;},function(){b.brand=null;delete BRANDP[b.id];return null;});
+    .then(function(entries){var okAny=entries.some(function(e){return e&&e.info;});entries.forEach(function(e){if(!b.wa&&e&&e.info){var w=waFrom(e.info);if(w)b.wa=w;}});return buildBrand(entries).then(function(br){return{br:br,fail:!okAny};});})
+    .then(function(r){b.brand=r.br;if(r.fail)b.brandFail=Date.now();else if(r.br)brandCachePut(b.id,sig,r.br);delete BRANDP[b.id];return r.br;},function(){b.brand=null;b.brandFail=Date.now();delete BRANDP[b.id];return null;});
   return BRANDP[b.id];
 }
 function brandOf(b){if(!b||!b.brand)return null;if(b.id==='shared')return b.brand;return pvBrandOn?b.brand:null;}
@@ -2495,6 +2508,7 @@ function brandNote(b){
   box.hidden=false;
   if(b.brand===undefined){note.textContent=T('Reading their page…');return;}
   var br=b.brand;
+  if(!br&&b.brandFail){note.textContent=T('Could not read their page right now. It will retry when you open it again.');return;}
   if(!br){note.textContent=(b.web||b.social||(b.guess&&(b.guess.u||b.guess.ig)))?T('Nothing usable found on their page or Instagram.'):T('No website or Instagram known for this business.');return;}
   var parts=[];
   if(br.k)parts.push(T('colours'));if(br.logo)parts.push(T('logo'));
@@ -2510,8 +2524,9 @@ function openPreview(b,themeId){
   $('pTitle').textContent=b.name;
   buildThemes();brandNote(b);
   renderFrame();$('mPrev').hidden=false;fitDesk();updPvNav();track('map_preview_open',{category:b.cat,status:b.status});
-  if(b.id!=='shared'&&b.brand===undefined){
-    enrichBrand(b).then(function(){
+  if(b.id!=='shared'&&(b.brand===undefined||brandRetryable(b))){
+    var pr=enrichBrand(b);brandNote(b);
+    pr.then(function(){
       if(pvB!==b||$('mPrev').hidden)return;
       brandNote(b);setBrandTheme(brandOf(b));
       if(!pvPicked)pvT=themeById('sun');
@@ -2995,8 +3010,9 @@ function pageInfoFromReader(txt,base){
 // Websites are read straight from the browser when the site allows it; otherwise (and for Instagram/Facebook) through the free r.jina.ai page reader.
 function readPage(url,skipDirect){
   var viaReader=function(){return fetchText('https://r.jina.ai/'+url,12000).then(function(t){return pageInfoFromReader(t,url);});};
+  var viaProxy=function(){return fetchText('https://api.allorigins.win/raw?url='+encodeURIComponent(url),12000).then(function(h){if(!h||h.length<200)throw new Error('empty');return pageInfoFromHTML(h,url);});};   // backup, only reached when the direct read and the reader both failed
   if(skipDirect)return viaReader().catch(function(){return null;});
-  return fetchText(url,7000).then(function(h){return pageInfoFromHTML(h,url);}).catch(viaReader).catch(function(){return null;});
+  return fetchText(url,7000).then(function(h){return pageInfoFromHTML(h,url);}).catch(viaReader).catch(viaProxy).catch(function(){return null;});
 }
 var PH_RE=/(?:\+|00)\d{1,3}[\s.-]?(?:\(?\d\)?[\s.-]?){7,12}\d|\b[6-9]\d{2}[\s.-]?\d{3}[\s.-]?\d{3}\b|\b[6-9]\d{2}[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}\b/g;
 var ADDR_RE=/\b(?:Calle|C\/|Avda\.?|Avenida|Plaza|Paseo|Camino|Ronda|Traves[ií]a)\s+[^\n|;,]{2,45}?,?\s+(?:n[º°o.]*\s*)?\d{1,4}\b/i;
