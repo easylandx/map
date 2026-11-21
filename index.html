@@ -1567,8 +1567,14 @@ function goTo(g,label){
 }
 function goPlace(f){var g=sugPlace(f),label=g.label;delete g.label;return goTo(g,label);}
 function submitNow(){var f=$('form');if(f.requestSubmit)f.requestSubmit();else f.dispatchEvent(new Event('submit',{cancelable:true}));}
+/* Default list: shown when the Where field is empty and gets focus / is clicked. Fixed coordinates, no network needed. */
+var DEF_CITIES=[['New York City','Nueva York','United States','Estados Unidos',40.7128,-74.0060],['San Francisco','San Francisco','United States','Estados Unidos',37.7749,-122.4194],['London','Londres','United Kingdom','Reino Unido',51.5074,-0.1278],['Los Angeles','Los Ángeles','United States','Estados Unidos',34.0522,-118.2437],['Austin','Austin','United States','Estados Unidos',30.2672,-97.7431],['Toronto','Toronto','Canada','Canadá',43.6532,-79.3832],['Singapore','Singapur','Singapore','Singapur',1.3521,103.8198],['Dubai','Dubái','United Arab Emirates','Emiratos Árabes Unidos',25.2048,55.2708],['Madrid','Madrid','Spain','España',40.4168,-3.7038],['Amsterdam','Ámsterdam','Netherlands','Países Bajos',52.3676,4.9041],['Chicago','Chicago','United States','Estados Unidos',41.8781,-87.6298],['Miami','Miami','United States','Estados Unidos',25.7617,-80.1918],['Paris','París','France','Francia',48.8566,2.3522],['Berlin','Berlín','Germany','Alemania',52.5200,13.4050],['Sydney','Sídney','Australia','Australia',-33.8688,151.2093],['Barcelona','Barcelona','Spain','España',41.3851,2.1734],['Boston','Boston','United States','Estados Unidos',42.3601,-71.0589],['Seattle','Seattle','United States','Estados Unidos',47.6062,-122.3321],['Dallas','Dallas','United States','Estados Unidos',32.7767,-96.7970],['Zurich','Zúrich','Switzerland','Suiza',47.3769,8.5417],['Dublin','Dublín','Ireland','Irlanda',53.3498,-6.2603]];
+function defaultFeatures(){var es=LANG==='es';return DEF_CITIES.map(function(c){return {type:'Feature',geometry:{type:'Point',coordinates:[c[5],c[4]]},properties:{name:es?c[1]:c[0],country:es?c[3]:c[2],type:'city'}};});}
+function showDefaultSug(){if($('qWhere').value.trim())return;SUG.q='';SUG.items=defaultFeatures();SUG.i=-1;renderSug();}
+$('qWhere').addEventListener('click',function(){if(!this.value.trim()&&sugBox.hidden)showDefaultSug();});
 $('qWhere').addEventListener('input',function(){
   var v=this.value.trim();clearTimeout(SUG.tmr);
+  if(!v){showDefaultSug();return;}
   if(v.length<3){SUG.items=[];closeSug();return;}
   SUG.tmr=setTimeout(function(){
     fetchSug(v).then(function(a){
@@ -1577,7 +1583,7 @@ $('qWhere').addEventListener('input',function(){
     },function(){});
   },300);
 });
-$('qWhere').addEventListener('focus',function(){var v=this.value.trim().toLowerCase();if(v.length>=3&&SUG.q===v&&SUG.items.length&&v!==String(doSearch._lastWhere||'').toLowerCase())renderSug();});
+$('qWhere').addEventListener('focus',function(){var v=this.value.trim().toLowerCase();if(!v){showDefaultSug();return;}if(v.length>=3&&SUG.q===v&&SUG.items.length&&v!==String(doSearch._lastWhere||'').toLowerCase())renderSug();});
 $('qWhere').addEventListener('blur',function(){setTimeout(closeSug,180);});
 $('qWhere').addEventListener('keydown',function(e){
   if(e.isComposing)return;
