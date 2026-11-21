@@ -75,6 +75,14 @@ a{color:var(--teal)}
 #searching{position:fixed;z-index:12;top:18px;left:calc(408px + 12px + (100vw - 408px - 12px)/2);transform:translateX(-50%);display:flex;align-items:center;gap:9px;background:#fff;border-radius:99px;padding:10px 16px;font-weight:800;font-size:.85rem;box-shadow:var(--shadow);pointer-events:none}
 #searching[hidden]{display:none}
 #searching .spin{margin:0;border-color:rgba(15,118,110,.22);border-top-color:var(--teal)}
+/* search progress: fill on the button and on the pill above the map */
+.go.loading{position:relative;overflow:hidden}
+.go.loading::before{content:'';position:absolute;left:0;top:0;bottom:0;width:var(--sp,0%);background:rgba(255,255,255,.32);transition:width .35s ease}
+.go.loading>*{position:relative;z-index:1}
+#searching{overflow:hidden;min-width:150px;justify-content:center}
+#searching::before{content:'';position:absolute;left:0;top:0;bottom:0;width:var(--sp,0%);background:var(--soft-teal);transition:width .35s ease}
+#searching::after{content:'';position:absolute;left:0;bottom:0;height:3px;width:var(--sp,0%);background:linear-gradient(90deg,var(--teal),var(--teal2));border-radius:3px;transition:width .35s ease}
+#searching>*{position:relative;z-index:1}
 
 /* sidebar */
 #side{position:fixed;z-index:10;top:58px;left:12px;bottom:12px;width:408px;background:var(--bg);border-radius:22px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(255,255,255,.7)}
@@ -101,6 +109,8 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 .go:active{transform:translateY(1px)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;overflow-y:auto;max-height:100px;padding:8px 16px 4px;flex:none;overscroll-behavior:contain;transition:max-height .2s}
 .chips.open{max-height:44vh}
+.chip.part{border-color:var(--teal);color:var(--teal)}
+
 .more{flex:none;border:0;background:none;text-align:left;padding:2px 18px 8px;font-weight:700;font-size:.8rem;color:var(--teal)}
 .chip{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:5px 11px;font-weight:600;font-size:.8rem;white-space:nowrap}
 .chip.on{background:var(--teal);border-color:var(--teal);color:#fff}
@@ -145,7 +155,7 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 .badge.noweb{background:var(--soft-amber);color:#a35f00}
 .badge.social{background:var(--soft-sky);color:#1d4fb5}
 .badge.web{background:#e0f6e8;color:#13703a}
-.badge.unk{background:#efe8ff;color:#5b31b8}
+.badge.unk{background:var(--soft-amber);color:#a35f00}
 .skel{height:64px;border-radius:var(--r);background:linear-gradient(90deg,#efe9dc 25%,#f8f3e8 50%,#efe9dc 75%);background-size:200% 100%;animation:sh 1.2s infinite;margin-bottom:8px}
 @keyframes sh{to{background-position:-200% 0}}
 .foot{padding:8px 18px 12px;font-size:.7rem;color:var(--mute);line-height:1.4;flex:none;border-top:1px solid var(--line)}
@@ -380,14 +390,6 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
   .lseg button{padding:11px 2px 11px 2px}
 }
 
-.leadbar .lb.hot{background:var(--soft-teal);border-color:var(--teal2);color:var(--teal)}
-.leadbar .lb.trk{padding:6px 10px 6px 10px;opacity:.6}
-.leadbar .lb.trk.on{opacity:1;border-color:var(--teal2);background:var(--soft-teal)}
-.lt.s-hot{background:var(--soft-teal);color:var(--teal)}
-.ll .lo{flex:none;font-size:.74rem;font-weight:700;color:var(--teal)}
-.lopen{display:grid;gap:8px;background:var(--soft-teal);color:#0b5e57;border-radius:12px;padding:10px 12px 10px 12px;font-size:.84rem;font-weight:700;margin-bottom:10px}
-.lopen.idle{background:#f6f1e6;color:var(--mute);font-weight:600;font-size:.8rem}
-.lopen .btn{margin:0}
 /* No double-tap zoom on the interface (the map keeps its own gestures) */
 html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#tools,#legend,#langSw,button,a,input,select,textarea,label,.pill,.btn,.chip,.biz{touch-action:manipulation}
 #side,.panel,#list,#detail,.chips,#tplForm,#addForm{-webkit-text-size-adjust:100%}
@@ -459,7 +461,7 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
 <div id="searching" hidden role="status" aria-live="polite"><span class="spin"></span><span id="searchingTxt">Searching…</span></div>
 <button id="here" hidden>↻ Search this area</button>
 <div id="tools"><button id="tilt" title="Toggle 2D / 3D">3D</button></div>
-<div id="legend"><span><i style="background:#f59e0b"></i><span id="lg1">No website listed</span></span><span><i style="background:#3b82f6"></i><span id="lg2">Social media only</span></span><span><i style="background:#16a34a"></i><span id="lg3">Has a website</span></span><span><i style="background:#8b5cf6"></i><span id="lg4">Website unknown</span></span><span><i style="background:#fff;box-shadow:0 0 0 2.5px #1d2b2a"></i><span id="lg5">Already contacted</span></span></div>
+<div id="legend"><span><i style="background:#16a34a"></i><span id="lg1">Web</span></span><span><i style="background:#3b82f6"></i><span id="lg2">Social</span></span><span><i style="background:#f59e0b"></i><span id="lg3">Other</span></span></div>
 <div id="toast"></div>
 
 <!-- Add a business -->
@@ -584,7 +586,6 @@ var CONFIG={
   GCSE_CX:'',
   GOOGLE_KEY:'',   // paste a Google Places API key here (restrict it to your site in Google Cloud) to complete phone, website, hours and rating
   WA:'34609204298',
-  TRACK:'https://elx-tracker.paniaguai.workers.dev',   // URL of your tracker Worker (see elx-tracker-worker.js). Empty = links stay long and untracked.
   SITE:'https://easylandx.github.io/',
   CENTER:[-3.7038,40.4168]                                  // Madrid, until the visitor searches
 };
@@ -597,6 +598,7 @@ var ES={"Name": "Nombre", "Business name or word": "Nombre del negocio o palabra
 ES['Mention what I found (Instagram, website)']='Mencionar lo que he encontrado (Instagram, web)';ES['Found details line']='Línea con lo encontrado';
 ES['One by one']='Uno a uno';ES['Bulk list']='Lista en bloque';ES['Instagram handles or websites, one per line']='@usuarios de Instagram o webs, uno por línea';ES['Add all']='Añadir todos';ES['Adding…']='Añadiendo…';ES['Stop']='Detener';ES['Close']='Cerrar';ES['{0} detected']='{0} detectados';ES['Adding {0} of {1} · {2}']='Añadiendo {0} de {1} · {2}';ES['Done: {0} of {1} added']='Listo: {0} de {1} añadidos';ES['Stopped: {0} of {1} added']='Detenido: {0} de {1} añadidos';ES['Could not add: {0}']='No se pudo añadir: {0}';ES['Already on the map: {0}']='Ya en el mapa: {0}';ES['Paste at least one handle or website first.']='Pega primero al menos un perfil o web.';ES['Nothing new to add.']='No hay nada nuevo que añadir.';ES['Added {0} businesses']='Añadidos {0} negocios';ES['Message']='Mensaje';ES['Searching… tap to stop']='Buscando… toca para parar';ES['Stop search']='Parar búsqueda';ES['Search stopped']='Búsqueda detenida';ES['Close leads']='Cerrar leads';ES['Clear all leads']='Borrar todos los leads';ES['Clear {0}']='Borrar {0}';ES['Leads deleted: {0}']='Leads eliminados: {0}';ES['Delete all {0} leads? Their status, notes and follow-up dates will be lost and this cannot be undone. Tip: press Export CSV first to keep a backup.']='¿Eliminar los {0} leads? Se perderán su estado, notas y fechas de seguimiento y no se puede deshacer. Consejo: pulsa Exportar CSV antes para guardar una copia.';ES['Delete the {0} leads in "{1}"? Their status, notes and follow-up dates will be lost and this cannot be undone. Tip: press Export CSV first to keep a backup.']='¿Eliminar los {0} leads de «{1}»? Se perderán su estado, notas y fechas de seguimiento y no se puede deshacer. Consejo: pulsa Exportar CSV antes para guardar una copia.';ES['Follow-up due']=ES['Follow-up due']||'Seguimiento pendiente';ES['Opened, no reply']=ES['Opened, no reply']||'Abierto, sin respuesta';ES['✏️ Edit templates']='✏️ Editar plantillas';ES['Message templates']='Plantillas de mensajes';ES['Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.']='Edita el mensaje de cada canal y categoría. Toca una etiqueta para insertarla; se sustituye en cada negocio.';ES['Reset']='Restablecer';ES['Save']='Guardar';ES['📸 Copy message and open Instagram']='📸 Copiar mensaje y abrir Instagram';ES['✉️ Open email app']='✉️ Abrir app de correo';ES['💬 Open SMS app']='💬 Abrir app de SMS';ES[' (looks like a landline, so it may not receive texts)']=' (parece un teléfono fijo, puede que no reciba SMS)';ES['No phone number listed for this business. The message will be copied.']='Este negocio no tiene teléfono. El mensaje se copiará.';ES['No Instagram listed for this business. The message will be copied so you can paste it in their DM.']='Este negocio no tiene Instagram. El mensaje se copiará para que lo pegues en su DM.';ES['Opens your email app with the subject and message filled in.']='Abre tu app de correo con el asunto y el mensaje ya escritos.';ES['{0} characters']='{0} caracteres';ES['about {0} texts']='unos {0} SMS';ES['No phone listed. Message copied.']='Sin teléfono. Mensaje copiado.';ES['Custom template for this category']='Plantilla propia de esta categoría';ES['Using your all-categories template']='Usando tu plantilla de todas las categorías';ES['Using the built-in template']='Usando la plantilla por defecto';ES['The template cannot be empty.']='La plantilla no puede estar vacía.';ES['Template saved']='Plantilla guardada';ES['Template reset']='Plantilla restablecida';ES['Business name']='Nombre del negocio';ES['Category']='Categoría';ES['Address']='Dirección';ES['Preview link']='Enlace de vista previa';ES['Example site']='Web de ejemplo';ES['WhatsApp order link']='Enlace de WhatsApp para pedir';ES['Link note']='Nota del enlace';ES['Use their brand (colours, logo, photos, services)']='Usar su marca (colores, logo, fotos, servicios)';ES['Reading their page…']='Leyendo su página…';ES['Nothing usable found on their page or Instagram.']='No se encontró nada aprovechable en su web o Instagram.';ES['No website or Instagram known for this business.']='No se conoce web ni Instagram de este negocio.';ES['colours']='colores';ES['logo']='logo';ES['{0} photos']='{0} fotos';ES['{0} services']='{0} servicios';ES['hours']='horario';ES['Found: {0}']='Encontrado: {0}';ES['Brand']='Marca';ES['Hi! I would like more information about {0}.']='Hola! Me gustaría más información sobre {0}.';ES['Chat on WhatsApp']='Escríbenos por WhatsApp';ES['Opening hours']='Horario';ES['🗑 Clear all']='🗑 Borrar todo';ES['Remove all {0} saved businesses?']='¿Quitar los {0} negocios guardados?';ES['Clear all {0} businesses from the list? Businesses you added by hand will be removed too.']='¿Borrar los {0} negocios de la lista? También se quitarán los que añadiste a mano.';ES['All categories']='Todas las categorías';ES['Search all categories']='Buscar en todas las categorías';ES['Part of the area did not load. Press "Search this area" to retry.']='Una parte de la zona no se cargó. Pulsa «Buscar en esta zona» para reintentar.';ES['Mobile']='Móvil';ES['Searching…']='Buscando…';ES['＋ Add']='＋ Añadir';ES['Add a business']='Añadir un negocio';ES['Type a business name, an Instagram @handle or a website link.']='Escribe el nombre de un negocio, un @usuario de Instagram o un enlace web.';ES['Name, @instagram or website']='Nombre, @instagram o web';ES['Café Sol, @cafesol or cafesol.es']='Café Sol, @cafesol o cafesol.es';ES['Category']='Categoría';ES['Auto-detect']='Detectar automáticamente';ES['Cancel']='Cancelar';ES['Add']='Añadir';ES['Looking it up…']='Buscando información…';ES['Type a name, an @instagram or a website first.']='Escribe primero un nombre, un @instagram o una web.';ES['Added: {0}']='Añadido: {0}';ES['Could not add it. Try again.']='No se pudo añadir. Inténtalo de nuevo.';ES['Added by you. We could not find a website for it yet. Check before contacting.']='Añadido por ti. Aún no hemos encontrado su web. Compruébalo antes de contactar.';ES['Open in Google Maps']='Abrir en Google Maps';ES['Details completed with Google Maps']='Datos completados con Google Maps';ES['Instagram']='Instagram';ES['Facebook']='Facebook';ES['None of these has an Instagram listed']='Ninguno tiene Instagram registrado';ES['Untick "Instagram" to see them, or search another category.']='Desmarca «Instagram» para verlos, o busca otra categoría.';ES['None of these has a Facebook page listed']='Ninguno tiene página de Facebook registrada';ES['Untick "Facebook" to see them, or search another category.']='Desmarca «Facebook» para verlos, o busca otra categoría.';ES['Web']='Web';ES['WhatsApp']='WhatsApp';ES['None of these has a website']='Ninguno tiene página web';ES['Untick "Web" to see them, or search another category.']='Desmarca «Web» para verlos, o busca otra categoría.';ES['None of these has a mobile number listed']='Ninguno tiene un móvil registrado';ES['Untick "WhatsApp" to see them, or search another category.']='Desmarca «WhatsApp» para verlos, o busca otra categoría.';
 var CAT_ES={"hair": "Peluquería", "beauty": "Belleza y cuidado de la piel", "tattoo": "Estudio de tatuajes", "cafe": "Cafetería", "restaurant": "Restaurante", "bakery": "Panadería", "pastry": "Pastelería y tartas", "choc": "Chocolatería", "cheese": "Quesería", "florist": "Floristería", "garden": "Jardín y plantas", "fitness": "Gimnasio y fitness", "yoga": "Yoga", "pilates": "Pilates", "dance": "Escuela de baile", "music": "Escuela de música", "therapy": "Terapia y psicología", "lawyer": "Despacho de abogados", "finance": "Contabilidad y finanzas", "realestate": "Inmobiliaria", "photo": "Fotógrafo", "art": "Galería y taller de arte", "jewelry": "Joyería", "pottery": "Cerámica y alfarería", "pets": "Peluquería y tiendas de mascotas", "stay": "Alojamiento rural", "outdoor": "Aire libre y aventura", "party": "Fiestas y eventos", "generic": "Negocio local"};
+Object.assign(CAT_ES,{"carrepair": "Taller mecánico", "bike": "Tienda de bicicletas", "driving": "Autoescuela", "boutique": "Boutique y moda", "gift": "Regalos y decoración", "books": "Librería", "toys": "Juguetería", "interior": "Interiorismo y muebles", "trades": "Fontanería, electricidad y oficios", "locksmith": "Cerrajería", "tailor": "Sastrería y arreglos", "laundry": "Lavandería y tintorería", "language": "Academia de idiomas", "coworking": "Coworking", "herbal": "Herbolario y salud natural", "escape": "Escape room y experiencias"});
 function T(k){var s=(LANG==='es'&&ES[k]!=null)?ES[k]:k;for(var i=1;i<arguments.length;i++)s=s.split('{'+(i-1)+'}').join(arguments[i]);return s;}
 function lbl(c){return LANG==='es'?(CAT_ES[c.id]||c.label):c.label;}
 var TITLE_EN=document.title,DESC_EN=(document.querySelector('meta[name=description]')||{getAttribute:function(){return '';}}).getAttribute('content');
@@ -607,7 +609,7 @@ var STATIC=[
 ['#qWhat','placeholder','Hair salon, café, yoga…'],['#qWhere','placeholder','City or neighbourhood'],
 ['#btnLoc','title','Use my location'],['#btnLoc','aria-label','Use my location'],
 ['#lblWeb',0,'Web'],['#lblWa',0,'WhatsApp'],['#lblIg',0,'Instagram'],['#lblFb',0,'Facebook'],['#here',0,'↻ Search this area'],['#tilt','title','Toggle 2D / 3D'],
-['#lg1',0,'No website listed'],['#lg2',0,'Social media only'],['#lg3',0,'Has a website'],['#lg4',0,'Website unknown'],
+['#lg1',0,'Web'],['#lg2',0,'Social'],['#lg3',0,'Other'],
 ['#pBack',0,'← Back'],['#mPrev .mbar .t small',0,'Concept preview · made with EasyLandX'],
 ['#pAR',0,'📱 View in AR'],['#pCopy',0,'🔗 Copy link'],['#pSendWa',0,'💬 WhatsApp'],['#pSendMail',0,'✉️ Email'],['#pWa',0,'💬 I want this page'],
 ['#pFrame','title','Concept preview'],
@@ -684,46 +686,128 @@ var CATS=[
 ['pets','Pet grooming & shops','🐾','pets',[['shop','pet_grooming'],['shop','pet']],'Pet Groomers & Salons','web/pets.html'],
 ['stay','Rural stay','🏡','outdoor',[['tourism','guest_house'],['tourism','chalet'],['tourism','apartment']],'Rural Accommodation','why/rental.html'],
 ['outdoor','Outdoor & adventure','🏕️','outdoor',[['shop','outdoor'],['sport','climbing']],'Adventure & Outdoor Experiences','why/adventure.html'],
-['party','Party & events','🎈','events',[['shop','party']],'Children\'s Party & Entertainment Businesses','why/kids.html']
+['party','Party & events','🎈','events',[['shop','party']],'Children\'s Party & Entertainment Businesses','why/kids.html'],
+['carrepair','Car repair & garage','🚗','pro',[['shop','car_repair']],'Examples hub','app/hub.html'],
+['bike','Bike shop','🚲','generic',[['shop','bicycle']],'Examples hub','app/hub.html'],
+['driving','Driving school','🚦','fitness',[['amenity','driving_school']],'Examples hub','app/hub.html'],
+['boutique','Boutique & fashion','👗','generic',[['shop','boutique']],'Examples hub','app/hub.html'],
+['gift','Gifts & decor','🎁','generic',[['shop','gift']],'Examples hub','app/hub.html'],
+['books','Bookshop','📚','generic',[['shop','books']],'Examples hub','app/hub.html'],
+['toys','Toy shop','🧸','generic',[['shop','toys']],'Examples hub','app/hub.html'],
+['interior','Interior design & furniture','🛋️','generic',[['shop','interior_decoration'],['shop','furniture']],'Examples hub','app/hub.html'],
+['trades','Plumber, electrician & trades','🛠️','pro',[['craft','plumber'],['craft','electrician'],['craft','carpenter']],'Examples hub','app/hub.html'],
+['locksmith','Locksmith','🔑','pro',[['craft','locksmith'],['shop','locksmith']],'Examples hub','app/hub.html'],
+['tailor','Tailor & alterations','🧵','pro',[['craft','tailor'],['shop','tailor']],'Examples hub','app/hub.html'],
+['laundry','Laundry & dry cleaning','🧺','pro',[['shop','laundry'],['shop','dry_cleaning']],'Examples hub','app/hub.html'],
+['language','Language school','🗣️','fitness',[['amenity','language_school']],'Examples hub','app/hub.html'],
+['coworking','Coworking space','💻','generic',[['amenity','coworking_space']],'Examples hub','app/hub.html'],
+['herbal','Herbalist & natural health','🌿','generic',[['shop','herbalist'],['shop','health_food'],['shop','nutrition_supplements']],'Examples hub','app/hub.html'],
+['escape','Escape room & experiences','🗝️','events',[['leisure','escape_game']],'Examples hub','app/hub.html']
 ].map(function(r){return{id:r[0],label:r[1],emoji:r[2],group:r[3],tags:r[4],exTitle:r[5],exUrl:CONFIG.SITE+r[6]};});
 var CAT={};CATS.forEach(function(c){CAT[c.id]=c;});
-var CAT_PRIORITY=['hair','beauty','tattoo','therapy','fitness','yoga','pilates','dance','pets','cafe','restaurant','bakery','pastry','choc','cheese','party','photo','art','jewelry','pottery','music','realestate','garden','florist','lawyer','finance','outdoor','stay'];
-/* Category order follows the group order chosen by Oz: Beauty & personal care, Wellbeing & therapy, Fitness & movement, Pets, Hospitality & food, Events & entertainment, Creation & crafts, Education & coaching, Home/garden/property, (Automotive), Professional services, (Local shops), Outdoors/adventure/tourism, (Specialised services), (Emerging niches). Groups with no category yet are skipped. Anything not listed goes last. */
+var CAT_PRIORITY=['hair','beauty','tattoo','therapy','fitness','yoga','pilates','dance','pets','cafe','restaurant','bakery','pastry','choc','cheese','party','photo','art','jewelry','pottery','music','language','realestate','garden','florist','interior','carrepair','bike','driving','lawyer','finance','boutique','gift','books','toys','outdoor','stay','trades','locksmith','tailor','laundry','coworking','herbal','escape'];
+/* Category order follows the group order chosen by Oz: Beauty, Wellbeing, Fitness, Pets, Hospitality & food, Events, Creation & crafts, Education, Home/garden/property, Automotive & mobility, Professional services, Local shops, Outdoors & tourism, Specialised services, Emerging niches. Anything not listed goes last. */
 function catsByPriority(){var r=function(c){var i=CAT_PRIORITY.indexOf(c.id);return i<0?999:i;};return CATS.slice().sort(function(x,y){return r(x)-r(y);});}
 var GENERIC={id:'generic',label:'Local business',emoji:'🏪',group:'generic',tags:[],exTitle:'Examples hub',exUrl:CONFIG.SITE+'app/hub.html'};
+var GROUPS=[
+ {id:'beauty',e:'💅',en:'Beauty, Hair & Personal Care',es:'Belleza, Peluquería y Cuidado Personal',m:['hair','beauty','tattoo']},
+ {id:'wellbeing',e:'🧘',en:'Wellbeing, Therapy & Health',es:'Bienestar, Terapia y Salud',m:['therapy']},
+ {id:'fitness',e:'🏋️',en:'Fitness & Movement',es:'Fitness y Movimiento',m:['fitness','yoga','pilates','dance']},
+ {id:'pets',e:'🐾',en:'Pets & Animals',es:'Mascotas y Animales',m:['pets']},
+ {id:'food',e:'☕',en:'Hospitality & Food',es:'Hostelería y Restauración',m:['cafe','restaurant','bakery','pastry','choc','cheese']},
+ {id:'events',e:'🎉',en:'Events & Entertainment',es:'Eventos y Entretenimiento',m:['party']},
+ {id:'creative',e:'🎨',en:'Creation & Crafts',es:'Creación y Artesanía',m:['photo','art','jewelry','pottery']},
+ {id:'edu',e:'📚',en:'Education & Coaching',es:'Educación y Coaching',m:['music','language']},
+ {id:'home',e:'🏡',en:'Home, Garden & Property',es:'Hogar, Jardín e Inmuebles',m:['realestate','garden','florist','interior']},
+ {id:'auto',e:'🚗',en:'Automotive & Mobility',es:'Automoción y Movilidad',m:['carrepair','bike','driving']},
+ {id:'pro',e:'💼',en:'Professional & Business Services',es:'Servicios Profesionales y de Negocios',m:['lawyer','finance']},
+ {id:'shops',e:'🛍️',en:'Shops & Local Retail',es:'Comercio y Tiendas Locales',m:['boutique','gift','books','toys']},
+ {id:'outdoor',e:'🏕️',en:'Outdoors, Adventure & Tourism',es:'Aire Libre, Aventura y Turismo',m:['outdoor','stay']},
+ {id:'special',e:'🔧',en:'Specialised Services',es:'Servicios Especializados',m:['trades','locksmith','tailor','laundry']},
+ {id:'niche',e:'🚀',en:'Emerging Niches',es:'Nichos Emergentes',m:['coworking','herbal','escape']}
+];
+/* Very dense types (thousands per city). They are still part of their group, but the search asks for them in their own request, so they can never fill the result limit and push other businesses out. */
+var HEAVY={restaurant:1,cafe:1,florist:1,boutique:1};
+var CORE_IDS=[];GROUPS.forEach(function(g){g.m.forEach(function(id){CORE_IDS.push(id);});});
+function glbl(g){return LANG==='es'?g.es:g.en;}
+function isSel(id){return selCats.indexOf(id)>-1;}
+function gDefaults(g){return g.m.slice();}
+function groupOn(g){var d=gDefaults(g);return d.length>0&&d.every(isSel);}
+function groupPart(g){return !groupOn(g)&&g.m.some(isSel);}
+function coreAll(){return selCats.length===CORE_IDS.length&&CORE_IDS.every(isSel);}
+function allOn(){return coreAll()||selCats.length===CATS.length;}
+/* One request per group (plus one per dense type), merged: each part has its own result limit, so nothing is left out because another type is very common. */
+function searchUnits(cats){
+  if(!cats.length)return [null];
+  var sel={},units=[],inG={};
+  cats.forEach(function(c){sel[c.id]=c;});
+  GROUPS.forEach(function(g){
+    var core=[],dense=[];
+    g.m.forEach(function(id){inG[id]=1;if(!sel[id])return;if(HEAVY[id])dense.push(sel[id]);else core.push(sel[id]);});
+    if(core.length)units.push(core);
+    dense.forEach(function(c){units.push([c]);});
+  });
+  var rest=cats.filter(function(c){return !inG[c.id];});
+  if(rest.length)units.push(rest);
+  return units;
+}
 
 function buildChips(){
   var dl=$('cats'),ch=$('chips');dl.innerHTML='';ch.innerHTML='';
-  var all=document.createElement('button');all.type='button';all.className='chip';all.dataset.id='all';all.textContent='✨ '+T('All categories');
-  all.onclick=function(){if(selCats.length===CATS.length)selCats=[];else selCats=CATS.map(function(c){return c.id;});syncWhat();};
-  ch.appendChild(all);
-  // alphabetical by the label shown in the current language ("All categories" stays first)
-  catsByPriority().forEach(function(c){
-    var o=document.createElement('option');o.value=lbl(c);dl.appendChild(o);
-    var b=document.createElement('button');b.type='button';b.className='chip';b.dataset.id=c.id;b.textContent=c.emoji+' '+lbl(c);
-    b.onclick=function(){var i=selCats.indexOf(c.id);if(i>-1)selCats.splice(i,1);else selCats.push(c.id);syncWhat();};
+  // "All categories": datalist option + first chip (selects / clears every category)
+  var oa=document.createElement('option');oa.value='✨ '+T('All categories');dl.appendChild(oa);
+  var ba=document.createElement('button');ba.type='button';ba.className='chip';ba.dataset.id='all';ba.textContent='✨ '+T('All categories');
+  ba.onclick=function(){selCats=allOn()?[]:CORE_IDS.slice();syncWhat();};
+  ch.appendChild(ba);
+  // the 15 groups, in the chosen order; tapping one selects everything inside it
+  GROUPS.forEach(function(g){
+    var b=document.createElement('button');b.type='button';b.className='chip';b.dataset.gid=g.id;b.textContent=g.e+' '+glbl(g);
+    b.onclick=function(){
+      if(groupOn(g))selCats=selCats.filter(function(id){return g.m.indexOf(id)<0;});
+      else gDefaults(g).forEach(function(id){if(!isSel(id))selCats.push(id);});
+      syncWhat();
+    };
     ch.appendChild(b);
   });
+  // dropdown list: same entries, same order and same names as the pills above (All categories + the 15 groups)
+  GROUPS.forEach(function(g){var o=document.createElement('option');o.value=g.e+' '+glbl(g);dl.appendChild(o);});
   buildAddCats();markChip();
 }
 function relabelCats(){buildChips();}
-function chipLab(){$('chipMore').textContent=$('chips').classList.contains('open')?T('Show fewer ▴'):T('Show all {0} categories ▾',CATS.length);}
+function chipLab(){$('chipMore').textContent=$('chips').classList.contains('open')?T('Show fewer ▴'):T('Show all {0} categories ▾',GROUPS.length);}
 $('chipMore').onclick=function(){$('chips').classList.toggle('open');chipLab();};chipLab();
 var selCats=[];
 buildChips();
 function syncWhat(){
-  $('qWhat').value=selCats.length===CATS.length?T('All categories'):selCats.map(function(id){return lbl(CAT[id]);}).join(', ');
+  var txt;
+  if(allOn())txt='✨ '+T('All categories');
+  else{
+    var parts=[],covered={};
+    GROUPS.forEach(function(g){if(groupOn(g)){parts.push(g.e+' '+glbl(g));g.m.forEach(function(id){covered[id]=1;});}});
+    selCats.forEach(function(id){if(!covered[id])parts.push(lbl(CAT[id]));});
+    txt=parts.join(', ');
+  }
+  $('qWhat').value=txt;
   markChip();
 }
 function markChip(){
-  var n=selCats.length;
-  [].forEach.call($('chips').children,function(b){b.classList.toggle('on',b.dataset.id==='all'?n===CATS.length:selCats.indexOf(b.dataset.id)>-1);});
-  if(!busy)$('goBtn').textContent=n===CATS.length?T('Search all categories'):n>1?T('Search {0} categories',n):T('Search businesses');
+  var n=selCats.length,all=allOn();
+  [].forEach.call($('chips').children,function(b){
+    if(b.dataset.id==='all'){b.classList.toggle('on',all);b.classList.remove('part');return;}
+    var g=null;GROUPS.forEach(function(x){if(x.id===b.dataset.gid)g=x;});
+    if(!g)return;
+    b.classList.toggle('on',groupOn(g));b.classList.toggle('part',groupPart(g));
+  });
+  if(!busy){var gn=GROUPS.filter(groupOn).length;$('goBtn').textContent=all?T('Search all categories'):gn>1?T('Search {0} categories',gn):(!gn&&n>1)?T('Search {0} categories',n):T('Search businesses');}
 }
 // Typing "Hair salon, Café" selects both; anything else is a free-text search
 function parseWhat(){
-  var parts=$('qWhat').value.split(',').map(function(x){return x.trim().toLowerCase();}).filter(Boolean),ids=[];
-  if(parts.length===1&&(parts[0]==='all categories'||parts[0]==='todas las categorías'||parts[0]==='todas las categorias')){selCats=CATS.map(function(c){return c.id;});markChip();return;}
+  var raw=$('qWhat').value.replace(/[\p{Extended_Pictographic}️‍]/gu,'').toLowerCase(),gs=[];
+  // group names contain commas, so take them out of the text before splitting it
+  GROUPS.forEach(function(g){[g.en,g.es].forEach(function(l){var L=l.toLowerCase(),k=raw.indexOf(L);if(k>-1){raw=raw.slice(0,k)+','+raw.slice(k+L.length);if(gs.indexOf(g)<0)gs.push(g);}});});
+  var parts=raw.split(',').map(function(x){return x.trim();}).filter(Boolean),ids=[];
+  if(!gs.length&&parts.length===1&&(parts[0]==='all categories'||parts[0]==='todas las categorías'||parts[0]==='todas las categorias')){selCats=CORE_IDS.slice();markChip();return;}
+  gs.forEach(function(g){gDefaults(g).forEach(function(id){if(ids.indexOf(id)<0)ids.push(id);});});
   for(var i=0;i<parts.length;i++){
     var f=null;for(var j=0;j<CATS.length;j++)if(CATS[j].label.toLowerCase()===parts[i]||lbl(CATS[j]).toLowerCase()===parts[i]||(CAT_ES[CATS[j].id]||'').toLowerCase()===parts[i]){f=CATS[j];break;}
     if(!f){selCats=[];markChip();return;}
@@ -732,6 +816,19 @@ function parseWhat(){
   selCats=ids;markChip();
 }
 $('qWhat').addEventListener('input',parseWhat);
+/* The category drop-down (a datalist) only lists options that match the text already in the box, so after choosing one it
+   looked "stuck". Open it empty: the box is cleared while you pick, and the previous choice comes back if you pick nothing. */
+(function(){
+  var el=$('qWhat'),prev='',typed=false;
+  function openFull(){if(!el.value)return;prev=el.value;typed=false;el.value='';}
+  el.addEventListener('focus',openFull);
+  el.addEventListener('click',function(){if(el.value&&document.activeElement===el)openFull();});   // already focused after a pick
+  el.addEventListener('input',function(e){
+    typed=true;
+    if(e.inputType==='insertReplacementText'||!e.inputType){setTimeout(function(){el.blur();},0);}   // picked from the list: close it so the next tap opens the full list again
+  });
+  el.addEventListener('blur',function(){if(!typed&&!el.value&&prev){el.value=prev;}prev='';});
+})();
 function catForTags(t){
   for(var i=0;i<CATS.length;i++){var c=CATS[i];for(var j=0;j<c.tags.length;j++){if(t[c.tags[j][0]]===c.tags[j][1])return c;}}
   return GENERIC;
@@ -775,7 +872,11 @@ function netPump(){
 var BAD={};   // server url -> time of its last failure
 function mirrorOrder(){
   var list=(CONFIG.OVERPASS_PROXY?[CONFIG.OVERPASS_PROXY]:[]).concat(CONFIG.OVERPASS),now=Date.now();
-  return list.map(function(u,i){return{u:u,i:i,bad:(BAD[u]&&now-BAD[u]<60000)?1:0};}).sort(function(a,b){return a.bad-b.bad||a.i-b.i;}).map(function(x){return x.u;});
+  var s=list.map(function(u,i){return{u:u,i:i,bad:(BAD[u]&&now-BAD[u]<60000)?1:0};}).sort(function(a,b){return a.bad-b.bad||a.i-b.i;}).map(function(x){return x.u;});
+  // spread parallel requests over the healthy servers (round robin) so one server is not hit by everything at once
+  var good=list.filter(function(u){return !(BAD[u]&&now-BAD[u]<60000);}).length;
+  if(good>1){var r=(mirrorOrder._rr=(mirrorOrder._rr||0)+1)%good;s=s.slice(r,good).concat(s.slice(0,r),s.slice(good));}
+  return s;
 }
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 var staleToastAt=0;
@@ -794,33 +895,45 @@ var provider={
   },
   // Big searches are split into a grid of smaller areas, fetched 2 at a time and merged. One slow part no longer kills everything:
   // a part that fails is split in 4 and retried, and saved results are used when the free servers are down.
-  search:function(cats,text,bounds0){
+  search:function(cats,text,bounds0,onPart){
     var self=this,STEP=0.005;
     var bounds={s:bounds0.s,n:bounds0.n,w:bounds0.w,e:bounds0.e};
     var h=bounds.n-bounds.s,w=bounds.e-bounds.w;
     var g=1;
-    var lim=cats.length>=CATS.length?450:300,jobs=[],i,j;
-    for(i=0;i<g;i++)for(j=0;j<g;j++)jobs.push({s:bounds.s+h*i/g,n:bounds.s+h*(i+1)/g,w:bounds.w+w*j/g,e:bounds.w+w*(j+1)/g});
-    var out=[],seen={},fails=0,okN=0,firstErr=null,capped=false,stale=false,idx=0,finished=0;
+    var lim=300,jobs=[],i,j,units=searchUnits(cats);
+    units.forEach(function(u){for(i=0;i<g;i++)for(j=0;j<g;j++)jobs.push({s:bounds.s+h*i/g,n:bounds.s+h*(i+1)/g,w:bounds.w+w*j/g,e:bounds.w+w*(j+1)/g,cs:u});});
+    // dense types (restaurants, cafés…) are the slow ones: start them first so the end of the search is not stuck waiting on them
+    function hv(j){return j.cs&&j.cs.length===1&&HEAVY[j.cs[0].id]?1:0;}
+    jobs=jobs.map(function(j,k){j.k=k;return j;}).sort(function(a,b){return hv(b)-hv(a)||a.k-b.k;});
+    var out=[],seen={},fails=0,okN=0,firstErr=null,capped=false,stale=false,idx=0,finished=0,closed=false,lastDone=Date.now(),tailT=null,myTok=searchTok;
     var skey='S|'+(cats.length?cats.map(function(c){return c.id;}).sort().join('+'):'t:'+text.toLowerCase())+'|'+bounds.s.toFixed(5)+','+bounds.w.toFixed(5)+','+bounds.n.toFixed(5)+','+bounds.e.toFixed(5)+'|'+lim;
     return new Promise(function(resolve,reject){
       function next(){
-        if(idx>=jobs.length)return;
+        if(searchTok!==myTok){   // search stopped or replaced: do not start any more requests
+          if(!closed){closed=true;clearInterval(tailT);reject(new Error('stopped'));}
+          return;
+        }
+        if(closed||idx>=jobs.length)return;
         var job=jobs[idx++];
-        self.searchOne(cats,text,job,lim).then(function(l){
+        (job.wait?sleep(job.wait):Promise.resolve()).then(function(){return self.searchOne(job.cs||cats,text,job,lim);}).then(function(l){
+          if(closed)return;
           okN++;if(l.stale)stale=true;
           l.forEach(function(b){if(!seen[b.id]){seen[b.id]=1;out.push(b);}});if(l.capped)capped=true;
+          if(onPart&&jobs.length>1&&out.length){try{onPart(out.slice(),finished+1,jobs.length);}catch(e){}}   // show what has arrived so far
         },function(e){
+          if(closed)return;
           firstErr=firstErr||e;
           if(false&&!job.sub&&(job.n-job.s)>0.004&&!/\b429\b|Failed to fetch|NetworkError|Load failed/i.test(String(e&&e.message))){   // split only when the area was too heavy, not when we are rate-limited or offline
             var mh=(job.s+job.n)/2,mw=(job.w+job.e)/2;
             [{s:job.s,n:mh,w:job.w,e:mw},{s:job.s,n:mh,w:mw,e:job.e},{s:mh,n:job.n,w:job.w,e:mw},{s:mh,n:job.n,w:mw,e:job.e}].forEach(function(q){q.sub=1;jobs.push(q);});
             console.info('[EasyLandX Map] part failed, splitting it in 4');
             next();
-          }else fails++;
+          }else if(!job.tried&&!(e&&e.message==='stopped')){job.tried=1;job.wait=2500;jobs.push(job);}   // one automatic retry of a failed part, after a short pause
+          else fails++;
         }).then(function(){
-          finished++;
-          if(finished===jobs.length){
+          if(closed)return;
+          finished++;lastDone=Date.now();searchProg(finished,jobs.length);
+          if(finished===jobs.length){closed=true;clearInterval(tailT);
             if(okN===0){   // nothing could be loaded: use the last complete copy of this whole search if there is one
               PC.get(skey).then(function(row){
                 if(row&&Date.now()-row.t<STALE_MS){var o=row.v;o.capped=row.c;o.stale=true;staleNote();resolve(o);}else reject(firstErr);
@@ -830,7 +943,15 @@ var provider={
           else next();
         });
       }
-      for(var k=0;k<Math.min(2,jobs.length);k++)next();
+      // the last parts are often stuck on a slow server: once most parts are in and nothing has finished for 7 s, show what we have
+      tailT=setInterval(function(){
+        if(closed)return;
+        if(finished>=Math.ceil(jobs.length*0.7)&&finished<jobs.length&&out.length&&Date.now()-lastDone>7000){
+          closed=true;clearInterval(tailT);searchProg(jobs.length,jobs.length);
+          out.capped=capped;out.partial=true;out.stale=stale;resolve(out);
+        }
+      },1000);
+      for(var k=0;k<Math.min(3,jobs.length);k++)next();   // 3 requests in parallel: the free servers refuse more
     });
   },
   searchOne:function(cats,text,bounds,LIM){
@@ -881,7 +1002,7 @@ var provider={
             });
         }
         launch(0);
-        for(var k=1;k<N;k++)(function(k){timers.push(setTimeout(function(){if(!launched[k]){launched[k]=1;launch(k);}},5000*k));})(k);
+        for(var k=1;k<N;k++)(function(k){timers.push(setTimeout(function(){if(!launched[k]){launched[k]=1;launch(k);}},2500*k));})(k);
       });
     }
     return PC.get(cacheKey).then(function(row){
@@ -907,7 +1028,7 @@ function whenIdle(){return new Promise(function(res){
 function tileSearch(cats,what,err){
   return whenIdle().then(function(){
     var list=[];try{list=fromTiles(cats,what);}catch(e){console.warn('[EasyLandX Map] tile fallback failed',e);}
-    if(list.length){toast('Live business data unavailable. Showing places from the map itself (website info unknown).');return list;}
+    if(list.length){toast('Live business data unavailable. Showing places from the map itself (website info unknown).');list.fallback=true;return list;}
     if(err)throw err;
     return [];
   });
@@ -930,17 +1051,35 @@ function fromTiles(cats,what){
   });
   return out.slice(0,400);
 }
+/* Instagram / Facebook from OSM tags: accepts full links or plain handles, and rescues social links that were typed into the "website" field */
+function socialUrl(v,kind){
+  v=String(v||'').trim().split(/[;,\s]+/)[0];if(!v)return '';
+  if(kind==='ig'){
+    if(/instagram\.com|instagr\.am/i.test(v))return /^https?:/i.test(v)?v:'https://'+v.replace(/^\/\//,'');
+    v=v.replace(/^@/,'');return /^[\w.]{2,30}$/.test(v)?'https://www.instagram.com/'+v+'/':'';
+  }
+  if(/facebook\.com|fb\.com|fb\.me/i.test(v))return /^https?:/i.test(v)?v:'https://'+v.replace(/^\/\//,'');
+  return /^[\w.\-]{3,80}$/.test(v)?'https://www.facebook.com/'+v:'';
+}
+function socialsOf(t){
+  var web=t.website||t['contact:website']||t.url||'';
+  var ig=socialUrl(t['contact:instagram']||t.instagram,'ig'),fb=socialUrl(t['contact:facebook']||t.facebook,'fb');
+  var other=t['contact:twitter']||t['contact:tiktok']||t['contact:youtube']||'';
+  if(web&&/instagram\.com|instagr\.am/i.test(web)){ig=ig||socialUrl(web,'ig');web='';}
+  else if(web&&/facebook\.com|fb\.com|fb\.me/i.test(web)){fb=fb||socialUrl(web,'fb');web='';}
+  else if(web&&/(tiktok|twitter|x|youtube)\.com|linktr\.ee|linktree/i.test(web)){other=other||web;web='';}
+  return{web:web,ig:ig,fb:fb,social:fb||ig||other};
+}
 function normalize(els,forced){
   var out=[],seen={};
   els.forEach(function(e){
     var t=e.tags||{};if(!t.name)return;
     var lat=e.lat!=null?e.lat:(e.center&&e.center.lat),lon=e.lon!=null?e.lon:(e.center&&e.center.lon);if(lat==null)return;
     var id=e.type[0]+e.id;if(seen[id])return;seen[id]=1;
-    var web=t.website||t['contact:website']||t.url||'';
-    var social=t['contact:facebook']||t['contact:instagram']||t.facebook||t.instagram||t['contact:twitter']||'';
+    var so=socialsOf(t),web=so.web,social=so.social;
     var addr=[((t['addr:street']||'')+' '+(t['addr:housenumber']||'')).trim(),t['addr:city']||t['addr:suburb']||''].filter(Boolean).join(', ');
     var cat=forced||catForTags(t),ph=collectPhones(t);
-    out.push({id:id,name:t.name,cat:cat.id,lat:lat,lon:lon,web:web,social:social,phone:ph.phone,wa:ph.wa,hours:t.opening_hours||'',addr:addr,
+    out.push({id:id,name:t.name,cat:cat.id,lat:lat,lon:lon,web:web,social:social,ig:so.ig,fb:so.fb,phone:ph.phone,wa:ph.wa,hours:t.opening_hours||'',addr:addr,
       status:web?'web':(social?'social':'noweb')});
   });
   return out;
@@ -950,7 +1089,7 @@ function catOf(b){return CAT[b.cat]||GENERIC;}
 /* ================= MAP ================= */
 var map=null,results=[],selId=null,lastSearchBounds=null,styleOk=false;
 var FALLBACK={version:8,sources:{},layers:[{id:'bg',type:'background',paint:{'background-color':'#e8efe4'}}]};
-var STATUS_COL=['match',['get','status'],'noweb','#f59e0b','social','#3b82f6','unk','#8b5cf6','#16a34a'];
+var STATUS_COL=['match',['get','status'],'web','#16a34a','social','#3b82f6','#f59e0b'];   // Web = green, Social = blue, Other (no website / unknown) = amber
 function initMap(){
   if(typeof maplibregl==='undefined'){toast('The map library could not load. Check your connection.');return;}
   map=new maplibregl.Map({container:'map',style:CONFIG.STYLE,center:CONFIG.CENTER,zoom:16,pitch:62,bearing:-18,maxPitch:78,attributionControl:{compact:true}});
@@ -965,7 +1104,7 @@ function initMap(){
   geoFromQuery();
 }
 function geojson(){
-  return{type:'FeatureCollection',features:(showLeads?leadList():results).map(function(b){return{type:'Feature',properties:{id:b.id,status:b.status,name:b.name,lead:stOf(b)},geometry:{type:'Point',coordinates:[b.lon,b.lat]}};})};
+  return{type:'FeatureCollection',features:visibleRows().map(function(b){return{type:'Feature',properties:{id:b.id,status:b.status,name:b.name,lead:stOf(b)},geometry:{type:'Point',coordinates:[b.lon,b.lat]}};})};
 }
 function ensureLayers(){
   if(!map.getSource('biz'))map.addSource('biz',{type:'geojson',data:geojson()});
@@ -1032,17 +1171,25 @@ function viewBounds(){
   return{n:n,s:s,e:e,w:w};
 }
 var busy=false,capped=false,lastEmpty=null,searchTok=0,SEARCH_ABORT=[];
+var PARTIAL=null;
+ES['Search stopped. Showing {0} found so far.']='Búsqueda detenida. Se muestran {0} encontrados hasta ahora.';
 function stopSearch(){
   if(!busy)return;
+  var part=(PARTIAL&&PARTIAL.tok===searchTok)?PARTIAL.list:null;PARTIAL=null;
   searchTok++;
   SEARCH_ABORT.splice(0).forEach(function(f){try{f();}catch(e){}});
   busy=false;setBusy(false);
   try{map.stop();}catch(e){}
   delete $('here').dataset.lock;doSearch._target=null;
   track('map_search_stop',{});
+  if(part&&part.length&&!showSaved&&!showLeads){   // show everything found before stopping, even if only a few parts were done
+    capped=false;results=part;setSel(null);renderList();scrollToResults();
+    toast('Search stopped. Showing {0} found so far.',part.length);
+    return;
+  }
   toast('Search stopped');
-  if(results.length||showSaved||showLeads)renderList();
-  else emptyMsg('Pick what to look for','Choose a category above or type something like "bakery" or "yoga".');
+  if(showSaved||showLeads)renderList();
+  else{results=[];pushData();emptyMsg('Pick what to look for','Choose a category above or type something like "bakery" or "yoga".');}
 }
 function scrollToResults(){
   if(window.innerWidth>820)return;
@@ -1052,17 +1199,53 @@ function scrollToResults(){
 }
 function skeleton(){lastEmpty=null;$('side').classList.remove('indetail');$('list').hidden=false;$('detail').hidden=true;$('list').innerHTML='<div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div>';scrollToResults();}
 function emptyMsg(t,s,a){lastEmpty=[t,s,a];$('side').classList.remove('indetail');$('list').hidden=false;$('detail').hidden=true;$('list').innerHTML='<div class="empty"><b>'+esc(T(t))+'</b>'+esc(T.apply(null,[s].concat(a||[])))+'</div>';$('count').textContent='';}
+/* Search progress: real part count (parts done / parts total) plus a slow "creep" so single-request searches still move */
+ES['tap to stop']='toca para parar';
+var SP={real:0,creep:0,done:0,total:0,t:null};
+function spPaint(){
+  var pct=Math.min(100,Math.round(Math.max(SP.real,SP.creep))),g=$('goBtn'),s=$('searching');
+  g.style.setProperty('--sp',pct+'%');s.style.setProperty('--sp',pct+'%');
+  var bt=g.querySelector('.ptx');if(bt)bt.textContent=T('Searching…')+' '+pct+'% · '+T('tap to stop');
+  $('searchingTxt').textContent=T('Searching…')+' '+(SP.total>1?SP.done+'/'+SP.total+' · ':'')+pct+'%';
+}
+function searchProg(done,total){SP.done=done;SP.total=total;SP.real=total?done/total*100:0;spPaint();}
 function setBusy(on){
   var g=$('goBtn');g.classList.toggle('loading',on);
-  $('searching').hidden=!on;$('searchingTxt').textContent=T('Searching…');
-  if(on){g.innerHTML='<span class="spin"></span>'+esc(T('Searching… tap to stop'));g.setAttribute('aria-label',T('Stop search'));}else{g.removeAttribute('aria-label');markChip();}
+  $('searching').hidden=!on;
+  clearInterval(SP.t);SP.t=null;
+  if(on){
+    SP.real=0;SP.creep=3;SP.done=0;SP.total=0;
+    g.innerHTML='<span class="spin"></span><span class="ptx"></span>';g.setAttribute('aria-label',T('Stop search'));
+    spPaint();
+    SP.t=setInterval(function(){SP.creep+=(92-SP.creep)*0.035;spPaint();},400);
+  }else{
+    g.style.removeProperty('--sp');$('searching').style.removeProperty('--sp');
+    g.removeAttribute('aria-label');markChip();
+  }
+}
+/* The base-map fallback has no website / Instagram / Facebook info, so every dot looks the same.
+   Try the live data again in the background (up to 3 times) and swap it in when it works. */
+ES['Live business data loaded.']='Datos de negocios en directo cargados.';
+function scheduleLive(cats,what,my,tries){
+  if(tries>=3)return;
+  setTimeout(function(){
+    if(my!==searchTok||busy||!lastSearchBounds)return;
+    provider.search(cats,what,lastSearchBounds).then(function(l){
+      if(my!==searchTok||busy||!l.length||l.fallback)return;
+      if(!$('detail').hidden||showSaved||showLeads){scheduleLive(cats,what,my,tries+1);return;}   // do not pull the screen from under the person
+      var c=map.getCenter();
+      l.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];});
+      capped=!!l.capped;results=l;setSel(null);pushData();renderList();toast('Live business data loaded.');
+    },function(){scheduleLive(cats,what,my,tries+1);});
+  },tries?12000:6000);
 }
 function doSearch(fromChip){
   if(!map){toast('The map is not ready.');return;}
   if(busy)return;
   if(showLeads){showLeads=false;renderLeadbar();}
-  if(!$('qWhat').value.trim()){selCats=CATS.map(function(c){return c.id;});syncWhat();}   // nothing chosen: search all categories
-  var what=$('qWhat').value.trim(),where=$('qWhere').value.trim(),cats=selCats.map(function(id){return CAT[id];});
+  // nothing chosen or typed: search all categories by default
+  if(!$('qWhat').value.trim()&&!selCats.length){selCats=CORE_IDS.slice();syncWhat();}
+    var what=$('qWhat').value.trim(),where=$('qWhere').value.trim(),cats=selCats.map(function(id){return CAT[id];});
   if(!what){emptyMsg('Pick what to look for','Choose a category above or type something like "bakery" or "yoga".');return;}
   var my=++searchTok;busy=true;setBusy(true);openSheet();skeleton();$('here').hidden=true;
   if($('chips').classList.contains('open'))$('chipMore').click();
@@ -1085,13 +1268,23 @@ function doSearch(fromChip){
     var fromGeo=!!doSearch._target,bnd=doSearch._target||viewBounds();doSearch._target=null;lastSearchBounds=bnd;
     if(!fromGeo&&map.getZoom()<11.5)toast('Zoomed out far: searching the centre of the view. Zoom in to see everything.');
     track('map_search',{category:cats.length?selCats.join('+'):'free_text',has_where:!!where});
-    return provider.search(cats,what,bnd).then(function(l){return l.length?l:tileSearch(cats,what,null);},function(e){
+    var lastR=0;
+    var onPart=function(list,done,total){
+      if(my!==searchTok)return;
+      var c=map.getCenter();
+      list.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];});
+      PARTIAL={tok:my,list:list};   // kept so "stop" can show what has been found so far
+      var now=Date.now();if(now-lastR<800)return;lastR=now;   // redraw at most every 0.8 s: redrawing a long list on every part is what made the end slow
+      results=list;setSel(null);renderList();
+    };
+    return provider.search(cats,what,bnd,onPart).then(function(l){return l.length?l:tileSearch(cats,what,null);},function(e){
+      if(my!==searchTok)return [];   // stopped: do not start another search
       // Area too big for the free service? Retry once on the centre of the view.
       var w=bnd.e-bnd.w,h=bnd.n-bnd.s,cx=(bnd.e+bnd.w)/2,cy=(bnd.n+bnd.s)/2;
       if(h>0.03||w>0.04){
         var sm={n:cy+Math.min(h,0.035)/2,s:cy-Math.min(h,0.035)/2,e:cx+Math.min(w,0.05)/2,w:cx-Math.min(w,0.05)/2};lastSearchBounds=sm;
         toast('That area is too big for the free data service. Searching the centre of the view.');
-        return provider.search(cats,what,sm).then(function(l){return l.length?l:tileSearch(cats,what,null);},function(e2){return tileSearch(cats,what,e2);});
+        return provider.search(cats,what,sm,onPart).then(function(l){return l.length?l:tileSearch(cats,what,null);},function(e2){return tileSearch(cats,what,e2);});
       }
       return tileSearch(cats,what,e);});
   }).then(function(list){
@@ -1099,6 +1292,7 @@ function doSearch(fromChip){
     var c=map.getCenter();
     list.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];});
     if(list.partial)toast('Part of the area did not load. Press "Search this area" to retry.');capped=!!list.capped;results=list;setSel(null);pushData();renderList();scrollToResults();
+    if(list.fallback)scheduleLive(cats,what,my,0);
     if(!list.length)emptyMsg('Nothing found here','Try zooming out, moving the map, or another category. OpenStreetMap does not list every business.');
   }).catch(function(e){
     if(my!==searchTok)return;
@@ -1151,10 +1345,10 @@ function nominatimName(name,b){
     a.forEach(function(x){
       var cls=x.category||x.class;if(NOM_SKIP[cls]||!x.name)return;
       var ex=x.extratags||{},t={};Object.keys(ex).forEach(function(k){t[k]=ex[k];});t[cls]=x.type;
-      var ad=x.address||{},web=ex.website||ex['contact:website']||ex.url||'',social=ex['contact:facebook']||ex['contact:instagram']||ex.facebook||ex.instagram||'';
+      var ad=x.address||{},so=socialsOf(ex),web=so.web,social=so.social;
       var ph=collectPhones(ex),cat=catForTags(t);
       var addr=[((ad.road||'')+' '+(ad.house_number||'')).trim(),ad.city||ad.town||ad.village||ad.suburb||''].filter(Boolean).join(', ');
-      out.push({id:String(x.osm_type||'n')[0]+x.osm_id,name:x.name,cat:cat.id,lat:+x.lat,lon:+x.lon,web:web,social:social,phone:ph.phone,wa:ph.wa,hours:ex.opening_hours||'',addr:addr,status:web?'web':(social?'social':'noweb')});
+      out.push({id:String(x.osm_type||'n')[0]+x.osm_id,name:x.name,cat:cat.id,lat:+x.lat,lon:+x.lon,web:web,social:social,ig:so.ig,fb:so.fb,phone:ph.phone,wa:ph.wa,hours:ex.opening_hours||'',addr:addr,status:web?'web':(social?'social':'noweb')});
     });
     return out;
   });
@@ -1282,7 +1476,7 @@ var LIX=null,showLeads=false,leadFilter='all';
  'First contacted':'Primer contacto','Last updated':'Última actualización','Website status':'Estado de la web'
 };Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
 ES['Options']='Opciones';ES['Show options']='Mostrar opciones';ES['Resize panel']='Cambiar tamaño del panel';
-STATIC.push(['#lg5',0,'Already contacted']);STATIC.push(['#pHandle','aria-label','Resize panel']);STATIC.push(['#pPrev',0,'‹ Prev'],['#pNext',0,'Next ›']);ES['Play']='Reproducir';ES['Stop']='Parar';
+ES['Other']='Otros';STATIC.push(['#pHandle','aria-label','Resize panel']);STATIC.push(['#pPrev',0,'‹ Prev'],['#pNext',0,'Next ›']);ES['Play']='Reproducir';ES['Stop']='Parar';
 
 function p2(n){return (n<10?'0':'')+n;}
 function dstr(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());}
@@ -1295,7 +1489,7 @@ function fmtDate(v){
   try{return d.toLocaleDateString(LANG==='es'?'es-ES':'en-GB',o);}catch(e){return String(v);}
 }
 function saveLeads(){store('elx_leads',JSON.stringify(LEADS));LIX=null;}
-function snap(b){var o={};['id','name','cat','addr','phone','wa','hours','lat','lon','web','social','status','custom','rating','ratingN','gmaps','gsrc','guess','email'].forEach(function(k){if(b[k]!=null&&b[k]!=='')o[k]=b[k];});return o;}
+function snap(b){var o={};['id','name','cat','addr','phone','wa','hours','lat','lon','web','social','ig','fb','status','custom','rating','ratingN','gmaps','gsrc','guess','email'].forEach(function(k){if(b[k]!=null&&b[k]!=='')o[k]=b[k];});return o;}
 function reindex(){
   LIX={ph:{},nm:{}};
   Object.keys(LEADS).forEach(function(k){var x=LEADS[k].b||{},wk=waPick(x),ph=wk?wk.d:'',nn=normName(x.name);
@@ -1321,7 +1515,6 @@ function setLead(b,patch){
   if(l.st!=='new'&&!l.at)l.at=Date.now();
   if(l.st==='new')l.at=0;
   l.upd=Date.now();l.b=snap(b);l.b.id=k;
-  if(l.st!=='new')l.lids=idsFor(b,k,l.lids);
   if(l.st==='new'&&!String(l.notes||'').trim()&&!l.fu)delete LEADS[k];else LEADS[k]=l;
   saveLeads();renderLeadbar();pushData();
   return LEADS[k]||null;
@@ -1333,7 +1526,6 @@ function leadList(){
 function leadPass(b){
   if(leadFilter==='all')return true;
   var l=leadOf(b);if(leadFilter==='due')return isDue(l);
-  if(leadFilter==='opened')return hot(l);
   return (l?l.st:'new')===leadFilter;
 }
 // Pipeline order: follow-ups due first (oldest first), then replied, sent, new, sold
@@ -1342,7 +1534,6 @@ function leadSort(a,b){
   var dx=isDue(x),dy=isDue(y);
   if(dx!==dy)return dx?-1:1;
   if(dx&&dy&&x.fu!==y.fu)return x.fu<y.fu?-1:1;
-  if(hot(x)!==hot(y))return hot(x)?-1:1;   // opened but no reply yet: the right moment to follow up
   if(LORD[x.st]!==LORD[y.st])return LORD[x.st]-LORD[y.st];
   var fx=x.fu||'9999',fy=y.fu||'9999';if(fx!==fy)return fx<fy?-1:1;
   return (y.upd||0)-(x.upd||0);
@@ -1350,18 +1541,16 @@ function leadSort(a,b){
 function leadLine(b){
   var l=leadOf(b);if(!l)return '';
   var s='<small class="ll"><span class="lt s-'+l.st+'">'+esc(T(LLAB[l.st]))+'</span>';
-  if(l.opn)s+='<span class="lo">👀 '+l.opn+'</span>';
   if(l.fu)s+='<span class="lf'+(isDue(l)?' due':'')+'">📅 '+esc(fmtDate(l.fu))+'</span>';
   if(l.notes)s+='<span class="ln">'+esc(String(l.notes).replace(/\s+/g,' ').slice(0,70))+'</span>';
   return s+'</small>';
 }
 function leadHeader(rows){
-  var cnt={new:0,sent:0,replied:0,sold:0},due=0,hotN=0,k,h='<div class="lview">';
-  for(k in LEADS){cnt[LEADS[k].st]++;if(isDue(LEADS[k]))due++;if(hot(LEADS[k]))hotN++;}
+  var cnt={new:0,sent:0,replied:0,sold:0},due=0,k,h='<div class="lview">';
+  for(k in LEADS){cnt[LEADS[k].st]++;if(isDue(LEADS[k]))due++;}
   LSTAT.forEach(function(s){h+='<button type="button" class="lt s-'+s+(leadFilter===s?' on':'')+'" data-f="'+s+'">'+esc(T(LLAB[s]))+' '+cnt[s]+'</button>';});
   if(due)h+='<button type="button" class="lt s-due'+(leadFilter==='due'?' on':'')+'" data-f="due">📅 '+due+'</button>';
-  if(hotN)h+='<button type="button" class="lt s-hot'+(leadFilter==='opened'?' on':'')+'" data-f="opened">👀 '+hotN+'</button>';
-  var fl={due:'Follow-up due',opened:'Opened, no reply'}[leadFilter]||LLAB[leadFilter],
+  var fl={due:'Follow-up due'}[leadFilter]||LLAB[leadFilter],
       clrLbl=leadFilter==='all'?T('Clear all leads')+' ('+rows.length+')':T('Clear {0}',T(fl))+' ('+rows.length+')';
   return h+'<button type="button" class="clr" id="leadClr">🗑 '+esc(clrLbl)+'</button><button type="button" class="exp" id="leadExp">⬇ '+esc(T('Export CSV'))+' ('+rows.length+')</button></div>';
 }
@@ -1375,7 +1564,7 @@ function wireLeadHeader(rows){
 // Deletes the leads shown (all of them, or just the ones matching the status filter). Asks first and points to the CSV backup.
 function clearLeads(rows){
   var all=leadFilter==='all',n=all?Object.keys(LEADS).length:rows.length;if(!n)return;
-  var fl={due:'Follow-up due',opened:'Opened, no reply'}[leadFilter]||LLAB[leadFilter];
+  var fl={due:'Follow-up due'}[leadFilter]||LLAB[leadFilter];
   var msg=all?T('Delete all {0} leads? Their status, notes and follow-up dates will be lost and this cannot be undone. Tip: press Export CSV first to keep a backup.',n)
              :T('Delete the {0} leads in \"{1}\"? Their status, notes and follow-up dates will be lost and this cannot be undone. Tip: press Export CSV first to keep a backup.',n,T(fl));
   if(!confirm(msg))return;
@@ -1388,18 +1577,13 @@ function clearLeads(rows){
 function renderLeadbar(){
   var el=$('leadbar');if(!el)return;
   var n=Object.keys(LEADS).length,due=0;Object.keys(LEADS).forEach(function(k){if(isDue(LEADS[k]))due++;});
-  var opts=[['all','All statuses'],['new','Not contacted yet'],['sent','Sent'],['replied','Replied'],['sold','Sold'],['due','Follow-up due'],['opened','Opened, no reply']],hotN=0;
-  Object.keys(LEADS).forEach(function(k){if(hot(LEADS[k]))hotN++;});
+  var opts=[['all','All statuses'],['new','Not contacted yet'],['sent','Sent'],['replied','Replied'],['sold','Sold'],['due','Follow-up due']];
   var h='<button type="button" class="lb'+(showLeads?' on':'')+'" id="btnLeads">'+(showLeads?'✕ '+esc(T('Close leads')):'📋 '+esc(T('Leads')))+' ('+n+')</button>';
   if(due)h+='<button type="button" class="lb due" id="btnDue">📅 '+esc(T('{0} due',due))+'</button>';
-  if(hotN)h+='<button type="button" class="lb hot" id="btnHot">'+esc(T('{0} opened',hotN))+' 👀</button>';
-  if(CONFIG.TRACK)h+='<button type="button" class="lb trk'+(trackOn()?' on':'')+'" id="btnTrack" title="'+esc(T('Link tracking'))+'" aria-label="'+esc(T('Link tracking'))+'">🔔</button>';
   h+='<select id="fLead" aria-label="'+esc(T('Filter by status'))+'">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(leadFilter===o[0]?' selected':'')+'>'+esc(T(o[1]))+'</option>';}).join('')+'</select>';
   el.innerHTML=h;
   $('btnLeads').onclick=function(){openLeads();};
   if($('btnDue'))$('btnDue').onclick=function(){openLeads('due');};
-  if($('btnHot'))$('btnHot').onclick=function(){openLeads('opened');};
-  if($('btnTrack'))$('btnTrack').onclick=setupTracking;
   $('fLead').onchange=function(){leadFilter=this.value;renderList();};
 }
 function openLeads(f){
@@ -1431,7 +1615,7 @@ function leadBoxHTML(b){
   var l=leadOf(b),st=l?l.st:'new';
   return '<div class="lead" id="leadBox"><div class="lh"><b>'+esc(T('Lead tracker'))+'</b><span id="leadUpd"></span></div>'+
    '<div class="lseg" role="group" aria-label="'+esc(T('Lead status'))+'">'+LSTAT.map(function(s){return '<button type="button" data-s="'+s+'" class="s-'+s+(s===st?' on':'')+'">'+esc(T(LLAB[s]))+'</button>';}).join('')+'</div>'+
-   '<div id="leadOpen"></div><div class="lwarn" id="leadWarn" hidden></div>'+
+   '<div class="lwarn" id="leadWarn" hidden></div>'+
    '<div class="lfu" id="leadFuBox"><label for="leadFu">'+esc(T('Follow-up date'))+'</label><input type="date" id="leadFu" value="'+esc(l&&l.fu||'')+'">'+
    '<button type="button" class="q" data-d="3">'+esc(T('+3 days'))+'</button><button type="button" class="q" data-d="7">'+esc(T('+1 week'))+'</button><button type="button" class="q" data-d="x" aria-label="'+esc(T('Clear date'))+'">✕</button></div>'+
    '<div class="lnotes"><label for="leadNotes">'+esc(T('Notes'))+'</label><textarea id="leadNotes" rows="3" placeholder="'+esc(T('E.g. Spoke to the owner, call back on Monday'))+'">'+esc(l&&l.notes||'')+'</textarea></div></div>';
@@ -1443,13 +1627,6 @@ function refreshLeadBox(b){
   var w=$('leadWarn'),t=leadWarnText(l);w.hidden=!t;w.textContent=t;w.classList.toggle('ok',st==='sold');
   $('leadFuBox').classList.toggle('due',isDue(l));
   $('leadUpd').textContent=l&&l.upd?T('Updated {0}',fmtDate(l.upd)):'';
-  var oi=$('leadOpen');oi.innerHTML=openInfoHTML(l);
-  var fb=$('leadFollow');if(fb)fb.onclick=function(){
-    var msg=followMsg(b,sendLang),wk=waPick(b),n=wk?wk.d:'';
-    track('map_followup_opened',{category:b.cat});
-    if(!n){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');return;}
-    window.open(waLink(msg,n),'_blank','noopener');
-  };
 }
 function wireLeadBox(b){
   var box=$('leadBox');if(!box)return;
@@ -1474,124 +1651,12 @@ function markSent(b){
   return true;
 }
 
-/* ---- Link tracking: short link + "opened" events (needs the tracker Worker, see CONFIG.TRACK) ---- */
-(function(){var X={
- 'Tracking is off. Put your tracker URL in CONFIG.TRACK first (see the worker file).':'El seguimiento está desactivado. Primero pon la URL de tu tracker en CONFIG.TRACK (mira el archivo del worker).',
- 'Paste your tracking key. Leave it empty to turn tracking off.':'Pega tu clave de seguimiento. Déjala vacía para desactivarlo.',
- 'Tracking is off.':'Seguimiento desactivado.','Tracking is on.':'Seguimiento activado.','That key is not right.':'Esa clave no es correcta.','Could not reach the tracker.':'No se pudo conectar con el tracker.',
- 'Tracking is not reachable. Using the long link.':'No se puede contactar con el seguimiento. Se usa el enlace largo.',
- '👀 {0} opened your link':'👀 {0} ha abierto tu enlace','👀 {0} businesses opened your link':'👀 {0} negocios han abierto tu enlace',
- 'Tracking link sent · not opened yet':'Enlace con seguimiento enviado · aún sin abrir','Opened {0}× · last {1}':'Abierto {0}× · última vez: {1}',
- '💬 Follow up: “I see you took a look 😊”':'💬 Seguimiento: «Veo que le echó un vistazo 😊»',
- '{0} opened':'{0} abiertos','Opened, no reply':'Abierto, sin respuesta','Link tracking':'Seguimiento de aperturas'
-};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
-var REG={};try{REG=JSON.parse(store('elx_links')||'{}')||{};}catch(e){REG={};}
-function saveReg(){var o={};Object.keys(REG).forEach(function(k){var e=REG[k];o[k]={id:e.id,bk:e.bk,lang:e.lang,sig:e.sig};});store('elx_links',JSON.stringify(o));}
-function trackBase(){return String(CONFIG.TRACK||'').replace(/\/+$/,'');}
-function trackOn(){return !!(CONFIG.TRACK&&store('elx_tkey'));}
-function newId(){
-  var A='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789',s='',i,r=new Uint8Array(8);
-  try{crypto.getRandomValues(r);}catch(e){for(i=0;i<8;i++)r[i]=Math.floor(Math.random()*256);}
-  for(i=0;i<8;i++)s+=A.charAt(r[i]%A.length);return s;
-}
-// One short id per business and language. The link is only used once the Worker confirmed it (otherwise the long link is the safe fallback).
-function shortFor(b,o){
-  if(!trackOn()||!b||b.id==='shared')return null;
-  var k=b.id+'|'+o.g,e=REG[k],sig=JSON.stringify(o);
-  if(!e){e=REG[k]={id:newId(),bk:b.id,lang:o.g,sig:''};saveReg();}
-  if(e.sig!==sig)registerLink(e,o,sig);
-  return e.sig?location.origin+location.pathname+'#p='+e.id:null;
-}
-function registerLink(e,o,sig){
-  if(e.busy||(e.fail&&Date.now()-e.fail<30000))return;
-  e.busy=true;var first=!e.sig;
-  fetch(trackBase()+'/l',{method:'POST',headers:{'content-type':'application/json','x-admin-key':store('elx_tkey')||''},body:JSON.stringify({id:e.id,payload:o})})
-    .then(function(r){if(!r.ok)throw new Error(r.status);e.sig=sig;e.busy=false;e.fail=0;saveReg();
-      if(first&&!$('mPrev').hidden&&!sendEdited)refreshSend(true);})   // swap the long link for the short one in the open message
-    .catch(function(){e.busy=false;e.fail=Date.now();if(!registerLink._w){registerLink._w=1;toast('Tracking is not reachable. Using the long link.');}});
-}
-function warmLink(b){try{if(trackOn()&&b&&b.id!=='shared')previewLink(b,sendLang);}catch(e){}}
-function idsFor(b,k,old){
-  var out=(old||[]).slice();
-  Object.keys(REG).forEach(function(r){var e=REG[r];if(e.sig&&(e.bk===b.id||e.bk===k)&&out.indexOf(e.id)<0)out.push(e.id);});
-  return out;
-}
-function trackNoteL(lang,isShort){return isShort?(lang==='es'?' El enlace solo cuenta que se ha abierto (no guarda datos personales).':' The link only counts that it was opened (it stores no personal data).'):'';}
-
-/* Recipient side: resolve the short id, show the preview, count one open */
+/* Preview links open the preview from the data inside the link */
+/* Recipient side: open the preview from the link */
 function sharedBiz(o){
   var br=null,k=hex6(o.k);
   if(k||o.l||(o.s&&o.s.length)||(o.i&&o.i.length))br={k:k,logo:safeUrl(o.l),s:(Array.isArray(o.s)?o.s:[]).slice(0,6).map(function(x){return String(x).slice(0,60);}),i:(Array.isArray(o.i)?o.i:[]).slice(0,3).map(safeUrl).filter(Boolean),h:''};
   return{id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:/^[\w.]{1,30}$/.test(String(o.ig||''))?'https://www.instagram.com/'+o.ig+'/':'',status:'noweb',wa:String(o.w||'').slice(0,20),brand:br,email:/^[^\s@<>"']+@[^\s@<>"']+\.[A-Za-z]{2,}$/.test(String(o.e||''))?String(o.e).slice(0,80):'',guess:{fb:/^[\w.\-\/?=%]{1,80}$/.test(String(o.f||''))?'https://www.facebook.com/'+o.f:'',u:safeUrl(o.u)}};
-}
-function openShortLink(raw){
-  var id=String(raw||'').replace(/[^A-Za-z0-9]/g,'');
-  if(!CONFIG.TRACK||!id){toast('That preview link looks broken.');return;}
-  fetch(trackBase()+'/l/'+id).then(function(r){if(!r.ok)throw new Error('nf');return r.json();}).then(function(d){
-    var o=d.payload||{};
-    if(o.g==='es'||o.g==='en'){LANG=o.g;refreshUI();}
-    openPreview(sharedBiz(o),o.t);
-    reportOpen(id);
-  }).catch(function(){toast('That preview link looks broken.');});
-}
-function reportOpen(id){
-  if(!CONFIG.TRACK||store('elx_tkey'))return;                       // your own browser never counts
-  for(var k in REG)if(REG[k].id===id)return;
-  try{if(sessionStorage.getItem('elx_o_'+id))return;sessionStorage.setItem('elx_o_'+id,'1');}catch(e){}
-  var go=function(){fetch(trackBase()+'/o/'+id,{method:'POST',keepalive:true}).catch(function(){});};
-  setTimeout(function(){
-    if(document.visibilityState==='visible')go();
-    else document.addEventListener('visibilitychange',function f(){if(document.visibilityState==='visible'){document.removeEventListener('visibilitychange',f);go();}});
-  },1500);
-}
-
-/* Sender side: poll counts, notify, show in the lead card */
-function hot(l){return !!(l&&l.st==='sent'&&l.opn>0);}
-function fmtDT(t){try{return new Date(+t).toLocaleString(LANG==='es'?'es-ES':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
-function pollOpens(){
-  if(!trackOn()||pollOpens._b)return;
-  var idk={},ids=[];
-  Object.keys(LEADS).forEach(function(k){(LEADS[k].lids||[]).forEach(function(id){if(!idk[id]){idk[id]=k;ids.push(id);}});});
-  if(!ids.length)return;
-  pollOpens._b=1;var chunks=[];for(var i=0;i<ids.length;i+=40)chunks.push(ids.slice(i,i+40));
-  Promise.all(chunks.map(function(c){
-    return fetch(trackBase()+'/s?ids='+c.join(','),{headers:{'x-admin-key':store('elx_tkey')||''}}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();});
-  })).then(function(arr){
-    var per={};
-    arr.forEach(function(d){Object.keys(d).forEach(function(id){var k=idk[id],s=d[id];if(!k||!s||!s.n)return;
-      var p=per[k]=per[k]||{n:0,first:0,last:0};p.n+=s.n;p.first=p.first?Math.min(p.first,s.first||p.first):s.first;p.last=Math.max(p.last,s.last||0);});});
-    var fresh=[];
-    Object.keys(per).forEach(function(k){var l=LEADS[k],p=per[k];if(!l||p.n<=(l.opn||0))return;l.opn=p.n;l.opf=p.first;l.opl=p.last;fresh.push((l.b&&l.b.name)||'');});
-    if(!fresh.length)return;
-    saveLeads();renderLeadbar();
-    toast(fresh.length===1?'👀 {0} opened your link':'👀 {0} businesses opened your link',fresh.length===1?fresh[0]:fresh.length);
-    if(!$('detail').hidden&&cur)refreshLeadBox(cur);
-    else if(!$('list').hidden&&!busy&&(results.length||showLeads))renderList();
-  }).catch(function(){}).then(function(){pollOpens._b=0;});
-}
-setInterval(function(){if(document.visibilityState==='visible')pollOpens();},60000);
-document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')pollOpens();});
-setTimeout(pollOpens,2000);
-function setupTracking(){
-  if(!CONFIG.TRACK){toast('Tracking is off. Put your tracker URL in CONFIG.TRACK first (see the worker file).');return;}
-  var v=prompt(T('Paste your tracking key. Leave it empty to turn tracking off.'),store('elx_tkey')||'');
-  if(v===null)return;v=v.trim();
-  if(!v){try{localStorage.removeItem('elx_tkey');}catch(e){}renderLeadbar();toast('Tracking is off.');return;}
-  fetch(trackBase()+'/s?ids=',{headers:{'x-admin-key':v}}).then(function(r){
-    if(r.status===401)throw new Error('auth');if(!r.ok)throw new Error('net');
-    store('elx_tkey',v);renderLeadbar();toast('Tracking is on.');if(cur)warmLink(cur);pollOpens();
-  }).catch(function(e){toast(e&&e.message==='auth'?'That key is not right.':'Could not reach the tracker.');});
-}
-function followMsg(b,lang){
-  return lang==='es'
-    ?'Hola! Vi que echó un vistazo a la propuesta de página web para '+b.name+' 😊 ¿Qué le ha parecido? Si quiere cambiar algo (colores, textos, fotos), se lo ajusto sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.\n@EasyLandX'
-    :'Hi! I noticed you took a look at the website concept for '+b.name+' 😊 What did you think? If you would like to change anything (colours, text, photos), I will adjust it with no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.\n@EasyLandX';
-}
-function openInfoHTML(l){
-  if(!trackOn()||!l||!l.lids||!l.lids.length)return '';
-  if(!l.opn)return '<div class="lopen idle">'+esc(T('Tracking link sent · not opened yet'))+'</div>';
-  return '<div class="lopen"><span>👀 '+esc(T('Opened {0}× · last {1}',l.opn,fmtDT(l.opl)))+'</span>'+
-    (l.st==='sold'?'':'<button type="button" class="btn t sm" id="leadFollow">'+esc(T('💬 Follow up: “I see you took a look 😊”'))+'</button>')+'</div>';
 }
 
 /* ---- CSV export ---- */
@@ -1686,8 +1751,10 @@ function visibleRows(){
 function renderList(){
   lastEmpty=null;$('side').classList.remove('indetail');$('detail').hidden=true;$('list').hidden=false;
   var rows=visibleRows();
+  pushData();   // the dots on the map always match the list (same filters)
   $('clearRow').hidden=showLeads||!rows.length;
   $('count').textContent=rows.length+(capped&&!showSaved&&!showLeads?'+':'')+' '+T(showLeads?(rows.length===1?'lead':'leads'):(rows.length===1?'business':'businesses'));
+  $('lblWeb').textContent=T('Web')+(results.length?' ('+results.filter(function(b){return b.status==='web';}).length+')':'');
   $('lblWa').textContent=T('WhatsApp')+(results.length?' ('+results.filter(hasWa).length+')':'');
   $('lblIg').textContent=T('Instagram')+(results.length?' ('+results.filter(hasIg).length+')':'');
   $('lblFb').textContent=T('Facebook')+(results.length?' ('+results.filter(hasFb).length+')':'');
@@ -2008,7 +2075,7 @@ function select(id,fly){
   var b=byId(id);if(!b)return;cur=b;setSel(id);track('map_select',{category:b.cat,status:b.status});
   openSheet();
   if(fly&&map)map.flyTo({center:[b.lon,b.lat],zoom:17.6,pitch:66,duration:1100,essential:true,offset:window.innerWidth>820?[200,0]:[0,-sheetOffset()]});
-  renderDetail(b);warmLink(b);
+  renderDetail(b);
   enrich(b).then(function(c1){return gEnrich(b).then(function(c2){return c1||c2;});}).then(function(ch){if(ch&&cur===b){renderDetail(b);pushData();}}).then(function(){return guessWeb(b);}).then(function(ch){if(ch&&cur===b){renderDetail(b);}});
 }
 function renderDetail(b){
@@ -2117,7 +2184,7 @@ function copyText(t){
   else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copied to clipboard');}catch(e){toast('Could not copy');}ta.remove();}
 }
 function pitch(b,lang){
-  var l=previewLink(b,lang),unk=b.status==='unk',tn=trackNoteL(lang,l.indexOf('#p=')>-1);
+  var l=previewLink(b,lang),unk=b.status==='unk',tn='';
   if(lang==='es')return 'Hola! Encontré '+b.name+' y '+(unk?'no encontré su web.':'vi que no tiene web registrada.')+' He preparado una propuesta gratuita de cómo podría ser su página: '+l+'\nSi le gusta, la creo en unas 24h, sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.'+tn+'\n@EasyLandX';
   return 'Hi! I came across '+b.name+' and '+(unk?'could not find a website for it.':'noticed there is no website listed.')+' I put together a free concept of what a page for it could look like: '+l+'\nIf you like it, I can build the real one in about 24h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.'+tn+'\n@EasyLandX';
 }
@@ -2327,7 +2394,7 @@ function parseHours(h,lang){
   return ok&&rows.length?rows:null;
 }
 function emailOf(b){var e=String((b&&(b.email||(b.guess&&b.guess.e)))||'');return /^[^\s@<>"']+@[^\s@<>"']+\.[A-Za-z]{2,}$/.test(e)&&e.length<=80?e:'';}
-function fbOf(b){var sc=String((b&&b.social)||'');if(/^https:\/\/(www\.)?facebook\.com\/[\w.\-\/?=%]+$/i.test(sc))return sc;var g=String((b&&b.guess&&b.guess.fb)||'');return /^https:\/\/www\.facebook\.com\/[\w.\-\/?=%]+$/.test(g)?g:'';}
+function fbOf(b){var sc=String((b&&b.fb)||(b&&b.social)||'');if(/^https:\/\/(www\.)?facebook\.com\/[\w.\-\/?=%]+$/i.test(sc))return sc;var g=String((b&&b.guess&&b.guess.fb)||'');return /^https:\/\/www\.facebook\.com\/[\w.\-\/?=%]+$/.test(g)?g:'';}
 function fbMe(b){var u=fbOf(b),m=u.match(/^https:\/\/(?:www\.)?facebook\.com\/(?:pages\/[^\/]+\/(\d+)|([A-Za-z0-9.\-]{3,80}))\/?$/);return m?(m[1]||m[2]):'';}
 function socRowHTML(b){
   var ig=igHandleOf(b),fb=fbOf(b);if(!ig&&!fb)return '';
@@ -2411,7 +2478,6 @@ function previewLink(b,l){
   var emL=emailOf(b);if(emL)o.e=emL;
   var fbL=fbOf(b);if(fbL)o.f=fbL.replace(/^https:\/\/(www\.)?facebook\.com\//i,'').slice(0,80);
   var wuL=b.web||(b.guess&&b.guess.u)||'';wuL=wuL?siteUrl(wuL):'';if(safeUrl(wuL)&&wuL.length<=120)o.u=wuL;
-  var sh=shortFor(b,o);if(sh)return sh;
   delete o.i;if(o.l&&o.l.length>120)delete o.l;   // the long (untracked) link keeps no photos, so it stays short
   return location.origin+location.pathname+packLink(o);
 }
@@ -2503,7 +2569,7 @@ var sendLang=LANG,sendEdited=false,sendDrafts={},sendFound=false;   // the messa
 var sendCh=store('elx_sendch')||'wa';if(!/^(wa|ig|fb|mail|sms)$/.test(sendCh))sendCh='wa';
 var CHANNELS=['wa','ig','fb','mail','sms'];
 // ---- Message templates: one per channel x category x language. Tags: {name} {category} {address} {link} {example} {order} {note}
-var TPL_VARS=[['name','Business name'],['category','Category'],['address','Address'],['link','Preview link'],['example','Example site'],['order','WhatsApp order link'],['note','Link note'],['found','Found details line']];
+var TPL_VARS=[['name','Business name'],['category','Category'],['address','Address'],['link','Preview link'],['example','Example site'],['order','WhatsApp order link'],['found','Found details line']];
 var TPL_DEF={
  wa:{
   es:'Hola! Encontré {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este mensaje o escríbanos aquí: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n@EasyLandX',
@@ -2527,7 +2593,7 @@ function getTpl(ch,cat,lang){var all=tplAll();var v=all[tplKey(ch,cat,lang)];if(
 function catLabelL(c,lang){return lang==='es'?(CAT_ES[c.id]||c.label):c.label;}
 function fillTpl(t,b,lang,found){
   var link=previewLink(b,lang),c=catOf(b);
-  var v={name:b.name,category:catLabelL(c,lang).toLowerCase(),address:b.addr||'',link:link,example:c.exUrl,order:'https://wa.me/'+CONFIG.WA,note:trackNoteL(lang,link.indexOf('#p=')>-1),found:found?'\n\n'+found:''};
+  var v={name:b.name,category:catLabelL(c,lang).toLowerCase(),address:b.addr||'',link:link,example:c.exUrl,order:'https://wa.me/'+CONFIG.WA,note:'',found:found?'\n\n'+found:''};
   return String(t).replace(/\{(name|category|address|link|example|order|note|found)\}/g,function(m,k){return v[k]==null?'':v[k];});
 }
 function foundLine(b,lang){
@@ -2548,7 +2614,7 @@ function buildChannelMsg(b,ch,lang,found){
   return fillTpl(t,b,lang,line);
 }
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
-function igHandleOf(b){var m=String((b&&b.social)||(b&&b.guess&&b.guess.ig)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
+function igHandleOf(b){var m=String((b&&b.ig)||(b&&/instagram\.com/i.test(b.social||'')&&b.social)||(b&&b.guess&&b.guess.ig)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
 function splitMail(txt){var m=String(txt).match(/^\s*(?:Subject|Asunto)\s*:\s*(.*)\n+/i);return m?{subject:m[1].trim(),body:txt.slice(m[0].length)}:{subject:'',body:String(txt)};}
 var GO_LABEL={wa:'💬 Open WhatsApp with this message',ig:'📸 Copy message and open Instagram',fb:'💬 Copy message and open Facebook',mail:'✉️ Open email app',sms:'💬 Open SMS app'};
 function refreshSend(force){
@@ -3131,7 +3197,6 @@ window.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mAdd').hi
 function geoFromQuery(){}
 function handleHash(){
   var h=location.hash;
-  if(h.indexOf('#p=')===0){openShortLink(h.slice(3));return;}
   if(h.indexOf('#pz=')===0){
     try{
       var oz=zUnpack(h.slice(4));
@@ -3178,11 +3243,8 @@ var TIPS={
  helpClose:E('Close the help','Cerrar la ayuda'),
  btnLeads:E('Show or hide the businesses you have contacted','Mostrar u ocultar los negocios que has contactado'),
  btnDue:E('Show the follow-ups that are due','Mostrar los seguimientos pendientes'),
- btnHot:E('Show the leads that opened your link but did not reply','Mostrar los leads que abrieron tu enlace sin responder'),
- btnTrack:E('Link tracking: see who opens your preview links','Seguimiento de enlaces: mira quién abre tus vistas previas'),
  leadClr:E('Delete these leads (ask first)','Eliminar estos leads (pregunta antes)'),
  leadExp:E('Download these leads as a CSV file','Descargar estos leads en un archivo CSV'),
- leadFollow:E('Send a friendly follow-up message','Enviar un mensaje de seguimiento amable'),
  dBackBtn:E('Back to the list of results','Volver a la lista de resultados'),
  dPrevBiz:E('Previous business in the list','Negocio anterior de la lista'),
  dNextBiz:E('Next business in the list','Negocio siguiente de la lista'),
