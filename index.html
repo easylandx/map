@@ -782,6 +782,23 @@ var CATS=[
 ['escape','Escape room & experiences','🗝️','events',[['leisure','escape_game'],['leisure','amusement_arcade'],['leisure','bowling_alley'],['leisure','miniature_golf'],['leisure','trampoline_park']],'Examples hub','app/hub.html']
 ].map(function(r){return{id:r[0],label:r[1],emoji:r[2],group:r[3],tags:r[4],exTitle:r[5],exUrl:CONFIG.SITE+r[6]};});
 var CAT={};CATS.forEach(function(c){CAT[c.id]=c;});
+// Spanish sector examples: use the Spanish pages from /app/hubes.html.
+var ES_EXAMPLE_URLS={
+  beauty:'why/beautyes.html', tattoo:'why/tatooes.html', cafe:'why/cafeses.html',
+  restaurant:'why/chefes.html', bakery:'web/gastronomia.html', pastry:'why/cakeses.html',
+  choc:'why/chocolates.html', cheese:'why/cheesees.html', florist:'web/floristeria.html',
+  fitness:'web/traineres.html', yoga:'web/yogaes.html', pilates:'why/pilateses.html',
+  dance:'why/danza.html', music:'why/pianoes.html', therapy:'web/terapeuta.html',
+  lawyer:'why/lawyeres.html', finance:'why/financiales.html', realestate:'why/ventas.html',
+  photo:'why/photoses.html', art:'web/arte.html', jewelry:'why/jewelryes.html',
+  pottery:'why/ceramicses.html', pets:'web/mascotas.html', stay:'why/rural.html',
+  outdoor:'why/aventura.html', party:'why/kides.html'
+};
+function exampleUrlFor(b){
+  var c=catOf(b);
+  if(LANG==='es')return CONFIG.SITE+(ES_EXAMPLE_URLS[c.id]||'app/hubes.html');
+  return c.exUrl||CONFIG.SITE+'app/hub.html';
+}
 var CAT_PRIORITY=['hair','beauty','tattoo','therapy','wellness','health','fitness','yoga','pilates','dance','pets','cafe','restaurant','bakery','pastry','choc','cheese','party','photo','art','jewelry','pottery','music','language','realestate','garden','florist','interior','carrepair','bike','driving','lawyer','finance','boutique','gift','books','toys','outdoor','stay','trades','locksmith','tailor','laundry','coworking','herbal','escape'];
 /* Category order follows the group order chosen by Oz: Beauty, Wellbeing, Fitness, Pets, Hospitality & food, Events, Creation & crafts, Education, Home/garden/property, Automotive & mobility, Professional services, Local shops, Outdoors & tourism, Specialised services, Emerging niches. Anything not listed goes last. */
 function catsByPriority(){var r=function(c){var i=CAT_PRIORITY.indexOf(c.id);return i<0?999:i;};return CATS.slice().sort(function(x,y){return r(x)-r(y);});}
@@ -2439,7 +2456,7 @@ function renderDetail(b){
   if($('dNextBiz'))$('dNextBiz').onclick=function(){if(ix<vis.length-1)select(vis[ix+1].id,true);};
   $('dPrev').onclick=function(){openPreview(b);};
   $('dMine').onclick=function(){openReq(b);};
-  $('dEx').onclick=function(){openViewer(c.exUrl,T(c.exTitle));};
+  $('dEx').onclick=function(){openViewer(exampleUrlFor(b),T(c.exTitle));};
   wireLeadBox(b);
   if(CANSEND){
     if(dViewFor!==b.id){dView=null;dViewFor=b.id;}
@@ -3215,7 +3232,7 @@ function fitDesk(){
 })();
 $('pCopy').onclick=function(){copyText(previewLink(pvB));};
 $('pWa').onclick=function(){if(pvB)openReq(pvB,T('Hi! I saw the sample Web & App for "{0}" and I like it: I want the real one. Could you send me the price and a mockup here?\n{1}',pvB.name,previewLink(pvB)));};   // WhatsApp or email, same choice as in the detail panel
-$('pEx').onclick=function(){var c=catOf(pvB);openViewer(c.exUrl,T(c.exTitle));};
+$('pEx').onclick=function(){if(!pvB)return;var c=catOf(pvB);openViewer(exampleUrlFor(pvB),T(c.exTitle));};
 
 /* ================= AR ================= */
 var arLibs=null;
