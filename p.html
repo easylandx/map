@@ -609,7 +609,41 @@ $('askWa').onclick=$('askMail').onclick=null;
   $('askWa').onclick=function(){window.open(waLink(m()),'_blank','noopener');};
   $('askMail').onclick=function(){openExt('mailto:'+CONFIG.MAIL+'?subject='+encodeURIComponent(T('Web & App proposal request'))+'&body='+encodeURIComponent(m()));};
 })();
-$('pEx').onclick=function(){if(!pvB)return;var c=catOf(pvB);window.open(c.exUrl,'_blank','noopener');};
+// Spanish examples: use the Spanish sector pages linked from /app/hubes.html.
+var ES_EXAMPLE_URLS={
+  beauty:'why/beautyes.html',
+  tattoo:'why/tatooes.html',
+  cafe:'why/cafeses.html',
+  restaurant:'why/chefes.html',
+  bakery:'web/gastronomia.html',
+  pastry:'why/cakeses.html',
+  choc:'why/chocolates.html',
+  cheese:'why/cheesees.html',
+  florist:'web/floristeria.html',
+  fitness:'web/traineres.html',
+  yoga:'web/yogaes.html',
+  pilates:'why/pilateses.html',
+  dance:'why/danza.html',
+  music:'why/pianoes.html',
+  therapy:'web/terapeuta.html',
+  lawyer:'why/lawyeres.html',
+  finance:'why/financiales.html',
+  realestate:'why/ventas.html',
+  photo:'why/photoses.html',
+  art:'web/arte.html',
+  jewelry:'why/jewelryes.html',
+  pottery:'why/ceramicses.html',
+  pets:'web/mascotas.html',
+  stay:'why/rural.html',
+  outdoor:'why/aventura.html',
+  party:'why/kides.html'
+};
+function exampleUrlFor(b){
+  var c=catOf(b);
+  if(LANG==='es')return CONFIG.SITE+(ES_EXAMPLE_URLS[c.id]||'app/hubes.html');
+  return c.exUrl||CONFIG.SITE+'app/hub.html';
+}
+$('pEx').onclick=function(){if(!pvB)return;window.open(exampleUrlFor(pvB),'_blank','noopener');};
 $('dMob').onclick=function(){$('device').classList.remove('desk');$('dMob').classList.add('on');$('dDesk').classList.remove('on');};
 $('dDesk').onclick=function(){$('device').classList.add('desk');$('dDesk').classList.add('on');$('dMob').classList.remove('on');};
 $('pAR').onclick=openAR;
