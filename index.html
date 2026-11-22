@@ -1942,7 +1942,9 @@ function markSent(b){
   if(!b||b.id==='shared')return;
   var st=stOf(b);
   if(canDemo(b)&&pvB&&pvB.id===b.id&&!$('mPrev').hidden&&sendView==='ask'){askBump();toast('First-contact message sent again. The status stays as it is.');if(pvB&&!$('mPrev').hidden)refreshSend();return false;}
-  if(canDemo(b)){
+  if(st==='new'&&pvB&&pvB.id===b.id&&!$('mPrev').hidden&&sendView==='demo'){   // demo sent straight away, without a first contact
+    setLead(b,{st:'sent'});toast('Marked as "Demo sent". You can change it in the lead tracker.');
+  }else if(canDemo(b)){
     if(st!=='ask')return;
     setLead(b,{st:'sent'});toast('Marked as "Demo sent". You can change it in the lead tracker.');
   }else{
@@ -2490,7 +2492,7 @@ function renderDetail(b){
     $('dCopyEs').onclick=function(){copyText(pitch(b,'es'));};
   }
 }
-ES['Request a proposal']='Solicitar propuesta';ES['How do you want to send it?']='¿Cómo quieres enviarlo?';ES['Proposal request: {0}']='Solicitud de propuesta: {0}';
+ES['👋 A short hello to open the conversation.']='👋 Un saludo corto para abrir la conversación.';ES['🚀 Send the demo straight away: they see their page right away.']='🚀 Envía la demo ya: verán su página al instante.';ES['Request a proposal']='Solicitar propuesta';ES['How do you want to send it?']='¿Cómo quieres enviarlo?';ES['Proposal request: {0}']='Solicitud de propuesta: {0}';
 function closeReq(){$('mReq').hidden=true;}
 function openReq(b){
   var msg=T('Hi! I found my business "{0}"{1} on your map and I want my real page. Could you send me the price and a mockup here?\n{2}',b.name,(b.addr?' ('+b.addr+')':''),previewLink(b));
@@ -3033,19 +3035,19 @@ function refreshSend(force){
   if(!CANSEND||!pvB||pvB.id==='shared'){box.hidden=true;$('pSend').hidden=true;return;}
   $('pSend').hidden=false;
   var hasIg=!!igHandleOf(pvB),hasFb=!!fbOf(pvB);
-  var dnc0=isDnc(pvB),dm=canDemo(pvB),md=dnc0?'dnc':(!dm||sendView==='ask'?'ask':'demo');
+  var dnc0=isDnc(pvB),dm=canDemo(pvB),md=dnc0?'dnc':(sendView==='demo'?'demo':(!dm||sendView==='ask'?'ask':'demo'));
   $('pSendIg').disabled=!hasIg||dnc0;$('pSendFb').disabled=!hasFb||dnc0;$('pSendWa').disabled=dnc0;$('pSendMail').disabled=dnc0;$('sGo').disabled=dnc0;
   box.hidden=false;
   if(md!==sendModeLast){sendDrafts={};sendEdited=false;sendModeLast=md;}
   if(force){sendDrafts={};sendEdited=false;}
-  $('sModeAsk').classList.toggle('on',md==='ask');$('sModeAsk').setAttribute('aria-pressed',md==='ask');$('sModeDemo').classList.toggle('on',md==='demo');$('sModeDemo').classList.toggle('lock',!dm);
-  $('sModeAsk').textContent=T('1 · First contact');$('sModeDemo').textContent=(dm?'':'🔒 ')+T('2 · Send demo');
+  $('sModeAsk').classList.toggle('on',md==='ask');$('sModeAsk').setAttribute('aria-pressed',md==='ask');$('sModeDemo').classList.toggle('on',md==='demo');$('sModeDemo').classList.remove('lock');
+  $('sModeAsk').textContent=T('1 · First contact');$('sModeDemo').textContent=T('2 · Send demo');
   var mn=$('sModeNote'),tx='';
   if(md==='dnc')tx=T('Do not contact: this business asked not to be contacted. Sending is blocked.');
   else if(md==='ask'&&dm)tx=T('Showing the first-contact message again (no link). Press step 2 to go back to the demo.');
-  else if(md==='ask'){tx=T('Step 1: first contact. This message has no link. The demo unlocks once you have sent it.');if(sendCh==='wa'||sendCh==='mail'||sendCh==='sms')tx+=' '+T('Higher risk for a first message: try Instagram or Facebook first.');}
-  else tx=T('Step 2: first contact is done, so this message includes the demo link.');
-  mn.textContent=tx;mn.className='modeNote '+(md==='dnc'?'bad':(md==='ask'?'warn':'ok'));
+  else if(md==='ask')tx=T('👋 A short hello to open the conversation.');
+  else tx=T(dm?'Step 2: first contact is done, so this message includes the demo link.':'🚀 Send the demo straight away: they see their page right away.');
+  mn.textContent=tx;mn.className='modeNote '+(md==='dnc'?'bad':'ok');
   $('sNo').textContent=T(dnc0?'↩ Allow contact again':'🚫 Do not contact');
   var sd=$('sDay');sd.hidden=md!=='ask';if(!sd.hidden){var ac=askCount();sd.textContent=T('First contacts today: {0}',ac)+(ac>=15?' · '+T('That is a lot for one day. Slow down to protect your accounts.'):'');}
   $('sEs').classList.toggle('on',sendLang==='es');$('sEn').classList.toggle('on',sendLang==='en');
@@ -3081,8 +3083,8 @@ function setSendCh(c){
 }
 $('chWa').onclick=function(){setSendCh('wa');};$('chIg').onclick=function(){setSendCh('ig');};$('chFb').onclick=function(){setSendCh('fb');};$('chMail').onclick=function(){setSendCh('mail');};$('chSms').onclick=function(){setSendCh('sms');};
 $('sFound').onchange=function(){sendFound=this.checked;sendDrafts={};sendEdited=false;refreshSend();};
-$('sModeDemo').onclick=function(){if(!pvB||isDnc(pvB))return;if(!canDemo(pvB)){toast('The demo unlocks once you have sent the first contact.');return;}sendView='demo';refreshSend(true);};
-$('sModeAsk').onclick=function(){if(!pvB||isDnc(pvB))return;if(canDemo(pvB)){sendView='ask';refreshSend(true);}};
+$('sModeDemo').onclick=function(){if(!pvB||isDnc(pvB))return;sendView='demo';refreshSend(true);};
+$('sModeAsk').onclick=function(){if(!pvB||isDnc(pvB))return;sendView='ask';refreshSend(true);};
 $('sNo').onclick=function(){if(!pvB)return;var was=isDnc(pvB);setLead(pvB,{st:was?'new':'dnc'});if($('leadBox')&&cur)refreshLeadBox(cur);if(dsRefresh)dsRefresh();refreshSend(true);if(!was)toast('Marked as "Do not contact". Sending is blocked.');};
 $('sEs').onclick=function(){sendLang='es';store('elx_sendlang','es');refreshSend(true);};
 $('sEn').onclick=function(){sendLang='en';store('elx_sendlang','en');refreshSend(true);};
