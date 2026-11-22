@@ -53,6 +53,8 @@ a{color:var(--teal)}
 .modal[hidden]{display:none}
 .mbar{display:flex;align-items:center;gap:8px;padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top));background:#fff;border-bottom:1px solid var(--line);flex:none;flex-wrap:wrap}
 .mbar .t{flex:1;min-width:140px;font-weight:800;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Customer-facing p.html: keep the EasyLandX logo, but hide the repeated business title/subtitle beside it. */
+.mbar > div.t{display:none!important}
 .mbar .t small{display:block;font-weight:500;color:var(--mute);font-size:.74rem}
 .pill:disabled,.btn:disabled{opacity:.4;pointer-events:none}
 .pill{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:9px 14px;font-weight:700;font-size:.84rem;text-decoration:none;color:var(--ink);white-space:nowrap}
