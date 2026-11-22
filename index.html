@@ -3014,6 +3014,10 @@ function foundLine(b,lang){
   if(ig)return 'I saw you\u2019re on Instagram as @'+ig+', so I built your sample page with that in mind.';
   return 'I had a look at your site ('+host+'), so I built your sample page with that in mind.';
 }
+function decisionLine(lang){
+  if(lang==='es')return '¿Te interesa? SÍ ↗ https://easylandx.github.io/app/yes.html?lang=es&mode=yes | NO ↗ https://easylandx.github.io/app/yes.html?lang=es&mode=no';
+  return 'Interested? YES ↗ https://easylandx.github.io/app/yes.html?lang=en&mode=yes | NO ↗ https://easylandx.github.io/app/yes.html?lang=en&mode=no';
+}
 function buildChannelMsg(b,ch,lang,found){
   var t=getTpl(ch,b.cat,lang),line=(found&&ch!=='sms')?foundLine(b,lang):'';
   if(t.indexOf('{mail}')<0&&ch!=='ig'&&ch!=='fb'){   // edited templates saved before {mail} existed still get the reply email
@@ -3022,7 +3026,10 @@ function buildChannelMsg(b,ch,lang,found){
     else t=t+(ch==='sms'?' ':'\n')+ml.replace(/\n$/,'').replace(/^ · /,'');
   }
   if(line&&t.indexOf('{found}')<0)t=t.replace('{link}','{link}{found}');   // templates without the tag get the line right after the preview link
-  return addOptOut(fillTpl(t,b,lang,line),lang);
+  var msg=addOptOut(fillTpl(t,b,lang,line),lang);
+  var choices=decisionLine(lang);
+  if(msg.indexOf('mode=yes')<0||msg.indexOf('mode=no')<0)msg+='\n\n'+choices;
+  return msg;
 }
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
 // ---- Step 1 messages: first contact, no link, with sender and opt-out
