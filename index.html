@@ -2918,17 +2918,17 @@ var CHANNELS=['wa','ig','fb','mail','sms'];
 var TPL_VARS=[['name','Business name'],['category','Category'],['address','Address'],['link','Preview link'],['example','Example site'],['order','WhatsApp order link'],['mail','Reply email'],['found','Found details line']];
 var TPL_DEF={
  wa:{
-  es:'Hola! Encontré {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este mensaje, escríbanos a {mail} o por WhatsApp aquí: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n@EasyLandX',
-  en:'Hi! I found {name} and prepared a free concept of what its website could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this message, write to {mail}, or message us on WhatsApp here: {order}\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n@EasyLandX'},
+  es:'Hola! Preparé una propuesta de web para {name}:\n{link}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Respóndame por aquí o escriba a {mail}.\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nSi prefiere que no le escriba más, dígamelo y no volveré a contactarle.\n@EasyLandX',
+  en:'Hi! I made a website concept for {name}:\n{link}\n\nIf you like it, we can build it in about 24 h, no commitment. Reply here or write to {mail}.\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
  ig:{
-  es:'Hola! 👋 Vi {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Respóndame por aquí cuando quiera 🙂\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\nTambién puede escribirnos a {mail}\n@EasyLandX',
-  en:'Hi! 👋 I came across {name} and made a free concept of what its website could look like:\n{link}\n\nIf you like it, we can build it in about 24 h with no commitment. Just reply here whenever you like 🙂\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\nYou can also reach us at {mail}\n@EasyLandX'},
+  es:'Hola! 👋 Vi {name} y preparé una propuesta de su web:\n{link}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Respóndame por aquí cuando quiera 🙂\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nSi prefiere que no le escriba más, dígamelo y no volveré a contactarle.\n@EasyLandX',
+  en:'Hi! 👋 I came across {name} and made a website concept:\n{link}\n\nIf you like it, we can build it in about 24 h, no commitment. Just reply here whenever you like 🙂\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
  mail:{
-  es:'Asunto: Una propuesta de web gratuita para {name}\n\nHola,\n\nEncontré {name} y preparé una propuesta gratuita de cómo podría ser su página web:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h y sin compromiso. Para encargarla, responda a este correo, escríbanos a {mail} o por WhatsApp: {order}\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n@EasyLandX',
-  en:'Subject: A free website concept for {name}\n\nHi,\n\nI found {name} and prepared a free concept of what its website could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build yours in about 24 h with no commitment. To order it, reply to this email, write to {mail}, or message us on WhatsApp: {order}\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n@EasyLandX'},
+  es:'Asunto: Propuesta de web para {name}\n\nHola,\n\nPreparé una propuesta de cómo podría ser la web de {name}:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Responda a este correo o escríbanos por WhatsApp: {order}\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nPara no recibir más mensajes, escriba a {mail} y no volveré a contactarle.\n@EasyLandX',
+  en:'Subject: Website concept for {name}\n\nHi,\n\nI made a concept of what the website for {name} could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build it in about 24 h, no commitment. Reply to this email or message us on WhatsApp: {order}\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nTo stop receiving messages, write to {mail} and I will not contact you again.\n@EasyLandX'},
  sms:{
-  es:'Hola! Preparé una propuesta gratis de web para {name}: {link} Si le gusta, la hacemos en 24 h sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.{note}\n@EasyLandX · {mail}',
-  en:'Hi! I made a free website concept for {name}: {link} If you like it, we build it in 24 h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.{note}\n@EasyLandX · {mail}'}
+  es:'EasyLandX: web de muestra para {name}: {link} Sin compromiso. Enlace seguro. Si no lo desea, no volveré a contactarle. Baja: {mail}',
+  en:'EasyLandX: sample website for {name}: {link} No commitment. Safe link. If not, I will not contact you again. Opt out: {mail}'}
 };
 TPL_DEF.fb=TPL_DEF.ig;   // Messenger uses the same short chat-style message as Instagram until you edit its own template
 function tplAll(){try{return JSON.parse(store('elx_tpl')||'{}')||{};}catch(e){return {};}}
@@ -2956,7 +2956,7 @@ function foundLine(b,lang){
 }
 function buildChannelMsg(b,ch,lang,found){
   var t=getTpl(ch,b.cat,lang),line=(found&&ch!=='sms')?foundLine(b,lang):'';
-  if(t.indexOf('{mail}')<0){   // edited templates saved before {mail} existed still get the reply email
+  if(t.indexOf('{mail}')<0&&ch!=='ig'&&ch!=='fb'){   // edited templates saved before {mail} existed still get the reply email
     var ml=ch==='sms'?' · {mail}':(lang==='es'?'También puede escribirnos a {mail}\n':'You can also reach us at {mail}\n'),k=t.lastIndexOf('@EasyLandX');
     if(k>-1)t=ch==='sms'?t.slice(0,k+10)+ml+t.slice(k+10):t.slice(0,k)+ml+t.slice(k);
     else t=t+(ch==='sms'?' ':'\n')+ml.replace(/\n$/,'').replace(/^ · /,'');
@@ -2968,14 +2968,14 @@ function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
 // ---- Step 1 messages: first contact, no link, with sender and opt-out
 var TPL_ASK={
  wa:{
-  es:'Hola! 👋 Soy de EasyLandX. Vi {name} y he preparado un boceto visual gratuito de cómo podría ser su página web, sin compromiso. ¿Le parece bien que se lo envíe por aquí?\n\nNota: este mensaje no es spam ni phishing. No incluye enlaces y no pide datos ni pagos.\n\nSi prefiere que no le escriba más, dígamelo o escriba a {mail} y no volveré a contactarle.\n@EasyLandX',
-  en:'Hi! 👋 This is EasyLandX. I came across {name} and made a free visual concept of what its website could look like, no commitment. Would it be OK if I send it to you here?\n\nNote: this message is neither spam nor phishing. It contains no links and asks for no data or payment.\n\nIf you would rather not hear from me, just tell me or write to {mail} and I will not contact you again.\n@EasyLandX'},
+  es:'Hola! Soy de EasyLandX 👋 Le escribo para ofrecerle un boceto de la web de {name}, sin compromiso. ¿Se lo envío por aquí?\n\nSi prefiere que no le escriba más, dígamelo y no volveré a contactarle.\n@EasyLandX',
+  en:'Hi! This is EasyLandX 👋 I\'m writing to offer you a website concept for {name}, no commitment. Shall I send it here?\n\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
  mail:{
-  es:'Asunto: ¿Le puedo enviar un boceto de web para {name}?\n\nHola,\n\nSoy de EasyLandX. He preparado un boceto visual gratuito de cómo podría ser la página web de {name}, sin compromiso. ¿Le parece bien que se lo envíe?\n\nNota: este mensaje no es spam ni phishing. No incluye enlaces y no pide datos ni pagos.\n\nSi prefiere no recibir más mensajes, escriba a {mail} y no volveré a contactarle.\n\n@EasyLandX',
-  en:'Subject: Can I send you a website concept for {name}?\n\nHi,\n\nThis is EasyLandX. I made a free visual concept of what the website for {name} could look like, no commitment. Would it be OK if I send it to you?\n\nNote: this message is neither spam nor phishing. It contains no links and asks for no data or payment.\n\nIf you would rather not hear from us again, write to {mail} and I will not contact you again.\n\n@EasyLandX'},
+  es:'Asunto: Boceto de web para {name}\n\nHola,\n\nSoy de EasyLandX. He preparado un boceto visual de la web de {name}, sin compromiso. ¿Se lo envío?\n\nPara no recibir más mensajes, escriba a {mail} y no volveré a contactarle.\n\n@EasyLandX',
+  en:'Subject: Website concept for {name}\n\nHi,\n\nThis is EasyLandX. I made a visual concept of the website for {name}, no commitment. Shall I send it?\n\nTo stop receiving messages, write to {mail} and I will not contact you again.\n\n@EasyLandX'},
  sms:{
-  es:'Hola! Soy de EasyLandX. He preparado un boceto gratis de web para {name}, sin compromiso. ¿Se lo envío? Nota: no es spam ni phishing, no incluye enlaces ni pide datos. Si prefiere no recibir más mensajes: {mail}\n@EasyLandX',
-  en:'Hi! This is EasyLandX. I made a free website concept for {name}, no commitment. Shall I send it? Note: not spam or phishing, no links, no data requested. If you would rather not hear from us again: {mail}\n@EasyLandX'}
+  es:'Soy de EasyLandX. Boceto de web para {name}, sin compromiso. ¿Se lo mando? Si no lo desea, no volveré a contactarle. Baja: {mail}',
+  en:'This is EasyLandX. Website concept for {name}, no commitment. Shall I send it? If not, I will not contact you again. Opt out: {mail}'}
 };
 TPL_ASK.ig=TPL_ASK.wa;TPL_ASK.fb=TPL_ASK.wa;
 function buildAskMsg(b,ch,lang){return fillTpl((TPL_ASK[ch]||TPL_ASK.wa)[lang]||TPL_ASK.wa.en,b,lang,'');}
