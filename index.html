@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<!-- SYNC NOTE: p.html (the light client page) shares code with this file. Keep these IDENTICAL in both: ZDICT, ZDICT2, zUnpack, zUnpack2, unb64 (they decode the #q= / #pz= / #preview= links: if they differ, links stop opening), pageHTML and its helpers, the AR code, THEMES, COPY, the ES translations, CONFIG.WA / MAIL / SITE. -->
+<script>/* Client links (#q=, #pz=, #preview=) go to the light page p.html in the same folder, so the map never loads for them. Old links keep working. */
+(function(){var h=location.hash;if(/^#(q|pz|preview)=/.test(h)){try{location.replace(location.pathname.replace(/[^\/]*$/,'')+'p.html'+h);}catch(e){}}})();</script>
 <title>EasyLandX Map — Find local businesses and see the website they could have</title>
 <meta name="description" content="Search real local businesses on a 3D map, see who has no website listed, preview a landing page for any of them, and view it in AR in your own shop.">
 <link rel="canonical" href="https://easylandx.github.io/app/map.html">
@@ -2499,8 +2502,8 @@ function renderDetail(b){
 }
 ES['👋 A short hello to open the conversation.']='👋 Un saludo corto para abrir la conversación.';ES['🚀 Send the demo straight away: they see their page right away.']='🚀 Envía la demo ya: verán su página al instante.';ES['Request a proposal']='Solicitar propuesta';ES['How do you want to send it?']='¿Cómo quieres enviarlo?';ES['Web & App proposal request: {0}']='Solicitud de propuesta de Web & App: {0}';
 function closeReq(){$('mReq').hidden=true;}
-function openReq(b){
-  var msg=T('Hi! I found my business "{0}"{1} on EasyLandX and I want my real Web & App. Could you send me the price and a mockup here?\n{2}',b.name,(b.addr?' ('+b.addr+')':''),previewLink(b));
+function openReq(b,m){
+  var msg=m||T('Hi! I found my business "{0}"{1} on EasyLandX and I want my real Web & App. Could you send me the price and a mockup here?\n{2}',b.name,(b.addr?' ('+b.addr+')':''),previewLink(b));
   $('reqT').textContent=T('How do you want to send it?');
   $('reqWa').textContent=T('💬 WhatsApp');
   $('reqMail').textContent=T('✉️ Email')+' · '+CONFIG.MAIL;
@@ -2864,7 +2867,7 @@ function previewLink(b,l){
   var fbL=fbOf(b);if(fbL)o.f=fbL.replace(/^https:\/\/(www\.)?facebook\.com\//i,'').slice(0,80);
   var wuL=b.web||(b.guess&&b.guess.u)||'';wuL=wuL?siteUrl(wuL):'';if(safeUrl(wuL)&&wuL.length<=120)o.u=wuL;
   delete o.i;if(o.l&&o.l.length>120)delete o.l;   // the long (untracked) link keeps no photos, so it stays short
-  return location.origin+location.pathname+packLink(o);
+  return location.origin+location.pathname.replace(/[^\/]*$/,'')+'p.html'+packLink(o);   // client page, no map code
 }
 function buildThemes(){
   var th=$('themes');th.innerHTML='';
@@ -3216,7 +3219,7 @@ function fitDesk(){
   window.__fitDesk=fitDesk;
 })();
 $('pCopy').onclick=function(){copyText(previewLink(pvB));track('map_copy_link');};
-$('pWa').onclick=function(){openWa(T('Hi! I saw the sample Web & App for "{0}" and I like it: I want the real one. Could you send me the price and a mockup here?\n{1}',pvB.name,previewLink(pvB)),'preview');};
+$('pWa').onclick=function(){if(pvB)openReq(pvB,T('Hi! I saw the sample Web & App for "{0}" and I like it: I want the real one. Could you send me the price and a mockup here?\n{1}',pvB.name,previewLink(pvB)));};   // WhatsApp or email, same choice as in the detail panel
 $('pEx').onclick=function(){var c=catOf(pvB);openViewer(c.exUrl,T(c.exTitle));};
 
 /* ================= AR ================= */
