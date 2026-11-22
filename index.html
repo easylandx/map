@@ -1742,9 +1742,9 @@ $('btnClear').onclick=function(){
 var LSTAT=['new','ask','sent','dnc'];
 var LLAB={new:'New',ask:'First contact',sent:'Demo sent',dnc:'Do not contact'};
 var LORD={ask:3,sent:4,new:5,dnc:7};
-Object.assign(ES,{'Showing the first-contact message again (no link). Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de primer contacto (sin enlace). Pulsa el paso 2 para volver a la demo.','First-contact message sent again. The status stays as it is.':'Mensaje de primer contacto enviado de nuevo. El estado se queda como está.','First contact':'Primer contacto','Demo sent':'Demo enviada','Do not contact':'No contactar',
+Object.assign(ES,{'Showing the first-contact message again (no demo link; YES/NO choices included). Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de primer contacto (sin enlace a la demo; incluye las opciones SÍ/NO). Pulsa el paso 2 para volver a la demo.','First-contact message sent again. The status stays as it is.':'Mensaje de primer contacto enviado de nuevo. El estado se queda como está.','First contact':'Primer contacto','Demo sent':'Demo enviada','Do not contact':'No contactar',
  '1 · First contact':'1 · Primer contacto','2 · Send demo':'2 · Enviar demo','🚫 Do not contact':'🚫 No contactar','↩ Allow contact again':'↩ Permitir contacto de nuevo',
- 'Step 1: first contact. This message has no link. The demo unlocks once you have sent it.':'Paso 1: primer contacto. Este mensaje no lleva enlace. La demo se desbloquea cuando lo hayas enviado.',
+ 'Step 1: first contact. No demo link yet; YES/NO choices are included. The demo unlocks once you have sent it.':'Paso 1: primer contacto. Aún no incluye el enlace a la demo; sí incluye las opciones SÍ/NO. La demo se desbloquea cuando lo hayas enviado.',
  'Higher risk for a first message: try Instagram or Facebook first.':'Más riesgo para un primer mensaje: prueba antes con Instagram o Facebook.',
  'Step 2: first contact is done, so this message includes the demo link.':'Paso 2: el primer contacto ya está hecho, así que este mensaje incluye el enlace a la demo.',
  'Do not contact: this business asked not to be contacted. Sending is blocked.':'No contactar: este negocio pidió no ser contactado. El envío está bloqueado.',
@@ -1754,7 +1754,7 @@ Object.assign(ES,{'Showing the first-contact message again (no link). Press step
  'Marked as "First contact". The demo is unlocked.':'Marcado como "Primer contacto". La demo está desbloqueada.',
  'Marked as "Demo sent". You can change it in the lead tracker.':'Marcado como "Demo enviada". Puedes cambiarlo en el seguimiento.',
  'Marked as "Do not contact". Sending is blocked.':'Marcado como "No contactar". El envío está bloqueado.',
- 'Step 1: these buttons send a short first message with no link. The demo unlocks once you have sent it.':'Paso 1: estos botones envían un primer mensaje corto, sin enlace. La demo se desbloquea cuando lo hayas enviado.',
+ 'Step 1: these buttons send a short first message without the demo link, but with YES/NO choices. The demo unlocks once you have sent it.':'Paso 1: estos botones envían un primer mensaje corto sin enlace a la demo, pero con opciones SÍ/NO. La demo se desbloquea cuando lo hayas enviado.',
  'You made first contact on {0}. The demo is unlocked.':'Hiciste el primer contacto el {0}. La demo está desbloqueada.',
  'Do not contact. Sending is blocked for this business.':'No contactar. El envío está bloqueado para este negocio.'});
 var LEADS={};try{LEADS=JSON.parse(store('elx_leads')||'{}')||{};}catch(e){LEADS={};}
@@ -2471,7 +2471,7 @@ function renderDetail(b){
       $('dModeAsk').classList.toggle('on',ask);$('dModeAsk').setAttribute('aria-pressed',ask);$('dModeDemo').classList.toggle('on',md==='demo');$('dModeDemo').setAttribute('aria-pressed',md==='demo');
       $('dModeAsk').disabled=$('dModeDemo').disabled=dnc;
       if(dnc)$('dSendTo').textContent=T('Do not contact: sending is blocked for this business.');
-      else if(ask)$('dSendTo').textContent=T(canDemo(b)?'Showing the first-contact message again (no link). Press step 2 to go back to the demo.':'Step 1: these buttons send a short first message with no link. The demo unlocks once you have sent it.')+' '+(n?T('To: {0}',ph):T('No phone number listed for this business. The message will be copied so you can paste it in their chat.'))+' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
+      else if(ask)$('dSendTo').textContent=T(canDemo(b)?'Showing the first-contact message again (no demo link; YES/NO choices included). Press step 2 to go back to the demo.':'Step 1: these buttons send a short first message with no link. The demo unlocks once you have sent it.')+' '+(n?T('To: {0}',ph):T('No phone number listed for this business. The message will be copied so you can paste it in their chat.'))+' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
       ['dSend','dSendMail','dSendIg','dSendFb'].forEach(function(id){var e=$(id);if(e)e.disabled=dnc;});
     };
     refreshDSend();dsRefresh=refreshDSend;
@@ -2536,7 +2536,7 @@ function copyText(t){
 function pitch(b,lang){
   var l=previewLink(b,lang),unk=b.status==='unk',tn='';
   if(lang==='es')return 'Hola! Encontré '+b.name+' y '+(unk?'no encontré su web.':'vi que no tiene web registrada.')+' He preparado una propuesta gratuita de cómo podría ser su página: '+l+'\nSi le gusta, la creo en unas 24h, sin compromiso.\n\nNota: este mensaje no es spam ni phishing. El enlace es seguro y solo muestra una propuesta de página web, sin pedir datos ni pagos.'+tn+'\n@EasyLandX';
-  return 'Hi! I came across '+b.name+' and '+(unk?'could not find a website for it.':'noticed there is no website listed.')+' I put together a free concept of what a page for it could look like: '+l+'\nIf you like it, I can build the real one in about 24h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a website concept, with no data or payment requested.'+tn+'\n@EasyLandX';
+  return 'Hi! I came across '+b.name+' and '+(unk?'could not find a website for it.':'noticed there is no website listed.')+' I put together a free concept of what a page for it could look like: '+l+'\nIf you like it, I can build the real one in about 24h, no commitment.\n\nNote: this message is neither spam nor phishing. The link is safe to open and only shows a Web & App concept, with no data or payment requested.'+tn+'\n@EasyLandX';
 }
 $('side').addEventListener('click',function(){});
 /* ===== Mobile bottom sheet: drag the handle (or the title) to any height ===== */
@@ -2978,17 +2978,17 @@ var CHANNELS=['wa','ig','fb','mail','sms'];
 var TPL_VARS=[['name','Business name'],['category','Category'],['address','Address'],['link','Preview link'],['example','Example site'],['order','WhatsApp order link'],['mail','Reply email'],['found','Found details line']];
 var TPL_DEF={
  wa:{
-  es:'Hola! Preparé una propuesta de web para {name}:\n{link}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Respóndame por aquí o escriba a {mail}.\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nSi prefiere que no le escriba más, dígamelo y no volveré a contactarle.\n@EasyLandX',
-  en:'Hi! I made a website concept for {name}:\n{link}\n\nIf you like it, we can build it in about 24 h, no commitment. Reply here or write to {mail}.\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
+  es:'Hola! Preparé una propuesta de Web & App para {name}:\n{link}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Respóndame por aquí o escriba a {mail}.\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nSi prefiere que no le escriba más, dígamelo y no volveré a contactarle.\n@EasyLandX',
+  en:'Hi! I made a Web & App concept for {name}:\n{link}\n\nIf you like it, we can build it in about 24 h, no commitment. Reply here or write to {mail}.\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
  ig:{
-  es:'Hola! 👋 Vi {name} y preparé una propuesta de su web:\n{link}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Respóndame por aquí cuando quiera 🙂\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nSi prefiere que no le escriba más, dígamelo y no volveré a contactarle.\n@EasyLandX',
-  en:'Hi! 👋 I came across {name} and made a website concept:\n{link}\n\nIf you like it, we can build it in about 24 h, no commitment. Just reply here whenever you like 🙂\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
+  es:'Hola! 👋 Vi {name} y preparé una propuesta de su Web & App:\n{link}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Respóndame por aquí cuando quiera 🙂\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nSi prefiere que no le escriba más, dígamelo y no volveré a contactarle.\n@EasyLandX',
+  en:'Hi! 👋 I came across {name} and made a Web & App concept:\n{link}\n\nIf you like it, we can build it in about 24 h, no commitment. Just reply here whenever you like 🙂\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
  mail:{
-  es:'Asunto: Propuesta de web para {name}\n\nHola,\n\nPreparé una propuesta de cómo podría ser la web de {name}:\n{link}\n\nAsí son nuestras webs reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Responda a este correo o escríbanos por WhatsApp: {order}\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nPara no recibir más mensajes, escriba a {mail} y no volveré a contactarle.\n@EasyLandX',
-  en:'Subject: Website concept for {name}\n\nHi,\n\nI made a concept of what the website for {name} could look like:\n{link}\n\nHere are real websites we built for this kind of business:\n{example}\n\nIf you like it, we can build it in about 24 h, no commitment. Reply to this email or message us on WhatsApp: {order}\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nTo stop receiving messages, write to {mail} and I will not contact you again.\n@EasyLandX'},
+  es:'Asunto: Propuesta de Web & App para {name}\n\nHola,\n\nPreparé una propuesta de cómo podría ser la Web & App de {name}:\n{link}\n\nAsí son nuestras Web & App reales para este tipo de negocio:\n{example}\n\nSi le gusta, la creamos en unas 24 h, sin compromiso. Responda a este correo o escríbanos por WhatsApp: {order}\n\nEl enlace es seguro: solo muestra una propuesta, sin pedir datos ni pagos.\nPara no recibir más mensajes, escriba a {mail} y no volveré a contactarle.\n@EasyLandX',
+  en:'Subject: Web & App concept for {name}\n\nHi,\n\nI made a Web & App concept for {name}:\n{link}\n\nHere are real Web & App projects we built for this kind of business:\n{example}\n\nIf you like it, we can build it in about 24 h, no commitment. Reply to this email or message us on WhatsApp: {order}\n\nThe link is safe: it only shows a concept, with no data or payment requested.\nTo stop receiving messages, write to {mail} and I will not contact you again.\n@EasyLandX'},
  sms:{
-  es:'EasyLandX: web de muestra para {name}: {link} Sin compromiso. Enlace seguro. Si no lo desea, no volveré a contactarle. Baja: {mail}',
-  en:'EasyLandX: sample website for {name}: {link} No commitment. Safe link. If not, I will not contact you again. Opt out: {mail}'}
+  es:'EasyLandX: muestra de Web & App para {name}: {link} Sin compromiso. Enlace seguro. Si no lo desea, no volveré a contactarle. Baja: {mail}',
+  en:'EasyLandX: Web & App concept for {name}: {link} No commitment. Safe link. If not, I will not contact you again. Opt out: {mail}'}
 };
 TPL_DEF.fb=TPL_DEF.ig;   // Messenger uses the same short chat-style message as Instagram until you edit its own template
 function tplAll(){try{return JSON.parse(store('elx_tpl')||'{}')||{};}catch(e){return {};}}
@@ -3032,20 +3032,20 @@ function buildChannelMsg(b,ch,lang,found){
   return msg;
 }
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
-// ---- Step 1 messages: first contact, no link, with sender and opt-out
+// ---- Step 1 messages: first contact, no demo link; YES/NO decision links included
 var TPL_ASK={
  wa:{
   es:'Hola! Soy de EasyLandX 👋 Le escribo para ofrecerle un boceto de la web de {name}, sin compromiso. ¿Se lo envío por aquí?\n\nSi prefiere que no le escriba más, dígamelo y no volveré a contactarle.\n@EasyLandX',
-  en:'Hi! This is EasyLandX 👋 I\'m writing to offer you a website concept for {name}, no commitment. Shall I send it here?\n\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
+  en:'Hi! This is EasyLandX 👋 I\'m writing to offer you a Web & App concept for {name}, no commitment. Shall I send it here?\n\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
  mail:{
   es:'Asunto: Boceto de web para {name}\n\nHola,\n\nSoy de EasyLandX. He preparado un boceto visual de la web de {name}, sin compromiso. ¿Se lo envío?\n\nPara no recibir más mensajes, escriba a {mail} y no volveré a contactarle.\n\n@EasyLandX',
-  en:'Subject: Website concept for {name}\n\nHi,\n\nThis is EasyLandX. I made a visual concept of the website for {name}, no commitment. Shall I send it?\n\nTo stop receiving messages, write to {mail} and I will not contact you again.\n\n@EasyLandX'},
+  en:'Subject: Web & App concept for {name}\n\nHi,\n\nThis is EasyLandX. I made a visual concept of the website for {name}, no commitment. Shall I send it?\n\nTo stop receiving messages, write to {mail} and I will not contact you again.\n\n@EasyLandX'},
  sms:{
   es:'Soy de EasyLandX. Boceto de web para {name}, sin compromiso. ¿Se lo mando? Si no lo desea, no volveré a contactarle. Baja: {mail}',
-  en:'This is EasyLandX. Website concept for {name}, no commitment. Shall I send it? If not, I will not contact you again. Opt out: {mail}'}
+  en:'This is EasyLandX. Web & App concept for {name}, no commitment. Shall I send it? If not, I will not contact you again. Opt out: {mail}'}
 };
 TPL_ASK.ig=TPL_ASK.wa;TPL_ASK.fb=TPL_ASK.wa;
-function buildAskMsg(b,ch,lang){return fillTpl((TPL_ASK[ch]||TPL_ASK.wa)[lang]||TPL_ASK.wa.en,b,lang,'');}
+function buildAskMsg(b,ch,lang){return fillTpl((TPL_ASK[ch]||TPL_ASK.wa)[lang]||TPL_ASK.wa.en,b,lang,'')+'\n\n'+decisionLine(lang);}
 function msgFor(b,ch,lang,found,mode){mode=mode||sendModeOf(b,null);return mode==='demo'?buildChannelMsg(b,ch,lang,found):buildAskMsg(b,ch,lang);}
 // Demo messages also carry the sender and an easy way to say no
 function addOptOut(t,lang){
@@ -3071,7 +3071,7 @@ function refreshSend(force){
   $('sModeAsk').textContent=T('1 · First contact');$('sModeDemo').textContent=T('2 · Send demo');
   var mn=$('sModeNote'),tx='';
   if(md==='dnc')tx=T('Do not contact: this business asked not to be contacted. Sending is blocked.');
-  else if(md==='ask'&&dm)tx=T('Showing the first-contact message again (no link). Press step 2 to go back to the demo.');
+  else if(md==='ask'&&dm)tx=T('Showing the first-contact message again (no demo link; YES/NO choices included). Press step 2 to go back to the demo.');
   else if(md==='ask')tx=T('👋 A short hello to open the conversation.');
   else tx=T(dm?'Step 2: first contact is done, so this message includes the demo link.':'🚀 Send the demo straight away: they see their page right away.');
   mn.textContent=tx;mn.className='modeNote '+(md==='dnc'?'bad':'ok');
