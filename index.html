@@ -160,13 +160,6 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 #legalBody ul{margin:0;padding-left:20px;display:grid;gap:4px;color:#34413f}
 #legalBody .lgDate{font-size:.78rem;color:var(--mute)}
 #legalBox .btn{margin:4px 0 0}
-#cookieBar{position:fixed;z-index:75;left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));max-width:520px;max-height:calc(100dvh - 32px);overflow:auto;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px 18px;display:grid;gap:12px}
-#cookieBar[hidden]{display:none}
-#cookieBar p{margin:0;font-size:.86rem;line-height:1.5;color:var(--ink)}
-#cookieBar p a{font-weight:700;color:var(--teal);text-decoration:underline;cursor:pointer}
-#cookieBar .row{margin:0}
-#cookieBar .row .btn{flex:1;margin:0}
-@media (min-width:821px){#cookieBar{left:440px}}
 #helpBox{background:#fff;border-radius:22px;padding:20px;width:min(480px,100%);max-height:100%;overflow:auto;box-shadow:var(--shadow);display:grid;gap:12px;align-content:start;overscroll-behavior:contain}
 #helpBox h3{margin:0;font-size:1.15rem}
 #helpBox .btn{margin:4px 0 0}
@@ -671,7 +664,6 @@ var CONFIG={
 };
 var $=function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function track(n,p){try{if(window.gtag)gtag('event',n,p||{});}catch(e){}}
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 var LANG=(function(){var s=store('elx_lang');if(s==='es'||s==='en')return s;return /^es/i.test(navigator.language||'')?'es':'en';})();
 var ES={"Name": "Nombre", "Business name or word": "Nombre del negocio o palabra", "No business found with that name": "No se encontró ningún negocio con ese nombre", "Try fewer words or another spelling. OpenStreetMap does not list every business.": "Prueba con menos palabras u otra grafía. OpenStreetMap no incluye todos los negocios.", "🔎 Search the web instead": "🔎 Buscar en la web", "Web pages, not map businesses. Open one to check it.": "Son páginas web, no negocios del mapa. Abre una para comprobarla.", "Searching the web…": "Buscando en la web…", "No web results either.": "Tampoco hay resultados en la web.", "Web search failed. Try again in a moment.": "La búsqueda web falló. Inténtalo de nuevo en un momento.", "Expand or collapse panel": "Expandir o contraer el panel", "What": "Qué", "Where": "Dónde", "Hair salon, café, yoga…": "Peluquería, cafetería, yoga…", "City or neighbourhood": "Ciudad o barrio", "Use my location": "Usar mi ubicación", "↻ Search this area": "↻ Buscar en esta zona", "Toggle 2D / 3D": "Cambiar entre 2D y 3D", "No website listed": "Sin web registrada", "Social media only": "Solo redes sociales", "Has a website": "Tiene página web", "Website unknown": "Web desconocida", "← Back": "← Volver", "Concept preview · made with EasyLandX": "Vista previa de concepto · hecha con EasyLandX", "📱 See it in 3D at your shop": "📱 Verlo en 3D en tu negocio", "📱 See it in 3D": "📱 Verlo en 3D", "🔗 Copy link": "🔗 Copiar enlace", "📤 Send to business": "📤 Enviar al negocio", "💬 Request a proposal": "💬 Solicitar propuesta", "Concept preview": "Vista previa de concepto", "Device": "Dispositivo", "Colors": "Colores", "Your Web & App": "Tu Web & App", "Language": "Idioma", "📱 Phone": "📱 Móvil", "🖥️ Desktop": "🖥️ Ordenador", "Send to this business": "Enviar a este negocio", "WhatsApp message": "Mensaje de WhatsApp", "💬 Open WhatsApp with this message": "💬 Abrir WhatsApp con este mensaje", "Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).": "No se envía nada automáticamente: revisas el mensaje y pulsas enviar en WhatsApp. Contacta con los negocios solo por sus canales públicos y cumple la normativa local de marketing (RGPD, LSSI en España).", "This is a draft of your Web & App ✨ With an online presence, more customers find you, trust you and order from you on their phone.": "Esto es un boceto de tu Web & App ✨ Con presencia online, más clientes te encuentran, confían en ti y te hacen pedidos desde el móvil.", "See a real EasyLandX example for this niche ↗": "Ver un ejemplo real de EasyLandX para este sector ↗", "← Back to preview": "← Volver a la vista previa", "Your site in 3D, in your shop": "Tu web en 3D, en tu negocio", "Place the page on your counter": "Coloca la página sobre tu mostrador", "↗ New tab": "↗ Nueva pestaña", "Example page": "Página de ejemplo", "Business data © <a href=\"https://www.openstreetmap.org/copyright\" rel=\"noopener\">OpenStreetMap</a> contributors. \"No website listed\" means none is recorded on the map, so it can be incomplete.": "Datos de negocios © colaboradores de <a href=\"https://www.openstreetmap.org/copyright\" rel=\"noopener\">OpenStreetMap</a>. «Sin web registrada» significa que no consta ninguna en el mapa, por lo que puede estar incompleto.", "EasyLandX Map — Find local businesses and see the website they could have": "EasyLandX Map — Encuentra negocios locales y mira la web que podrían tener", "Search real local businesses on a 3D map, see who has no website listed, preview a landing page for any of them, and view it in AR in your own shop.": "Busca negocios locales reales en un mapa 3D, mira cuáles no tienen web registrada, previsualiza una landing para cualquiera de ellos y velo en RA en tu propio local.", "Search businesses": "Buscar negocios", "Search {0} categories": "Buscar {0} categorías", "Show fewer ▴": "Mostrar menos ▴", "Show all {0} categories ▾": "Mostrar las {0} categorías ▾", "★ Saved ({0})": "★ Guardados ({0})", "business": "negocio", "businesses": "negocios", "Social only": "Solo redes", "Has website": "Tiene web", "Address not listed": "Dirección no indicada", "Showing the first {0}. Zoom in or move the map and press <b style=\"display:inline\">Search this area</b> to see more.": "Se muestran los primeros {0}. Acércate o mueve el mapa y pulsa <b style=\"display:inline\">Buscar en esta zona</b> para ver más.", "The map is not ready.": "El mapa aún no está listo.", "The map library could not load. Check your connection.": "No se pudo cargar la biblioteca del mapa. Revisa tu conexión.", "Map tiles are slow to load. Showing a simple map.": "Los mosaicos del mapa tardan en cargar. Mostrando un mapa sencillo.", "Live business data unavailable. Showing places from the map itself (website info unknown).": "Datos de negocios en directo no disponibles. Mostrando lugares del propio mapa (se desconoce si tienen web).", "Zoomed out far: searching the centre of the view. Zoom in to see everything.": "Vista muy alejada: se busca en el centro. Acércate para verlo todo.", "That area is too big for the free data service. Searching the centre of the view.": "Esa zona es demasiado grande para el servicio de datos gratuito. Se busca en el centro de la vista.", "Pick what to look for": "Elige qué buscar", "Choose a category above or type something like \"bakery\" or \"yoga\".": "Elige una categoría arriba o escribe algo como «panadería» o «yoga».", "Nothing found here": "No se encontró nada aquí", "Try zooming out, moving the map, or another category. OpenStreetMap does not list every business.": "Prueba a alejar el zoom, mover el mapa o elegir otra categoría. OpenStreetMap no incluye todos los negocios.", "Place not found": "Lugar no encontrado", "Check the spelling of the city or neighbourhood and try again.": "Revisa cómo está escrita la ciudad o el barrio e inténtalo de nuevo.", "Could not load businesses": "No se pudieron cargar los negocios", "The free map data service did not answer ({0}). Wait a few seconds and try again.": "El servicio de datos del mapa no respondió ({0}). Espera unos segundos e inténtalo de nuevo.", "network error": "error de red", "Location is not available on this device.": "La ubicación no está disponible en este dispositivo.", "Finding your location…": "Buscando tu ubicación…", "Location permission was denied. Type a city instead.": "Se denegó el permiso de ubicación. Escribe una ciudad.", "All of these already have a website": "Todos estos ya tienen página web", "Untick \"No Web\" to see them, or search another category.": "Desmarca «Sin Web» para verlos, o busca otra categoría.", "No saved businesses yet": "Aún no hay negocios guardados", "Open a business and tap the star to save it.": "Abre un negocio y toca la estrella para guardarlo.", "Copied to clipboard": "Copiado al portapapeles", "Could not copy": "No se pudo copiar", "No phone listed. Message copied: paste it in their WhatsApp chat.": "Sin teléfono. Mensaje copiado: pégalo en su chat de WhatsApp.", "That preview link looks broken.": "Ese enlace de vista previa parece estar roto.", "This business has no website recorded on the map. A clear page could help new customers find and choose it.": "Este negocio no tiene web registrada en el mapa. Una página clara podría ayudar a que nuevos clientes lo encuentren y lo elijan.", "Only a social profile is listed. A page of its own gives it a home that shows up in search.": "Solo figura un perfil social. Una página propia le da un hogar que aparece en las búsquedas.", "The live business data service was not available, so this place comes from the base map, which does not say whether it has a website. Check before contacting.": "El servicio de datos en directo no estaba disponible, así que este lugar viene del mapa base, que no indica si tiene web. Compruébalo antes de contactar.", "Already has a website": "Ya tiene página web", "It lists a site. You can still preview a fresh concept for comparison.": "Tiene una web registrada. Aun así puedes ver una propuesta nueva para comparar.", "View on OpenStreetMap": "Ver en OpenStreetMap", "← Results": "← Resultados", "‹ Prev": "‹ Ant.", "Next ›": "Sig. ›", "Previous (←)": "Anterior (←)", "Next (→)": "Siguiente (→)", "Previous business": "Negocio anterior", "Next business": "Negocio siguiente", "💬 Send sample by WhatsApp": "💬 Enviar muestra por WhatsApp", "Message language": "Idioma del mensaje", "✨ Preview a page for this business": "✨ Ver una página para este negocio", "🙋 This is my business": "🙋 Este es mi negocio", "See what we built for {0}": "Mira lo que hemos creado para {0}", "Open ↗": "Abrir ↗", "☆ Save": "☆ Guardar", "★ Saved": "★ Guardado", "Copy pitch EN": "Copiar propuesta EN", "Copy pitch ES": "Copiar propuesta ES", "Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain). The pitch includes a preview link, nothing is sent automatically.": "Contacta con los negocios solo por sus canales públicos y cumple la normativa local de marketing (RGPD, LSSI en España). La propuesta incluye un enlace a la vista previa; no se envía nada automáticamente.", "Opens WhatsApp to {0} with the link to their sample page and the example for their niche.": "Abre WhatsApp con {0} y el enlace a su página de muestra y al ejemplo de su sector.", " This looks like a landline, so WhatsApp may not reach it.": " Parece un teléfono fijo, así que puede que WhatsApp no llegue.", "No phone listed for this business: the message will be copied so you can paste it in their chat.": "Este negocio no tiene teléfono: el mensaje se copiará para que lo pegues en su chat.", "Hi! I found my business \"{0}\"{1} on EasyLandX and I want my real Web & App. Could you send me the price and a mockup here?\n{2}": "Hola! He encontrado mi negocio «{0}»{1} en EasyLandX y quiero mi Web & App real. ¿Me enviáis el precio y una maqueta por aquí?\n{2}", "Hi! I saw the sample Web & App for \"{0}\" and I like it: I want the real one. Could you send me the price and a mockup here?\n{1}": "Hola! He visto la Web & App de ejemplo de «{0}» y me gusta: quiero la real. ¿Me enviáis el precio y una maqueta por aquí?\n{1}", "To: {0}": "Para: {0}", " (looks like a landline, so WhatsApp may not reach it)": " (parece un teléfono fijo, puede que WhatsApp no llegue)", "No phone number listed for this business. The message will be copied so you can paste it in their chat.": "Este negocio no tiene teléfono. El mensaje se copiará para que lo pegues en su chat.", "Proposal by EasyLandX for {0}.": "Propuesta de EasyLandX para {0}.", "Proposal by EasyLandX": "Propuesta de EasyLandX", "Find us": "Encuéntranos", "Everything you offer, easy to scan in seconds.": "Todo lo que ofreces, fácil de ver en segundos.", "{0} in one tap": "{0} en un toque", "A clear button that turns visitors into customers.": "Un botón claro que convierte visitas en clientes.", "Find you fast": "Te encuentran rápido", "Address, hours and directions, always up to date.": "Dirección, horario y cómo llegar, siempre al día.", "Everything you offer, easy to scan": "Todo lo que ofreces, fácil de ver", "A clear button that brings customers": "Un botón claro que atrae clientes", "Address, hours and directions": "Dirección, horario y cómo llegar", "Visit us": "Visítanos", "Open map": "Abrir mapa", "Ready when you are": "Listos cuando tú lo estés", "This is a draft. The real version uses your own photos, prices and booking.": "Esto es un boceto. La versión real usa tus propias fotos, precios y reservas.", "Look and feel your best at {n}": "Luce y siéntete genial en {n}", "Services, prices and booking on one clean page.": "Servicios, precios y reservas en una página clara.", "Book now": "Reserva ya", "Services & prices": "Servicios y precios", "Good food, easy to find: {n}": "Buena comida, fácil de encontrar: {n}", "Menu, hours and directions one tap away.": "Carta, horario y cómo llegar a un toque.", "Reserve a table": "Reserva una mesa", "Menu & highlights": "Carta y platos destacados", "Move better with {n}": "Muévete mejor con {n}", "Classes, schedule and sign-up in seconds.": "Clases, horarios e inscripción en segundos.", "Join a class": "Apúntate a una clase", "Classes & schedule": "Clases y horarios", "A calm first step: {n}": "Un primer paso con calma: {n}", "See how we can help and book a first session.": "Descubre cómo podemos ayudarte y reserva una primera sesión.", "Book a session": "Reserva una sesión", "How we can help": "Cómo podemos ayudarte", "Clear answers from {n}": "Respuestas claras de {n}", "Services, process and a simple way to get in touch.": "Servicios, proceso y una forma sencilla de contactar.", "Request a call": "Solicita una llamada", "Services": "Servicios", "Made with care by {n}": "Hecho con cariño por {n}", "Browse the work and get in touch to commission.": "Explora el trabajo y contacta para hacer tu encargo.", "Get in touch": "Contacta", "Work & commissions": "Trabajos y encargos", "Happy pets, happy owners: {n}": "Mascotas felices, dueños felices: {n}", "Services, care and easy booking.": "Servicios, cuidados y reserva fácil.", "Book a visit": "Reserva una visita", "Services & care": "Servicios y cuidados", "Make it memorable with {n}": "Hazlo inolvidable con {n}", "See what is on offer and ask for a date.": "Mira lo que ofrecemos y pide fecha.", "Check dates": "Consulta fechas", "Packages": "Paquetes", "Discover {n}": "Descubre {n}", "Everything you need to plan your visit.": "Todo lo que necesitas para planificar tu visita.", "Plan your visit": "Planifica tu visita", "What we offer": "Qué ofrecemos", "Meet {n}": "Conoce {n}", "Everything your customers need to know, in one place.": "Todo lo que tus clientes necesitan saber, en un solo lugar.", "Sunrise": "Amanecer", "Fresh": "Fresco", "Lagoon": "Laguna", "Bloom": "Flor", "Citrus": "Cítrico", "Building your 3D model…": "Creando tu modelo 3D…", "Preparing a phone model that shows your page.": "Preparando un modelo de teléfono que muestra tu página.", "Tap <b>See it in 3D at your shop</b>, then point your camera at your counter or floor. On iPhone the model is a still preview of your page, and you can resize it with two fingers.": "Toca <b>Verlo en 3D en tu negocio</b> y apunta la cámara a tu mostrador o al suelo. En iPhone el modelo es una vista previa fija de tu página y puedes cambiarle el tamaño con dos dedos.", "Tap <b>See it in 3D at your shop</b>, point your camera at your counter or floor, then move the phone slowly until it is placed. Pinch to resize.": "Toca <b>Verlo en 3D en tu negocio</b>, apunta la cámara a tu mostrador o al suelo y mueve el teléfono despacio hasta que se coloque. Pellizca para cambiar el tamaño.", "To see it in your shop you need a compatible phone or tablet. You can still rotate this 3D model here. Tap <b>Copy link</b> in the preview and open it on your phone.": "Para verlo en tu negocio necesitas un móvil o tablet compatible. Aun así puedes girar este modelo 3D aquí. Toca <b>Copiar enlace</b> en la vista previa y ábrelo en tu móvil.", "Your page on a phone, placed in your space": "Tu página en un teléfono, colocada en tu espacio", "Could not show the 3D model on this device.": "No se pudo mostrar el modelo 3D en este dispositivo.", "Could not load AR on this connection. Please try again.": "No se pudo cargar la RA con esta conexión. Inténtalo de nuevo.", "AR files could not be loaded.": "No se pudieron cargar los archivos de RA.", "Hair Stylists & Hair Salons": "Peluqueros y salones de peluquería", "Estheticians & Skincare Specialists": "Esteticistas y especialistas en cuidado de la piel", "Tattoo Artists & Studios": "Tatuadores y estudios de tatuaje", "Independent Cafés & Coffee Shops": "Cafeterías independientes", "Private Chefs & Catering": "Chefs privados y catering", "Bakeries & Specialty Food": "Panaderías y alimentación especializada", "Cake Designers & Custom Bakeries": "Diseñadores de tartas y pastelerías a medida", "Chocolatier & Chocolate Makers": "Chocolateros y artesanos del chocolate", "Artisan Cheese Makers": "Queseros artesanos", "Florists & Floral Designers": "Floristas y diseñadores florales", "Gardeners & Garden Designers": "Jardineros y diseñadores de jardines", "Personal Trainers & Studios": "Entrenadores personales y estudios", "Yoga Teachers & Studios": "Profesores y estudios de yoga", "Pilates Studios": "Estudios de pilates", "Dance Teachers & Dance Studios": "Profesores y estudios de baile", "Piano Teachers & Private Music Studios": "Profesores de piano y estudios de música", "Psychologists & Practices": "Psicólogos y consultas", "Lawyers & Legal Services": "Abogados y servicios legales", "Financial Advisors & Independent Planners": "Asesores financieros y planificadores independientes", "Independent Real Estate Sales Professional": "Profesionales inmobiliarios independientes", "Photographers": "Fotógrafos", "Artists & Art Workshops": "Artistas y talleres de arte", "Jewelry Designers & Makers": "Diseñadores y artesanos de joyería", "Ceramic Artists & Pottery Studios": "Ceramistas y estudios de alfarería", "Pet Groomers & Salons": "Peluquerías caninas y salones para mascotas", "Rural Accommodation": "Alojamientos rurales", "Adventure & Outdoor Experiences": "Experiencias de aventura y aire libre", "Children's Party & Entertainment Businesses": "Fiestas infantiles y animación", "Examples hub": "Centro de ejemplos"};
@@ -729,7 +721,7 @@ function waLink(t,ph){
   return isMobile()?'https://api.whatsapp.com/send?'+q:'https://web.whatsapp.com/send?'+q;
 }
 function openExt(u){var a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.style.display='none';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},500);}
-function openWa(t,where){track('map_whatsapp',{cta_location:where});window.open(waLink(t),'_blank','noopener');}
+function openWa(t,where){window.open(waLink(t),'_blank','noopener');}
 
 var params=new URLSearchParams(location.search);
 if(params.get('outreach')==='1')store('elx_outreach','1');
@@ -1329,7 +1321,7 @@ function stopSearch(){
   busy=false;setBusy(false);
   try{map.stop();}catch(e){}
   delete $('here').dataset.lock;doSearch._target=null;
-  track('map_search_stop',{});
+  
   if(part&&part.length&&!showSaved&&!showLeads){   // show everything found before stopping, even if only a few parts were done
     capped=false;results=part;setSel(null);renderList();scrollToResults();
     toast('Search stopped. Showing {0} found so far.',part.length);
@@ -1434,7 +1426,7 @@ function doSearch(fromChip){
   }).then(function(){
     if(my!==searchTok)throw new Error('stopped');
     var fromGeo=!!doSearch._target,bnd=doSearch._target||viewBounds();doSearch._target=null;lastSearchBounds=bnd;
-    track('map_search',{category:cats.length?selCats.join('+'):'free_text',has_where:!!where});
+    
     var lastR=0;
     var onPart=function(list,done,total){
       if(my!==searchTok)return;
@@ -1545,7 +1537,7 @@ function nameWebResults(name,where){
 function nameEmpty(name,where){
   lastEmpty=null;$('side').classList.remove('indetail');$('list').hidden=false;$('detail').hidden=true;$('count').textContent='';
   $('list').innerHTML='<div class="empty"><b>'+esc(T('No business found with that name'))+'</b>'+esc(T('Try fewer words or another spelling. OpenStreetMap does not list every business.'))+'<br><button type="button" id="webFall" style="margin-top:12px;padding:10px 16px;border:0;border-radius:12px;background:var(--teal2);color:#fff;font-weight:700;font-size:.9rem;cursor:pointer">'+esc(T('🔎 Search the web instead'))+'</button></div>';
-  $('webFall').onclick=function(){track('map_name_web',{});nameWebResults(name,where);};
+  $('webFall').onclick=function(){nameWebResults(name,where);};
 }
 function doNameSearch(){
   if(!map){toast('The map is not ready.');return;}
@@ -1554,7 +1546,7 @@ function doNameSearch(){
   var name=$('qName').value.trim(),where=$('qWhere').value.trim();
   var my=++searchTok;busy=true;setBusy(true);openSheet();skeleton();$('here').hidden=true;
   if($('chips').classList.contains('open'))$('chipMore').click();
-  track('map_name_search',{has_where:!!where,google:!!CONFIG.GOOGLE_KEY});
+  
   var bnd=null;
   nameBounds(where).then(function(b){
     if(my!==searchTok)throw new Error('stopped');
@@ -1991,7 +1983,7 @@ function exportCSV(rows){
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='easylandx-leads-'+todayStr()+'.csv';
   document.body.appendChild(a);a.click();
   setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
-  track('map_export_leads',{rows:rows.length});toast('CSV downloaded');
+  toast('CSV downloaded');
 }
 
 /* ===== Phone numbers: read every phone-like tag, split combined fields, tell mobile from landline ===== */
@@ -2384,7 +2376,7 @@ function findWebsites(){
 $('btnFind').onclick=findWebsites;
 var cur=null;
 function select(id,fly){
-  var b=byId(id);if(!b)return;cur=b;setSel(id);track('map_select',{category:b.cat,status:b.status});
+  var b=byId(id);if(!b)return;cur=b;setSel(id);
   openSheet();
   if(fly&&map)map.flyTo({center:[b.lon,b.lat],zoom:17.6,pitch:66,duration:1100,essential:true,offset:window.innerWidth>820?[200,0]:[0,-sheetOffset()]});
   renderDetail(b);
@@ -2468,28 +2460,28 @@ function renderDetail(b){
     $('dSendMail').onclick=function(){
       var md=sendModeOf(b,dView);if(!okToSend(b,md))return;
       var to=emailOf(b),m=splitMail(msgFor(b,'mail',sendLang,false,md));
-      track('map_send_business',{category:b.cat,lang:sendLang,channel:'mail',has_email:!!to,from:'detail'});
+      
       if(!to)toast('No email known. Add the recipient in your email app.');
       markSent(b,md);
       openExt('mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(m.body));
     };
     if($('dSendIg'))$('dSendIg').onclick=function(){
       var md=sendModeOf(b,dView),h=igHandleOf(b);if(!h||!okToSend(b,md))return;
-      track('map_send_business',{category:b.cat,lang:sendLang,channel:'ig',from:'detail'});
+      
       copyText(msgFor(b,'ig',sendLang,false,md));openIg(h);
       markSent(b,md);
     };
     if($('dSendFb'))$('dSendFb').onclick=function(){
       var md=sendModeOf(b,dView),fu=fbOf(b);if(!fu||!okToSend(b,md))return;
       var msg=msgFor(b,'fb',sendLang,false,md);
-      track('map_send_business',{category:b.cat,lang:sendLang,channel:'fb',from:'detail'});
+      
       copyText(msg);window.open(fu,'_blank','noopener');
       markSent(b,md);
     };
     $('dSend').onclick=function(){
       var md=sendModeOf(b,dView);if(!okToSend(b,md))return;
       var wk=waPick(b),n=wk?wk.d:'',msg=msgFor(b,'wa',sendLang,false,md);
-      track('map_send_business',{category:b.cat,lang:sendLang,has_phone:!!n,from:'detail'});
+      
       if(!n){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(b,md);return;}
       window.open(waLink(msg,n),'_blank','noopener');markSent(b,md);
     };
@@ -2509,7 +2501,7 @@ function openReq(b,m){
   $('reqMail').textContent=T('✉️ Email')+' · '+CONFIG.MAIL;
   $('reqCancel').textContent=T('Cancel');
   $('reqWa').onclick=function(){closeReq();openWa(msg,'detail_mine');};
-  $('reqMail').onclick=function(){closeReq();track('map_request_mail',{category:b.cat});openExt('mailto:'+CONFIG.MAIL+'?subject='+encodeURIComponent(T('Web & App proposal request: {0}',b.name))+'&body='+encodeURIComponent(msg));};
+  $('reqMail').onclick=function(){closeReq();openExt('mailto:'+CONFIG.MAIL+'?subject='+encodeURIComponent(T('Web & App proposal request: {0}',b.name))+'&body='+encodeURIComponent(msg));};
   $('reqCancel').onclick=closeReq;
   $('mReq').hidden=false;
 }
@@ -2575,7 +2567,7 @@ function sheetOffset(){return Math.round(Math.min(curSheet(),window.innerHeight*
 })();
 
 /* ================= EXAMPLE VIEWER ================= */
-function openViewer(url,title){$('vTitle').textContent=title;$('vTab').href=url;$('vFrame').src=url;$('viewer').hidden=false;track('map_open_example',{niche:title});}
+function openViewer(url,title){$('vTitle').textContent=title;$('vTab').href=url;$('vFrame').src=url;$('viewer').hidden=false;}
 $('vBack').onclick=function(){$('viewer').hidden=true;$('vFrame').src='about:blank';};
 
 /* ================= PREVIEW GENERATOR ================= */
@@ -2871,7 +2863,7 @@ function previewLink(b,l){
 }
 function buildThemes(){
   var th=$('themes');th.innerHTML='';
-  THEMES.forEach(function(t){var x=document.createElement('button');x.innerHTML='<i style="background:'+t.c+'"></i>'+esc(T(t.name));if(t.id===pvT.id)x.className='on';x.onclick=function(){pvT=t;pvPicked=true;[].forEach.call(th.children,function(y){y.classList.remove('on');});x.className='on';renderFrame();track('map_theme',{theme:t.id});};th.appendChild(x);});
+  THEMES.forEach(function(t){var x=document.createElement('button');x.innerHTML='<i style="background:'+t.c+'"></i>'+esc(T(t.name));if(t.id===pvT.id)x.className='on';x.onclick=function(){pvT=t;pvPicked=true;[].forEach.call(th.children,function(y){y.classList.remove('on');});x.className='on';renderFrame();};th.appendChild(x);});
 }
 function brandNote(b){
   var box=$('brandBox'),note=$('brandNote');
@@ -2898,7 +2890,7 @@ function openPreview(b,themeId){
   $('pBack').hidden=shared;$('pLogo').hidden=!shared;$('mPrev').classList.toggle('shared',shared);
   if(shared){var li=$('pLogo').querySelector('img'),src=document.querySelector('.brand .logo img');if(src&&li.getAttribute('src')!==src.src)li.src=src.src;}
   buildThemes();brandNote(b);
-  renderFrame();$('mPrev').hidden=false;fitDesk();updPvNav();track('map_preview_open',{category:b.cat,status:b.status});
+  renderFrame();$('mPrev').hidden=false;fitDesk();updPvNav();
   if(b.id!=='shared'&&(b.brand===undefined||brandRetryable(b))){
     var pr=enrichBrand(b);brandNote(b);
     pr.then(function(){
@@ -2927,7 +2919,7 @@ function stepPreview(d){
   var nt=THEMES[(ti+d+THEMES.length)%THEMES.length];   // next / previous colour as well
   select(nb.id,true);        // keeps the map and the detail panel in step with the preview
   openPreview(nb,nt.id);pvPicked=true;buildThemes();
-  track('map_preview_step',{dir:d});
+  
 }
 /* Auto-play: moves on to the next business every few seconds, stops at the end of the list */
 var pvPlayT=null,PV_PLAY_MS=6000;
@@ -2945,7 +2937,7 @@ function pvPlayStart(){
   var r=pvIndex();if(r.ix<0||r.vis.length<2)return;
   if(r.ix===r.vis.length-1){var fb=r.vis[0];select(fb.id,true);openPreview(fb,pvT&&pvT.id);}   // at the end: start again from the first one
   if(pvPlayT!=null)clearInterval(pvPlayT);
-  pvPlayT=setInterval(pvPlayTick,PV_PLAY_MS);updPlayBtn();track('map_preview_play',{});
+  pvPlayT=setInterval(pvPlayTick,PV_PLAY_MS);updPlayBtn();
 }
 $('pPlay').onclick=function(){if(pvPlaying())pvPlayStop();else pvPlayStart();};
 function pvPlayRestart(){if(pvPlayT!=null){clearInterval(pvPlayT);pvPlayT=setInterval(pvPlayTick,PV_PLAY_MS);}}   // manual Prev / Next gives the new page its full time
@@ -3105,7 +3097,7 @@ $('sGo').onclick=function(){
   var md=pvB?sendModeOf(pvB,sendView):'ask';
   if(pvB&&!okToSend(pvB,md))return;
   var msg=$('sMsg').value,bp=sendCh==='wa'?waPick(pvB):bestPhone(pvB),n=bp?bp.d:'';
-  track('map_send_business',{category:pvB&&pvB.cat,lang:sendLang,channel:sendCh,has_phone:!!n});
+  
   var sent=function(){markSent(pvB,md);};
   if(sendCh==='wa'){
     var wn=n;
@@ -3218,7 +3210,7 @@ function fitDesk(){
   window.addEventListener('resize',function(){if(window.innerWidth>820){stage.style.removeProperty('--pnlH');pnl=null;}else if(pnl!=null)setH(pnl);fitDesk();});
   window.__fitDesk=fitDesk;
 })();
-$('pCopy').onclick=function(){copyText(previewLink(pvB));track('map_copy_link');};
+$('pCopy').onclick=function(){copyText(previewLink(pvB));};
 $('pWa').onclick=function(){if(pvB)openReq(pvB,T('Hi! I saw the sample Web & App for "{0}" and I like it: I want the real one. Could you send me the price and a mockup here?\n{1}',pvB.name,previewLink(pvB)));};   // WhatsApp or email, same choice as in the detail panel
 $('pEx').onclick=function(){var c=catOf(pvB);openViewer(c.exUrl,T(c.exTitle));};
 
@@ -3316,7 +3308,7 @@ function openAR(){
   $('arInfo').textContent=T('Preparing a phone model that shows your page.');
   var old=$('arStage').querySelector('model-viewer');if(old)old.remove();
   var oldb=$('arStage').querySelector('.arbtn');if(oldb)oldb.remove();
-  track('map_ar_open',{category:pvB.cat});
+  
   var theme=pvT,biz=pvB;
   loadARLibs().then(function(){return buildGLB(biz,theme);}).then(function(buf){
     if(glbUrl)URL.revokeObjectURL(glbUrl);
@@ -3561,7 +3553,7 @@ function addOne(v,catSel,where,center){
     b.d=haversine(center.lat,center.lng,b.lat,b.lon);
     results.push(b);pushData();
     if(b.web){try{enrichBrand(b);}catch(e){}}   // a website gives colours, logo, photos, services and hours for the preview
-    track('map_add_custom',{kind:inp.kind,category:b.cat});
+    
     return b;
   });
 }
@@ -3664,7 +3656,7 @@ function refreshUI(){
   document.documentElement.lang=LANG;sendLang=LANG;
   document.title=T(TITLE_EN);
   var md=document.querySelector('meta[name=description]');if(md)md.setAttribute('content',T(DESC_EN));
-  applyStatic();relabelCats();applyTips();if(!$('mHelp').hidden)buildHelp();if(!$('mLegal').hidden)buildLegal();cookieRender();
+  applyStatic();relabelCats();applyTips();if(!$('mHelp').hidden)buildHelp();if(!$('mLegal').hidden)buildLegal();
   parseWhat();if(selCats.length)syncWhat();
   chipLab();persistSaved();renderLeadbar();
   [].forEach.call(document.querySelectorAll('[data-l]'),function(b){b.classList.toggle('on',b.dataset.l===LANG);});
@@ -3829,7 +3821,7 @@ es:[
  ['h5','1. Qué datos tratamos'],
  ['ul',['De los negocios: datos de contacto y de perfil publicados en fuentes públicas.','De quienes usan la herramienta: datos técnicos y estadísticas de uso (por ejemplo, páginas y acciones, tipo de dispositivo y país aproximado) y una ubicación aproximada, ya sea porque pulsas «usar mi ubicación» o porque se estima a partir de tu IP o zona horaria.','En tu propio navegador: preferencias, negocios guardados, leads, notas y plantillas. Se guardan en tu dispositivo y no se envían a nuestros servidores.']],
  ['h5','2. Para qué y con qué base'],
- ['ul',['Mostrar el mapa y las vistas previas: es el servicio que ofrece la herramienta.','Contactar con negocios para ofrecerles una propuesta de página web: nuestro interés legítimo, siempre respetando las normas sobre comunicaciones comerciales.','Estadísticas de uso para mejorar la herramienta: con tu consentimiento, mediante Google Analytics (ver «Cookies y almacenamiento»).']],
+ ['ul',['Mostrar el mapa y las vistas previas: es el servicio que ofrece la herramienta.','Contactar con negocios para ofrecerles una propuesta de página web: nuestro interés legítimo, siempre respetando las normas sobre comunicaciones comerciales.','Estadísticas de uso: no se recopilan en esta versión.']],
  ['h5','3. De dónde obtenemos los datos'],
  ['p','De fuentes públicas: OpenStreetMap, Google, y las webs y perfiles públicos de los propios negocios.'],
  ['h5','4. Con quién se comparten y transferencias'],
@@ -3839,7 +3831,7 @@ es:[
  ['h5','6. Tus derechos'],
  ['p','Puedes pedir acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad de tus datos escribiendo a '+CONFIG.MAIL+'. Si crees que no hemos respondido bien, puedes reclamar ante tu autoridad de protección de datos (en España, la Agencia Española de Protección de Datos, www.aepd.es).'],
  ['h5','7. Cookies y almacenamiento'],
- ['p','La herramienta usa el almacenamiento del navegador para recordar tus preferencias, negocios guardados, leads y plantillas. Solo si lo aceptas, usa también Google Analytics (cookies de analítica) para medir el uso de forma agregada. Puedes cambiar tu elección en cualquier momento con el botón «Preferencias de cookies» de este aviso, o bloquear y borrar estos datos desde los ajustes de tu navegador.'],
+ ['p','La herramienta usa el almacenamiento del navegador para recordar tus preferencias, negocios guardados, leads y plantillas. También utiliza Google Analytics para medir visitas y uso de forma agregada.'],
  ['h5','8. Cambios'],
  ['p','Podemos actualizar este texto. La versión vigente es la que aparece aquí.'],
  ['d','Última actualización: noviembre de 2026']
@@ -3862,7 +3854,7 @@ en:[
  ['h5','1. What data we process'],
  ['ul',['About businesses: contact and profile details published in public sources.','About people using the tool: technical data and usage statistics (for example pages and actions, device type and approximate country) and an approximate location, either because you tap \u201cuse my location\u201d or because it is estimated from your IP address or time zone.','In your own browser: preferences, saved businesses, leads, notes and templates. They are stored on your device and are not sent to our servers.']],
  ['h5','2. Why and on what basis'],
- ['ul',['Showing the map and previews: this is the service the tool provides.','Contacting businesses to offer a website proposal: our legitimate interest, always respecting the rules on commercial messages.','Usage statistics to improve the tool: with your consent, through Google Analytics (see \u201cCookies and storage\u201d).']],
+ ['ul',['Showing the map and previews: this is the service the tool provides.','Contacting businesses to offer a website proposal: our legitimate interest, always respecting the rules on commercial messages.','Usage statistics are not collected in this version.']],
  ['h5','3. Where the data comes from'],
  ['p','From public sources: OpenStreetMap, Google, and the businesses\u2019 own public websites and profiles.'],
  ['h5','4. Who it is shared with, and transfers'],
@@ -3872,7 +3864,7 @@ en:[
  ['h5','6. Your rights'],
  ['p','You can ask for access, correction, deletion, objection, restriction and portability of your data by writing to '+CONFIG.MAIL+'. If you think we have not handled it properly, you can complain to your data protection authority (in Spain, the Spanish Data Protection Agency, www.aepd.es).'],
  ['h5','7. Cookies and storage'],
- ['p','The tool uses browser storage to remember your preferences, saved businesses, leads and templates. Only if you accept, it also uses Google Analytics (analytics cookies) to measure usage in aggregate. You can change your choice at any time with the \u201cCookie settings\u201d button in this notice, or block and delete this data in your browser settings.'],
+ ['p','The tool uses browser storage to remember your preferences, saved businesses, leads and templates. It also uses Google Analytics to measure visits and usage in aggregate.'],
  ['h5','8. Changes'],
  ['p','We may update this text. The version shown here is the current one.'],
  ['d','Last updated: November 2026']
@@ -3889,7 +3881,7 @@ function buildLegal(){
     if(i===2&&parts.length)h+='<p>'+esc(parts.join(' · '))+'</p>';
   });
   $('legalT').textContent=T('Legal notice and privacy');$('legalClose').textContent=T('Close');$('legalX').setAttribute('aria-label',T('Close'));
-  $('legalBody').innerHTML=h+'<button type="button" class="btn l sm" id="cookieSet">'+esc(T('Cookie settings'))+'</button>';
+  $('legalBody').innerHTML=h;
 }
 ES['Legal notice and privacy']='Aviso legal y privacidad';ES['Close']='Cerrar';
 function openLegal(){buildLegal();$('mLegal').hidden=false;$('legalBox').scrollTop=0;setTimeout(function(){try{$('legalX').focus({preventScroll:true});}catch(e){}$('legalBox').scrollTop=0;},40);}
@@ -3899,49 +3891,7 @@ $('legalClose').onclick=closeLegal;$('legalX').onclick=closeLegal;
 $('mLegal').addEventListener('click',function(e){if(e.target===this)closeLegal();});
 window.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mLegal').hidden)closeLegal();});
 
-/* ---- Cookie consent: Google Analytics only loads after the visitor accepts ---- */
-var GA_ID='G-C32H6BV2R3';
-ES['We use analytics cookies (Google Analytics) to measure how the tool is used. They only load if you accept.']='Usamos cookies de analítica (Google Analytics) para medir el uso de la herramienta. Solo se activan si las aceptas.';
-ES['Accept']='Aceptar';ES['Reject']='Rechazar';ES['More information']='Más información';ES['Cookie settings']='Preferencias de cookies';ES['Cookie notice']='Aviso de cookies';
-function loadGA(){
-  window['ga-disable-'+GA_ID]=false;
-  if(window.__gaOn)return;window.__gaOn=true;
-  window.dataLayer=window.dataLayer||[];
-  window.gtag=function(){window.dataLayer.push(arguments);};
-  window.gtag('js',new Date());window.gtag('config',GA_ID);
-  var sc=document.createElement('script');sc.async=true;sc.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID;document.head.appendChild(sc);
-}
-function stopGA(){
-  window['ga-disable-'+GA_ID]=true;
-  var names=['_ga','_ga_'+GA_ID.replace('G-',''),'_gid','_gat'],h=location.hostname.split('.'),doms=[''];
-  for(var i=0;i<h.length-1;i++)doms.push('; domain=.'+h.slice(i).join('.'),'; domain='+h.slice(i).join('.'));
-  names.forEach(function(n){doms.forEach(function(d){try{document.cookie=n+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'+d;}catch(e){}});});
-}
-function cookieRender(){
-  var b=$('cookieBar');if(!b)return;
-  b.setAttribute('aria-label',T('Cookie notice'));
-  b.innerHTML='<p>'+esc(T('We use analytics cookies (Google Analytics) to measure how the tool is used. They only load if you accept.'))+' <a id="cookieMore" role="button" tabindex="0">'+esc(T('More information'))+'</a></p>'
-    +'<div class="row"><button type="button" class="btn l sm" id="cookieNo">'+esc(T('Reject'))+'</button><button type="button" class="btn l sm" id="cookieYes">'+esc(T('Accept'))+'</button></div>';
-}
-function cookieShow(){
-  var b=$('cookieBar');
-  if(!b){b=document.createElement('div');b.id='cookieBar';b.setAttribute('role','region');b.hidden=true;document.body.appendChild(b);}
-  cookieRender();b.hidden=false;
-}
-function cookieChoose(v){
-  store('elx_cookies',v);
-  var b=$('cookieBar');if(b)b.hidden=true;
-  if(v==='granted')loadGA();else stopGA();
-}
-document.addEventListener('click',function(e){
-  var t=e.target&&e.target.closest?e.target.closest('#cookieYes,#cookieNo,#cookieMore,#cookieSet'):null;if(!t)return;
-  if(t.id==='cookieYes')cookieChoose('granted');
-  else if(t.id==='cookieNo')cookieChoose('denied');
-  else if(t.id==='cookieMore')openLegal();
-  else if(t.id==='cookieSet'){closeLegal();cookieShow();}
-});
-document.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.id==='cookieMore'){e.preventDefault();openLegal();}});
-(function(){var c=store('elx_cookies');if(c==='granted')loadGA();else if(c!=='denied')cookieShow();})();
+
 
 var HELP=[
  ['🗺️',E('What is this?','¿Para qué sirve?'),E('Find any local business on the map and see a sample website made just for it. No website yet? See what it could look like. Already have one? See how a fresher, mobile-first version compares. Then send it to the owner in one tap.','Encuentra cualquier negocio local en el mapa y mira una página de muestra hecha a su medida. ¿Aún sin web? Mira cómo podría verse. ¿Ya tiene una? Compárala con una versión más fresca y pensada para el móvil. Luego envíasela al dueño con un toque.'),E('Why? Seeing a real example convinces far more than being told you need a website.','¿Por qué? Ver un ejemplo real convence mucho más que oír que necesitas una web.')],
@@ -3969,7 +3919,16 @@ $('btnHelp').onclick=openHelp;
 $('helpClose').onclick=closeHelp;
 $('mHelp').addEventListener('click',function(e){if(e.target===this)closeHelp();});
 window.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mHelp').hidden)closeHelp();});
-function setLang(l){if(l!==LANG){LANG=l;store('elx_lang',l);refreshUI();track('map_lang',{lang:l});}}
+/* ---- Google Analytics 4: always-on, no consent popup/blocking ---- */
+var GA_ID='G-C32H6BV2R3';
+window.dataLayer=window.dataLayer||[];
+function gtag(){window.dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config',GA_ID);
+(function(){var sc=document.createElement('script');sc.async=true;sc.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID;document.head.appendChild(sc);})();
+function track(n,p){try{if(window.gtag)gtag('event',n,p||{});}catch(e){}}
+
+function setLang(l){if(l!==LANG){LANG=l;store('elx_lang',l);refreshUI();}}
 [].forEach.call(document.querySelectorAll('[data-l]'),function(b){b.onclick=function(){setLang(b.dataset.l);};});
 refreshUI();
 initMap();
