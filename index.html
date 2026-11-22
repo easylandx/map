@@ -440,6 +440,8 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
 #side,.panel,#list,#detail,.chips,#tplForm,#addForm{-webkit-text-size-adjust:100%}
 
 /* ===== Preview modal on mobile: full-size preview + draggable bottom panel ===== */
+.mbar .pill.pLogo{padding:0;border:0;background:none;display:inline-flex;align-items:center;flex:none}
+.mbar .pill.pLogo img{display:block;width:36px;height:36px;border-radius:10px;box-shadow:0 1px 3px rgba(29,43,42,.18)}
 .phandle{display:none}
 @media (max-width:820px){
   .mbar{gap:6px;padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top))}
@@ -565,6 +567,7 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
 <div class="modal" id="mPrev" hidden>
   <div class="mbar">
     <button class="pill" id="pBack">← Back</button>
+    <a class="pill pLogo" id="pLogo" href="https://easylandx.github.io/" target="_blank" rel="noopener" aria-label="EasyLandX" hidden><img alt="EasyLandX" width="36" height="36"></a>
     <button class="pill" id="pPrev" aria-label="Previous business">‹ Prev</button><span id="pPos" style="font-size:.78rem;font-weight:700;color:var(--mute);min-width:44px;text-align:center"></span><button class="pill" id="pNext" aria-label="Next business">Next ›</button><button class="pill play" id="pPlay" type="button" aria-pressed="false" aria-label="Auto-play businesses" hidden><span id="pPlayI">▶</span> <span id="pPlayTxt">Play</span></button>
     <div class="t"><span id="pTitle"></span><small>Concept preview · made with EasyLandX</small></div>
     <button class="pill t" id="pAR">📱 View in AR</button>
@@ -2849,6 +2852,10 @@ function openPreview(b,themeId){
   setBrandTheme(brandOf(b));
   pvT=themeById(themeId||'sun');
   $('pTitle').textContent=b.name;
+  // Shared link (business owner): no way back to the map, the EasyLandX logo opens easylandx.github.io in a new tab instead
+  var shared=b.id==='shared';
+  $('pBack').hidden=shared;$('pLogo').hidden=!shared;
+  if(shared){var li=$('pLogo').querySelector('img'),src=document.querySelector('.brand .logo img');if(src&&li.getAttribute('src')!==src.src)li.src=src.src;}
   buildThemes();brandNote(b);
   renderFrame();$('mPrev').hidden=false;fitDesk();updPvNav();track('map_preview_open',{category:b.cat,status:b.status});
   if(b.id!=='shared'&&(b.brand===undefined||brandRetryable(b))){
@@ -3936,7 +3943,7 @@ window.addEventListener('keydown',function(e){
     var bt=$(e.key==='ArrowLeft'?'pPrev':'pNext');if(bt&&!bt.hidden&&!bt.disabled){e.preventDefault();bt.click();}
   }
 });
-window.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!$('mAR').hidden)$('mAR').hidden=true;else if(!$('viewer').hidden)$('vBack').click();else if(!$('mPrev').hidden)$('pBack').click();}});
+window.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!$('mAR').hidden)$('mAR').hidden=true;else if(!$('viewer').hidden)$('vBack').click();else if(!$('mPrev').hidden&&!(pvB&&pvB.id==='shared'))$('pBack').click();}});
 /* Stop accidental page zoom on phones (double-tap or pinch outside the map) */
 (function(){
   var lastEnd=0;
