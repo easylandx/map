@@ -138,6 +138,11 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 .helpbtn:hover{border-color:var(--teal2)}
 #mHelp{position:fixed;inset:0;z-index:61;background:rgba(29,43,42,.5);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 #mHelp[hidden]{display:none}
+#mReq{position:fixed;inset:0;z-index:63;background:rgba(29,43,42,.5);display:grid;place-items:center;padding:16px}
+#mReq[hidden]{display:none}
+#reqBox{background:#fff;border-radius:22px;padding:20px;width:min(380px,100%);box-shadow:var(--shadow);display:grid;gap:10px}
+#reqBox h3{margin:0;font-size:1.1rem}
+#reqBox .btn{margin:0}
 .legalLink{font-weight:700;color:var(--teal)!important;white-space:nowrap}
 #mLegal{position:fixed;inset:0;z-index:62;background:rgba(29,43,42,.5);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 #mLegal[hidden]{display:none}
@@ -538,6 +543,15 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
     <div class="lgHead"><h3 id="legalT">Legal notice and privacy</h3><button type="button" id="legalX" aria-label="Close">✕</button></div>
     <div id="legalBody"></div>
     <button type="button" class="btn p" id="legalClose">Close</button>
+  </div>
+</div>
+
+<div id="mReq" hidden role="dialog" aria-modal="true" aria-labelledby="reqT">
+  <div id="reqBox">
+    <h3 id="reqT">How do you want to send it?</h3>
+    <button type="button" class="btn p" id="reqWa" style="background:var(--green);box-shadow:none">💬 WhatsApp</button>
+    <button type="button" class="btn t" id="reqMail">✉️ Email</button>
+    <button type="button" class="btn l" id="reqCancel">Cancel</button>
   </div>
 </div>
 
@@ -2410,7 +2424,7 @@ function renderDetail(b){
    '<div class="facts">'+facts+'</div>'+(b.gsrc?'<p class="note">'+T('Details completed with Google Maps')+'</p>':'')+
    (CANSEND?'<div class="row"><div style="flex:1;display:flex;gap:3px;min-width:0;margin-bottom:8px"><button class="btn p" id="dSend" style="flex:1;margin:0;border-radius:14px 5px 5px 14px;white-space:nowrap">'+T('💬 WhatsApp')+'</button><button class="btn t" id="dSendMail" style="flex:1;margin:0;border-radius:5px 14px 14px 5px;white-space:nowrap">'+T('✉️ Email')+'</button></div><button class="btn l" id="dLang" style="width:64px;flex:none;margin-bottom:8px" title="'+T('Message language')+'"></button></div>'+socRowHTML(b)+'<p class="note" id="dSendTo"></p>':'')+
    '<button class="btn p" id="dPrev">'+T('✨ Preview a page for this business')+'</button>'+
-   '<button class="btn t" id="dMine">'+T('🙋 This is my business')+'</button>'+
+   '<button class="btn t" id="dMine">'+T('Request a proposal')+'</button>'+
    '<div class="ex"><span>'+esc(T('See what we built for {0}',lbl(c).toLowerCase()))+'</span><button id="dEx">'+T('Open ↗')+'</button></div>';
   if(OUTREACH){
     h+='<div class="row"><button class="btn l sm" id="dSave">'+T(saved[b.id]?'★ Saved':'☆ Save')+'</button><button class="btn l sm" id="dCopyEn">'+T('Copy pitch EN')+'</button><button class="btn l sm" id="dCopyEs">'+T('Copy pitch ES')+'</button></div>'+
@@ -2422,7 +2436,7 @@ function renderDetail(b){
   if($('dPrevBiz'))$('dPrevBiz').onclick=function(){if(ix>0)select(vis[ix-1].id,true);};
   if($('dNextBiz'))$('dNextBiz').onclick=function(){if(ix<vis.length-1)select(vis[ix+1].id,true);};
   $('dPrev').onclick=function(){openPreview(b);};
-  $('dMine').onclick=function(){openWa(T('Hi! I found my business "{0}"{1} on your map and I want my real page. Could you send me the price and a mockup here?\n{2}',b.name,(b.addr?' ('+b.addr+')':''),previewLink(b)),'detail_mine');};
+  $('dMine').onclick=function(){openReq(b);};
   $('dEx').onclick=function(){openViewer(c.exUrl,T(c.exTitle));};
   wireLeadBox(b);
   if(CANSEND){
@@ -2476,6 +2490,21 @@ function renderDetail(b){
     $('dCopyEs').onclick=function(){copyText(pitch(b,'es'));};
   }
 }
+ES['Request a proposal']='Solicitar propuesta';ES['How do you want to send it?']='¿Cómo quieres enviarlo?';ES['Proposal request: {0}']='Solicitud de propuesta: {0}';
+function closeReq(){$('mReq').hidden=true;}
+function openReq(b){
+  var msg=T('Hi! I found my business "{0}"{1} on your map and I want my real page. Could you send me the price and a mockup here?\n{2}',b.name,(b.addr?' ('+b.addr+')':''),previewLink(b));
+  $('reqT').textContent=T('How do you want to send it?');
+  $('reqWa').textContent=T('💬 WhatsApp');
+  $('reqMail').textContent=T('✉️ Email')+' · '+CONFIG.MAIL;
+  $('reqCancel').textContent=T('Cancel');
+  $('reqWa').onclick=function(){closeReq();openWa(msg,'detail_mine');};
+  $('reqMail').onclick=function(){closeReq();track('map_request_mail',{category:b.cat});openExt('mailto:'+CONFIG.MAIL+'?subject='+encodeURIComponent(T('Proposal request: {0}',b.name))+'&body='+encodeURIComponent(msg));};
+  $('reqCancel').onclick=closeReq;
+  $('mReq').hidden=false;
+}
+$('mReq').addEventListener('click',function(e){if(e.target===this)closeReq();});
+window.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('mReq').hidden)closeReq();});
 function copyText(t){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast('Copied to clipboard');},function(){toast('Could not copy');});}
   else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copied to clipboard');}catch(e){toast('Could not copy');}ta.remove();}
@@ -3660,7 +3689,7 @@ var TIPS={
  dSendFb:E('Copy the message and open their Facebook','Copiar el mensaje y abrir su Facebook'),
  dLang:E('Choose the language of the message','Elegir el idioma del mensaje'),
  dPrev:E('See a sample website made for this business','Ver una web de muestra hecha para este negocio'),
- dMine:E('This is your business? Ask for your real page','¿Es tu negocio? Pide tu página real'),
+ dMine:E('Request your proposal','Solicita tu propuesta'),
  dEx:E('Open a real EasyLandX example for this type of business','Abrir un ejemplo real de EasyLandX para este tipo de negocio'),
  dSave:E('Save or unsave this business','Guardar o quitar de guardados este negocio'),
  dCopyEn:E('Copy a ready-made pitch in English','Copiar una propuesta lista en inglés'),
