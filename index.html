@@ -668,6 +668,7 @@ var CONFIG={
   GOOGLE_KEY:'',   // paste a Google Places API key here (restrict it to your site in Google Cloud) to complete phone, website, hours and rating
   WA:'34609204298',
   MAIL:'easylandx@proton.me',   // reply-contact email added to every message (tag {mail})
+  CC:'easylandx@proton.me',   // copied (CC) on every proposal email you send, so you keep a copy
   SITE:'https://easylandx.github.io/',
   CENTER:[-3.7038,40.4168]                                  // Madrid, until the visitor searches
 };
@@ -730,6 +731,7 @@ function waLink(t,ph){
   var q='phone='+(ph||CONFIG.WA)+'&text='+encodeURIComponent(t);
   return isMobile()?'https://api.whatsapp.com/send?'+q:'https://web.whatsapp.com/send?'+q;
 }
+function mailCc(to){var c=CONFIG.CC||'';return(c&&String(to||'').trim().toLowerCase()!==c.toLowerCase())?'&cc='+encodeURIComponent(c).replace(/%40/g,'@'):'';}
 function openExt(u){var a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.style.display='none';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},500);}
 function openWa(t,where){window.open(waLink(t),'_blank','noopener');}
 
@@ -2547,7 +2549,7 @@ function renderDetail(b){
       
       if(!to)toast('No email known. Add the recipient in your email app.');
       markSent(b,md);
-      openExt('mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(m.body));
+      openExt('mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+mailCc(to)+'&body='+encodeURIComponent(m.body));
     };
     if($('dSendIg'))$('dSendIg').onclick=function(){
       var md=sendModeOf(b,dView),h=igHandleOf(b);if(!h||!okToSend(b,md))return;
@@ -3205,7 +3207,7 @@ $('sGo').onclick=function(){
   }
   if(sendCh==='mail'){
     var m=splitMail(msg),to=$('sMailTo').value.trim();
-    openExt('mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(m.body));
+    openExt('mailto:'+encodeURIComponent(to).replace(/%40/g,'@')+'?subject='+encodeURIComponent(m.subject)+mailCc(to)+'&body='+encodeURIComponent(m.body));
     sent();return;
   }
   if(!n){copyText(msg);toast('No phone listed. Message copied.');markSent(pvB,md);return;}
