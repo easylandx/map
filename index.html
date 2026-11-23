@@ -363,11 +363,18 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
 .clearrow button:active{transform:translateY(1px)}
 #side.indetail .clearrow{display:none}
 /* Find contacts: animated while searching */
-#btnFind{position:relative;overflow:hidden}
-#btnFind.busy{display:inline-flex;align-items:center;gap:8px;color:var(--teal);border-color:var(--teal)}
-#btnFind.busy::before{content:'';position:absolute;left:0;top:0;bottom:0;width:var(--prog,0%);background:var(--soft-teal);transition:width .6s ease}
-#btnFind.busy::after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);animation:fshine 1.6s ease-in-out infinite}
-#btnFind.busy>*{position:relative;z-index:1}
+#btnFind,#btnFindOne{position:relative;overflow:hidden}
+#btnFind.busy,#btnFindOne.busy{display:inline-flex;align-items:center;gap:8px;color:var(--teal);border-color:var(--teal)}
+#btnFind.busy::before,#btnFindOne.busy::before{content:'';position:absolute;left:0;top:0;bottom:0;width:var(--prog,0%);background:var(--soft-teal);transition:width .6s ease}
+#btnFind.busy::after,#btnFindOne.busy::after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);animation:fshine 1.6s ease-in-out infinite}
+#btnFind.busy>*,#btnFindOne.busy>*{position:relative;z-index:1}
+#findOneBox{margin:0 0 12px}
+#btnFindOne,#btnFindOne.busy,#btnFind,#btnFind.busy{background:#f4ff00;border-color:#111;color:#111;font-weight:800}
+#btnFind.busy::before{background:rgba(0,0,0,.12)}
+#btnFind:active{filter:brightness(.95)}
+#btnFindOne.busy::before{background:transparent}
+#btnFindOne:active{filter:brightness(.95)}
+#findOneBox .note{margin:6px 0 0}
 .fstop{margin-left:2px;font-weight:800;opacity:.7}
 .fspin{width:13px;height:13px;border:2.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:fspin .8s linear infinite;flex:none}
 .fdots i{font-style:normal;opacity:.2;animation:fdot 1.2s infinite}
@@ -375,7 +382,7 @@ model-viewer{width:100%;height:100%;--poster-color:transparent;background:transp
 @keyframes fspin{to{transform:rotate(360deg)}}
 @keyframes fdot{0%,80%,100%{opacity:.2}40%{opacity:1}}
 @keyframes fshine{to{left:110%}}
-@media (prefers-reduced-motion:reduce){.fspin,#btnFind.busy::after{animation:none}.fdots i{animation:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.fspin,#btnFind.busy::after,#btnFindOne.busy::after{animation:none}.fdots i{animation:none;opacity:1}}
 @media (max-width:820px){.clearrow{padding:0 18px 10px}.clearrow button{padding:8px 16px;font-size:.88rem}}
 .lt{display:inline-block;font-size:.66rem;font-weight:800;padding:2px 8px 2px 8px;border-radius:99px;letter-spacing:.02em;white-space:nowrap}
 .lt.s-new{background:#efe9dc;color:var(--mute)}
@@ -505,7 +512,7 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
     <span class="n" id="count"></span>
   </div>
   <div class="leadbar" id="leadbar"></div>
-  <div class="clearrow" id="clearRow" hidden><button type="button" id="btnClear">🗑 Clear all</button> <button type="button" id="btnFind" style="color:var(--teal)">🔎 Find contacts</button></div>
+  <div class="clearrow" id="clearRow" hidden><button type="button" id="btnClear">🗑 Clear all</button> <button type="button" id="btnFind">🔎 Find data</button></div>
   <section id="list"></section>
   <section id="detail" hidden></section>
   <div class="foot" id="foot">Business data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors. "No website listed" means none is recorded on the map, so it can be incomplete.</div>
@@ -594,6 +601,7 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
     <div class="canvas"><div class="device" id="device"><iframe id="pFrame" title="Concept preview" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe></div></div>
     <button class="phandle" id="pHandle" type="button" aria-label="Resize panel"><span id="pHandleTxt">Options</span></button>
     <div class="panel">
+      <div id="findOneBox" hidden><button class="btn l sm" id="btnFindOne" type="button">🔎 Find data</button><p class="note" id="findOneNote"></p></div>
       <h3>Device</h3>
       <div class="seg"><button id="dMob" class="on">📱 Phone</button><button id="dDesk">🖥️ Desktop</button></div>
       <div id="brandBox" hidden><label><input type="checkbox" id="brandOn" checked> <span id="brandLbl">Use their brand (colours, logo, photos, services)</span></label><p class="note" id="brandNote"></p></div>
@@ -701,6 +709,7 @@ function applyStatic(){
   var pa=$('pAR');if(pa)pa.innerHTML='<span class="arLong">'+esc(T('📱 See it in 3D at your shop'))+'</span><span class="arShort">'+esc(T('📱 See it in 3D'))+'</span>';
   STATIC.forEach(function(r){var el=document.querySelector(r[0]);if(!el)return;var v=T(r[2]);if(r[1])el.setAttribute(r[1],v);else el.textContent=v;});
   if(typeof updPlayBtn==='function')updPlayBtn();
+  if(typeof updFindOne==='function')updFindOne();
   $('foot').innerHTML=T(FOOT_EN)+' · <a href="#" id="legalLink" class="legalLink">'+esc(T('Legal notice and privacy'))+'</a>';
 }
 function toast(){var e=$('toast');e.textContent=T.apply(null,arguments);e.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){e.classList.remove('on');},2800);}
@@ -2230,8 +2239,8 @@ function gEnrich(b){
 /* ===== Find the possible website of a business on the web (not Maps) =====
    1) Google Custom Search API if CONFIG.GCSE_KEY + GCSE_CX are set (real Google results)
    2) otherwise DuckDuckGo results, read through the free r.jina.ai page reader. Results are cached in this browser. */
-(function(){var X={'💬 Copy message and open Facebook':'💬 Copiar mensaje y abrir Facebook','No Facebook page known for this business. The message will be copied so you can paste it in their chat.':'No hay página de Facebook conocida. El mensaje se copiará para pegarlo en su chat.','Email: {0}':'Email: {0}','No email known: the email app opens without a recipient.':'No hay email conocido: el correo se abre sin destinatario.','No email known. Add the recipient in your email app.':'No hay email conocido. Añade el destinatario en tu app de correo.','Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find contacts':'🔎 Buscar contactos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding details {0} of {1}':'Buscando datos {0} de {1}','Tap to stop':'Toca para detener','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
-STATIC.push(['#btnFind',0,'🔎 Find contacts']);
+(function(){var X={'💬 Copy message and open Facebook':'💬 Copiar mensaje y abrir Facebook','No Facebook page known for this business. The message will be copied so you can paste it in their chat.':'No hay página de Facebook conocida. El mensaje se copiará para pegarlo en su chat.','Email: {0}':'Email: {0}','No email known: the email app opens without a recipient.':'No hay email conocido: el correo se abre sin destinatario.','No email known. Add the recipient in your email app.':'No hay email conocido. Añade el destinatario en tu app de correo.','Email us':'Escríbenos','Facebook':'Facebook','Possible website':'Posible web','Verify before contacting':'verifícalo antes de contactar','No website found on the web':'No se encontró web en internet','Search on Google':'Buscar en Google','🔎 Find data':'🔎 Buscar datos','Found (website, email or social): {0} of {1}':'Encontrados (web, email o redes): {0} de {1}','Instagram (found on the web)':'Instagram (encontrado en la web)','Facebook (found on the web)':'Facebook (encontrado en la web)','WhatsApp (found on the web)':'WhatsApp (encontrado en la web)','Finding details {0} of {1}':'Buscando datos {0} de {1}','Tap to stop':'Toca para detener','Stopped. Found: {0}':'Detenido. Encontrados: {0}','Found (website or email): {0} of {1}':'Encontrados (web o email): {0} de {1}','Email (found on the web)':'Email (encontrado en la web)','Nothing to search here.':'Nada que buscar aquí.'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
+STATIC.push(['#btnFind',0,'🔎 Find data']);
 var GUESS={};try{GUESS=JSON.parse(store('elx_guess4')||'{}')||{};}catch(e){GUESS={};}
 function saveGuess(){try{store('elx_guess4',JSON.stringify(GUESS));}catch(e){}}
 function guessLine(b){var g=b.guess;if(!g)return '';var parts=[];if(g.u&&b.status!=='web')parts.push('🔎 '+hostOf(g.u));if(g.e&&!b.email)parts.push('✉️ '+g.e);if(g.wa&&!hasWa(b))parts.push('💬');if(g.ig)parts.push('📸');if(g.fb)parts.push('👍');return parts.length?'<small style="color:var(--teal);font-weight:700">'+esc(parts.join(' · '))+'</small>':'';}
@@ -2382,7 +2391,7 @@ function findWebsites(){
   function done(stopped){
     if(run!==findRun)return;
     findRun++;findEnd=null;findBusy=false;
-    btn.classList.remove('busy');btn.style.removeProperty('--prog');btn.removeAttribute('title');btn.textContent=T('🔎 Find contacts');
+    btn.classList.remove('busy');btn.style.removeProperty('--prog');btn.removeAttribute('title');btn.textContent=T('🔎 Find data');
     renderList();pushData();
     toast(stopped?'Stopped. Found: {0}':'Found (website, email or social): {0} of {1}',found,total);
   }
@@ -2396,6 +2405,59 @@ function findWebsites(){
   step();
 }
 $('btnFind').onclick=findWebsites;
+/* ===== Find contacts for ONE business (button inside the preview) =====
+   Same search as "Find data", but only for the business on screen. The preview, the detail card and the message are refreshed when it ends. */
+var foBusy={},foRes={},FO_LBL={u:'website',e:'email',ig:'Instagram',fb:'Facebook',wa:'WhatsApp'};
+(function(){var X={'🔎 Find data':'🔎 Buscar datos','Searching this business':'Buscando datos','Searches only this business and updates the preview.':'Busca solo este negocio y actualiza la vista previa.','Nothing new found for this business.':'No se encontró nada nuevo para este negocio.','Could not search right now. Try again in a moment.':'No se pudo buscar ahora. Inténtalo de nuevo en un momento.','website':'web','Found: {0}':'Encontrado: {0}'};Object.keys(X).forEach(function(k){if(ES[k]==null)ES[k]=X[k];});})();
+function updFindOne(){
+  var box=$('findOneBox'),btn=$('btnFindOne');if(!box||!btn)return;
+  var b=pvB;box.hidden=!b||b.id==='shared';
+  if(box.hidden)return;
+  var busy=!!foBusy[b.id],r=foRes[b.id],note=$('findOneNote');
+  btn.classList.toggle('busy',busy);btn.style.pointerEvents=busy?'none':'';btn.setAttribute('aria-busy',busy?'true':'false');
+  if(busy){btn.style.setProperty('--prog','100%');btn.innerHTML='<span class="fspin" aria-hidden="true"></span><span>'+esc(T('Searching this business'))+'</span><span class="fdots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>';}
+  else{btn.style.removeProperty('--prog');btn.textContent=T('🔎 Find data');}
+  note.textContent=busy?'':(!r?T('Searches only this business and updates the preview.'):(r.fail?T('Could not search right now. Try again in a moment.'):(r.keys.length?T('Found: {0}',r.keys.map(function(k){return T(FO_LBL[k]);}).join(', ')):T('Nothing new found for this business.'))));
+}
+function findOne(){
+  var b=pvB;if(!b||b.id==='shared'||foBusy[b.id])return;
+  var old=(b.guess&&typeof b.guess==='object')?JSON.parse(JSON.stringify(b.guess)):null,chData=false;
+  foBusy[b.id]=1;delete foRes[b.id];updFindOne();
+  enrich(b).then(function(c1){return gEnrich(b).then(function(c2){return c1||c2;});}).catch(function(){return false;})
+    .then(function(c){chData=!!c;return guessWeb(b,true);}).catch(function(){return false;})
+    .then(function(ok){
+      delete foBusy[b.id];
+      if(!ok){foRes[b.id]={fail:1,keys:[]};}
+      else{
+        if(old){   // keep what an earlier search found when this one finds less
+          if(!b.guess)b.guess=old;
+          else Object.keys(old).forEach(function(k){if(b.guess[k]==null)b.guess[k]=old[k];});
+          GUESS[b.id]=b.guess;saveGuess();
+        }
+        var g=b.guess||{};
+        foRes[b.id]={keys:Object.keys(FO_LBL).filter(function(k){return g[k]&&(!old||old[k]!==g[k]);})};
+      }
+      var r=foRes[b.id];
+      if(r.fail)toast('Could not search right now. Try again in a moment.');
+      else if(r.keys.length)toast('Found: {0}',r.keys.map(function(k){return T(FO_LBL[k]);}).join(', '));
+      else toast('Nothing new found for this business.');
+      if(cur===b)renderDetail(b);
+      renderList();pushData();
+      if(pvB!==b||$('mPrev').hidden)return;   // the person moved on to another business: data is saved, nothing to redraw here
+      var g2=b.guess||{},newSrc=!!((g2.u&&(!old||g2.u!==old.u))||(g2.ig&&(!old||g2.ig!==old.ig)));
+      if(!sendEdited)sendDrafts={};
+      updFindOne();renderFrame();   // renderFrame also refreshes the send box (email, WhatsApp, Instagram, Facebook)
+      if(newSrc){   // a new website or Instagram: read it again for colours, logo, photos, services and hours
+        var oldBrand=b.brand;b.brand=undefined;b.brandFail=0;brandNote(b);
+        enrichBrand(b).then(function(){
+          if(!b.brand&&oldBrand)b.brand=oldBrand;
+          if(pvB!==b||$('mPrev').hidden)return;
+          brandNote(b);setBrandTheme(brandOf(b));if(!pvPicked)pvT=themeById('sun');buildThemes();renderFrame();
+        });
+      }else if(chData)brandNote(b);
+    });
+}
+$('btnFindOne').onclick=findOne;
 var cur=null;
 function select(id,fly){
   var b=byId(id);if(!b)return;cur=b;setSel(id);
@@ -2909,7 +2971,7 @@ function openPreview(b,themeId){
   var shared=b.id==='shared';
   $('pBack').hidden=shared;$('pLogo').hidden=!shared;$('mPrev').classList.toggle('shared',shared);
   if(shared){var li=$('pLogo').querySelector('img'),src=document.querySelector('.brand .logo img');if(src&&li.getAttribute('src')!==src.src)li.src=src.src;}
-  buildThemes();brandNote(b);
+  buildThemes();brandNote(b);updFindOne();
   renderFrame();$('mPrev').hidden=false;fitDesk();updPvNav();
   if(b.id!=='shared'&&(b.brand===undefined||brandRetryable(b))){
     var pr=enrichBrand(b);brandNote(b);
@@ -3702,6 +3764,7 @@ var TIPS={
  btnSaved:E('Show or hide your saved businesses','Mostrar u ocultar tus negocios guardados'),
  btnClear:E('Remove every business from the list','Quitar todos los negocios de la lista'),
  btnFind:E('Look up the website, Instagram and phone of each business','Buscar la web, el Instagram y el teléfono de cada negocio'),
+ btnFindOne:E('Look up the website, Instagram, email and phone of just this business and update the preview with what is found','Busca la web, el Instagram, el email y el teléfono de solo este negocio y actualiza la vista previa con lo que encuentre'),
  here:E('Search the area you are looking at on the map','Buscar en la zona que ves en el mapa'),
  tilt:E('Switch between flat 2D and 3D buildings','Cambiar entre mapa plano 2D y edificios en 3D'),
  handle:E('Open or close the panel','Abrir o cerrar el panel'),
@@ -3931,7 +3994,7 @@ var HELP=[
  ['✏️',E('Message templates','Plantillas de mensajes'),E('Use "Edit templates" to change the message for each channel and category.','Usa "Editar plantillas" para cambiar el mensaje de cada canal y categoría.')],
  ['★',E('Save and Leads','Guardar y Leads'),E('The star saves a business. Leads remembers who you contacted, with notes and follow-up dates, and can export a CSV.','La estrella guarda un negocio. Leads recuerda a quién contactaste, con notas y fechas de seguimiento, y puede exportar un CSV.')],
  ['＋',E('Add a business','Añadir un negocio'),E('Add one by name, Instagram @handle or website, or paste a whole list at once.','Añade uno por nombre, @usuario de Instagram o web, o pega una lista entera.')],
- ['🧰',E('Find contacts and Clear all','Buscar contactos y Borrar todo'),E('"Find contacts" looks up each website, Instagram and phone. "Clear all" empties the list.','"Buscar contactos" busca la web, el Instagram y el teléfono de cada uno. "Borrar todo" vacía la lista.')],
+ ['🧰',E('Find data and Clear all','Buscar datos y Borrar todo'),E('"Find data" looks up each website, Instagram and phone. Inside a preview, the same button searches only that business. "Clear all" empties the list.','"Buscar datos" busca la web, el Instagram y el teléfono de cada uno. Dentro de una vista previa, el mismo botón busca solo ese negocio. "Borrar todo" vacía la lista.')],
  ['🧭',E('Map and tips','Mapa y consejos'),E('3D switches the buildings on or off. EN / ES changes the language. Hover over any button (or press and hold it on a phone) to see what it does.','3D activa o desactiva los edificios. EN / ES cambia el idioma. Pasa el ratón por cualquier botón (o mantenlo pulsado en el móvil) para ver qué hace.')]
 ];
 ES['Help']='Ayuda';ES['Got it']='Entendido';
