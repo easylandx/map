@@ -265,6 +265,20 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 .seg button{flex:1;border:0;background:none;border-radius:9px;padding:8px;font-weight:700;font-size:.82rem}
 .seg button.on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .panel p{font-size:.82rem;color:var(--mute);line-height:1.5;margin:0 0 14px}
+#contactBox{margin-bottom:6px}
+#contactBox .cfields{display:grid;gap:8px;margin-bottom:10px}
+#contactBox .cf{position:relative}
+#contactBox .cf label{position:absolute;left:12px;top:6px;font-size:.6rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);pointer-events:none}
+#contactBox .cf input{width:100%;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:21px 34px 7px 12px;font-size:.92rem;font-weight:600;outline:none;transition:border-color .15s,box-shadow .15s}
+#contactBox .cf input:focus{border-color:var(--teal2);box-shadow:0 0 0 4px rgba(20,184,166,.15)}
+#contactBox .cf.chg input{border-color:var(--teal2);background:var(--soft-teal)}
+#contactBox .cf.bad input{border-color:var(--coral);background:var(--soft-coral)}
+#contactBox .cf .cx{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:var(--mute);font-size:.8rem;font-weight:800;line-height:1;padding:0;cursor:pointer}
+#contactBox .cf .cx:hover{background:var(--bg)}
+#contactBox .cf .cx[hidden]{display:none}
+#contactBox .cmsg{margin:0 0 10px;font-size:.76rem;line-height:1.4;color:var(--coral);font-weight:700}
+#contactBox .cmsg:empty{display:none}
+#contactBox #cReset{margin-bottom:18px}
 #sendBox{margin-bottom:18px;padding:12px;border-radius:14px;background:var(--soft-teal)}
 #sendBox h3{color:var(--teal)}
 #sendBox .seg{background:#fff;margin-bottom:10px}
@@ -613,6 +627,21 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
       <h3>Device</h3>
       <div class="seg"><button id="dMob" class="on">📱 Phone</button><button id="dDesk">🖥️ Desktop</button></div>
       <div id="brandBox" hidden><label><input type="checkbox" id="brandOn" checked> <span id="brandLbl">Use brand (colours, logo, services)</span></label><label id="photosRow" hidden><input type="checkbox" id="photosOn"> <span id="photosLbl">Include photos in the proposal</span></label><p class="note" id="brandNote"></p></div>
+      <div id="contactBox" hidden>
+        <h3 id="hContact">Contact details</h3>
+        <p class="note" id="contactNote">Pre-filled with what was found. Paste the right data (e.g. from Google Maps) and the preview updates by itself.</p>
+        <div class="cfields">
+          <div class="cf"><label for="cPhone" id="lblCPhone">Phone</label><input id="cPhone" data-k="phone" type="text" inputmode="tel" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="cx" hidden aria-label="Clear">✕</button></div>
+          <div class="cf"><label for="cWa" id="lblCWa">WhatsApp</label><input id="cWa" data-k="wa" type="text" inputmode="tel" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="cx" hidden aria-label="Clear">✕</button></div>
+          <div class="cf"><label for="cFb" id="lblCFb">Facebook</label><input id="cFb" data-k="fb" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="cx" hidden aria-label="Clear">✕</button></div>
+          <div class="cf"><label for="cIg" id="lblCIg">Instagram</label><input id="cIg" data-k="ig" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="cx" hidden aria-label="Clear">✕</button></div>
+          <div class="cf"><label for="cMail" id="lblCMail">Email</label><input id="cMail" data-k="email" type="text" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="cx" hidden aria-label="Clear">✕</button></div>
+          <div class="cf"><label for="cWeb" id="lblCWeb">Website</label><input id="cWeb" data-k="web" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="cx" hidden aria-label="Clear">✕</button></div>
+          <div class="cf"><label for="cAddr" id="lblCAddr">Address</label><input id="cAddr" data-k="addr" type="text" autocomplete="off" spellcheck="false"><button type="button" class="cx" hidden aria-label="Clear">✕</button></div>
+        </div>
+        <p class="cmsg" id="cMsg"></p>
+        <button class="btn l sm" id="cReset" type="button" hidden>↺ Restore found data</button>
+      </div>
       <h3>Colors</h3>
       <div class="sw" id="themes"></div>
       <div id="sendBox" hidden>
@@ -1419,7 +1448,7 @@ function scheduleLive(cats,what,my,tries){
       if(my!==searchTok||busy||!l.length||l.fallback)return;
       if(!$('detail').hidden||showSaved||showLeads){scheduleLive(cats,what,my,tries+1);return;}   // do not pull the screen from under the person
       var c=map.getCenter();
-      l.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];});
+      l.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];applyOvr(b);});
       capped=!!l.capped;results=withImp(l);setSel(null);pushData();renderList();toast('Live business data loaded.');
     },function(){scheduleLive(cats,what,my,tries+1);});
   },tries?12000:6000);
@@ -1476,7 +1505,7 @@ function doSearch(fromChip){
     var onPart=function(list,done,total){
       if(my!==searchTok)return;
       var c=map.getCenter();
-      list.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];});
+      list.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];applyOvr(b);});
       PARTIAL={tok:my,list:list};   // kept so "stop" can show what has been found so far
       var now=Date.now();if(now-lastR<800)return;lastR=now;   // redraw at most every 0.8 s: redrawing a long list on every part is what made the end slow
       results=withImp(list);setSel(null);renderList();
@@ -1494,7 +1523,7 @@ function doSearch(fromChip){
   }).then(function(list){
     if(my!==searchTok)return;
     var c=map.getCenter();
-    list.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];});
+    list.forEach(function(b){b.d=haversine(c.lat,c.lng,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];applyOvr(b);});
     if(list.partial)toast('Part of the area did not load. Press "Search this area" to retry.');capped=!!list.capped;results=withImp(list);setSel(null);pushData();renderList();scrollToResults();
     if(list.fallback)scheduleLive(cats,what,my,0);
     if(!list.length)emptyMsg('Nothing found here','Try zooming out, moving the map, or another category. OpenStreetMap does not list every business.');
@@ -1609,7 +1638,7 @@ function doNameSearch(){
   }).then(function(list){
     if(my!==searchTok)return;
     var cy=(bnd.n+bnd.s)/2,cx=(bnd.e+bnd.w)/2;
-    list.forEach(function(b){b.d=haversine(cy,cx,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];});
+    list.forEach(function(b){b.d=haversine(cy,cx,b.lat,b.lon);if(GUESS[b.id])b.guess=GUESS[b.id];applyOvr(b);});
     capped=false;results=withImp(list);setSel(null);pushData();
     if(!list.length){nameEmpty(name,where);return;}
     renderList();scrollToResults();
@@ -2461,7 +2490,7 @@ function findOne(){
       if(pvB!==b||$('mPrev').hidden)return;   // the person moved on to another business: data is saved, nothing to redraw here
       var g2=b.guess||{},newSrc=!!((g2.u&&(!old||g2.u!==old.u))||(g2.ig&&(!old||g2.ig!==old.ig)));
       if(!sendEdited)sendDrafts={};
-      updFindOne();renderFrame();   // renderFrame also refreshes the send box (email, WhatsApp, Instagram, Facebook)
+      updFindOne();renderFrame();cfFill(b);   // renderFrame also refreshes the send box (email, WhatsApp, Instagram, Facebook)
       if(newSrc){   // a new website or Instagram: read it again for colours, logo, photos, services and hours
         var oldBrand=b.brand;b.brand=undefined;b.brandFail=0;brandNote(b);
         enrichBrand(b).then(function(){
@@ -3086,7 +3115,7 @@ function brandNote(b){
   if(prow)prow.hidden=!(br.i&&br.i.length);
 }
 function openPreview(b,themeId){
-  pvB=b;sendView=null;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
+  applyOvr(b);pvB=b;sendView=null;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
   pvBrandOn=true;pvPicked=false;$('brandOn').checked=true;pvPhotosOn=false;$('photosOn').checked=false;$('photosOn').disabled=false;
   setBrandTheme(brandOf(b));
   pvT=themeById(themeId||'sun');
@@ -3095,7 +3124,7 @@ function openPreview(b,themeId){
   var shared=b.id==='shared';
   $('pBack').hidden=shared;$('pLogo').hidden=!shared;$('mPrev').classList.toggle('shared',shared);
   if(shared){var li=$('pLogo').querySelector('img'),src=document.querySelector('.brand .logo img');if(src&&li.getAttribute('src')!==src.src)li.src=src.src;}
-  buildThemes();brandNote(b);updFindOne();
+  buildThemes();brandNote(b);updFindOne();cfFill(b);
   renderFrame();$('mPrev').hidden=false;fitDesk();updPvNav();
   if(b.id!=='shared'&&(b.brand===undefined||brandRetryable(b))){
     var pr=enrichBrand(b);brandNote(b);
@@ -3156,7 +3185,132 @@ $('brandOn').onchange=function(){
   pvT=themeById('sun');
   buildThemes();renderFrame();
 };
-function renderFrame(){$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
+/* ===== Editable contact details above the colours: paste the right data (Google Maps...) and the preview, link and messages update ===== */
+var OVR={};try{OVR=JSON.parse(store('elx_ovr1')||'{}')||{};}catch(e){OVR={};}
+function saveOvr(){try{store('elx_ovr1',JSON.stringify(OVR));}catch(e){}}
+var CF_KEYS=['phone','wa','fb','ig','email','web','addr'];
+var CF_ID={phone:'cPhone',wa:'cWa',fb:'cFb',ig:'cIg',email:'cMail',web:'cWeb',addr:'cAddr'};
+var CF_ORIG={};   // data as it was found, per business id (for "Restore found data")
+function cfIgUrl(h){return h?'https://www.instagram.com/'+h+'/':'';}
+// What the page uses right now for each field (this is what the fields are pre-filled with)
+function cfCurrent(b){
+  var d=waDigits(b),h=igHandleOf(b);
+  var wr=b.web||(b.guess&&b.guess.u)||'',wu=wr?siteUrl(wr):'';if(!/^https?:\/\/[^\s"'<>]+$/i.test(wu))wu='';
+  return{phone:String(b.phone||''),wa:d?'+'+d:'',fb:fbOf(b),ig:cfIgUrl(h),email:emailOf(b),web:wu,addr:String(b.addr||''),
+    _web:String(b.web||''),_status:b.status,_gu:String((b.guess&&b.guess.u)||'')};   // _web/_status/_gu: raw state, only used by "Restore found data"
+}
+// Turns whatever was pasted into the clean value stored on the business. ok=false: it cannot be read
+function cfNormalize(k,raw){
+  var v=String(raw||'').trim();
+  if(!v)return{ok:true,v:''};
+  if(k==='phone')return{ok:/\d{6,}/.test(v.replace(/\D/g,'')),v:v.slice(0,40)};
+  if(k==='addr')return{ok:true,v:v.replace(/\s+/g,' ').slice(0,160)};
+  if(k==='wa'){
+    var m=v.match(/(?:wa\.me\/|phone=)\+?(\d{8,15})/i),c=m?m[1]:v.replace(/[^\d+]/g,'');
+    var dg=c.replace(/\D/g,'');
+    return{ok:dg.length>=8&&dg.length<=15,v:c.slice(0,20)};
+  }
+  if(k==='email'){
+    v=v.replace(/^mailto:/i,'').split('?')[0].trim();
+    return{ok:/^[^\s@<>"']+@[^\s@<>"']+\.[A-Za-z]{2,}$/.test(v)&&v.length<=80,v:v};
+  }
+  if(k==='web'){
+    var wv=v.replace(/^<|>$/g,'').replace(/\s+/g,'');
+    if(!/^https?:\/\//i.test(wv))wv='https://'+wv.replace(/^\/\//,'');
+    var hm=wv.match(/^https?:\/\/([^\/?#:]+)(?::\d+)?([\/?#]|$)/i);
+    if(!hm||!/^[a-z0-9\u00a1-\uffff]([a-z0-9\u00a1-\uffff\-]*[a-z0-9\u00a1-\uffff])?(\.[a-z0-9\u00a1-\uffff]([a-z0-9\u00a1-\uffff\-]*[a-z0-9\u00a1-\uffff])?)*\.[a-z\u00a1-\uffff]{2,}$/i.test(hm[1]))return{ok:false,v:v};
+    if(/(^|\.)(facebook\.com|fb\.com|instagram\.com|wa\.me)$/i.test(hm[1]))return{ok:false,v:v};   // those have their own fields
+    wv=wv.replace(/#.*$/,'').replace(/^http:\/\//i,'https://').replace(/\/+$/,'');
+    return{ok:/^https:\/\/[^\s"'<>()]+$/i.test(wv)&&wv.length<=200,v:wv};
+  }
+  if(k==='ig'){
+    var mi=v.match(/instagram\.com\/([\w.]+)/i),h=mi?mi[1]:v.replace(/^@/,'').replace(/\/+$/,'');
+    h=h.replace(/\.+$/,'');
+    if(!/^[\w.]{1,30}$/.test(h)||/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(h))return{ok:false,v:v};
+    return{ok:true,v:cfIgUrl(h)};
+  }
+  if(k==='fb'){
+    var u,mf=v.match(/(?:facebook\.com|fb\.com)\/(.+)$/i);
+    if(mf){var path=mf[1].split('#')[0];if(!/^profile\.php/i.test(path))path=path.split('?')[0];u='https://www.facebook.com/'+path.replace(/^\/+/,'');}
+    else if(/^[\w.\-]{3,80}$/.test(v.replace(/^@/,'')))u='https://www.facebook.com/'+v.replace(/^@/,'');
+    else return{ok:false,v:v};
+    return{ok:/^https:\/\/(www\.)?facebook\.com\/[\w.\-\/?=%]+$/i.test(u),v:u.slice(0,200)};
+  }
+  return{ok:false,v:v};
+}
+// Writes one saved value into the business. An empty value means "this one does not exist": the guessed value is dropped as well
+function cfApply(b,k,val){
+  var gk={wa:'wa',fb:'fb',ig:'ig',email:'e',web:'u'}[k];
+  if(k==='phone')b.phone=val;
+  else if(k==='addr')b.addr=val;
+  else if(k==='wa')b.wa=val;
+  else if(k==='email')b.email=val;
+  else if(k==='web'){b.web=val;b.status=val?'web':(b.status==='web'?(b.social?'social':'noweb'):b.status);}
+  else if(k==='fb'){b.fb=val;if(/facebook\.com/i.test(b.social||''))b.social='';}
+  else if(k==='ig'){b.ig=val;if(/instagram\.com/i.test(b.social||''))b.social='';}
+  if(gk&&b.guess&&typeof b.guess==='object'&&b.guess[gk]){var g=Object.assign({},b.guess);g[gk]='';b.guess=g;}
+}
+function applyOvr(b){
+  if(!b||!b.id||b.id==='shared')return;
+  var o=OVR[b.id];if(!o)return;
+  if(!CF_ORIG[b.id])CF_ORIG[b.id]=cfCurrent(b);
+  CF_KEYS.forEach(function(k){if(o[k]!==undefined)cfApply(b,k,o[k]);});
+}
+function cfFill(b){
+  var box=$('contactBox');if(!box)return;
+  box.hidden=!b||b.id==='shared';
+  if(box.hidden)return;
+  if(!CF_ORIG[b.id])CF_ORIG[b.id]=cfCurrent(b);   // data as found (applyOvr already stored it first when there were saved edits)
+  var cur0=cfCurrent(b),o=OVR[b.id]||{};
+  CF_KEYS.forEach(function(k){
+    var inp=$(CF_ID[k]),w=inp.parentNode;
+    inp.value=cur0[k];
+    w.classList.toggle('chg',o[k]!==undefined);w.classList.remove('bad');
+    w.querySelector('.cx').hidden=!inp.value;
+  });
+  $('cMsg').textContent='';
+  $('cReset').hidden=!Object.keys(o).length;
+}
+var cfTimer=null;
+function cfCommit(k){
+  var b=pvB;if(!b||b.id==='shared')return;
+  var inp=$(CF_ID[k]),w=inp.parentNode,r=cfNormalize(k,inp.value);
+  w.querySelector('.cx').hidden=!inp.value;
+  if(!r.ok){w.classList.add('bad');$('cMsg').textContent=T({phone:'That phone number does not look right.',wa:'That WhatsApp number does not look right.',fb:'That Facebook link does not look right.',ig:'That Instagram link or @handle does not look right.',email:'That email does not look right.',web:'That website does not look right.'}[k]);return;}
+  w.classList.remove('bad');
+  if(!CF_KEYS.some(function(x){return $(CF_ID[x]).parentNode.classList.contains('bad');}))$('cMsg').textContent='';
+  var o=OVR[b.id]||(OVR[b.id]={});
+  if(o[k]===r.v)return;
+  o[k]=r.v;saveOvr();
+  cfApply(b,k,r.v);
+  w.classList.add('chg');$('cReset').hidden=false;
+  if(k==='email')$('sMailTo').value=emailOf(b);
+  if(!sendEdited)sendDrafts={};
+  renderFrame();   // preview, share link and send messages are rebuilt from the business data
+  try{if(cur===b)renderDetail(b);renderList();pushData();}catch(e){}
+}
+CF_KEYS.forEach(function(k){
+  var inp=$(CF_ID[k]);
+  inp.addEventListener('input',function(){clearTimeout(cfTimer);inp.parentNode.querySelector('.cx').hidden=!inp.value;cfTimer=setTimeout(function(){cfCommit(k);},350);});
+  inp.addEventListener('change',function(){clearTimeout(cfTimer);cfCommit(k);});
+  inp.parentNode.querySelector('.cx').onclick=function(){inp.value='';inp.focus();clearTimeout(cfTimer);cfCommit(k);};
+});
+$('cReset').onclick=function(){
+  var b=pvB;if(!b||b.id==='shared')return;
+  var orig=CF_ORIG[b.id],o=OVR[b.id];
+  if(orig&&o)Object.keys(o).forEach(function(k){cfApply(b,k,orig[k]);   // back to the data as found
+    if(k==='email')b.email=orig.email;if(k==='wa')b.wa=orig.wa;if(k==='fb')b.fb=orig.fb;if(k==='ig')b.ig=orig.ig;
+    if(k==='web'){b.web=orig._web;b.status=orig._status;if(orig._gu&&b.guess&&typeof b.guess==='object')b.guess=Object.assign({},b.guess,{u:orig._gu});}});   // website: back to the raw state (a guessed site stays a guess)
+  delete OVR[b.id];saveOvr();
+  $('sMailTo').value=emailOf(b);
+  if(!sendEdited)sendDrafts={};
+  cfFill(b);renderFrame();
+  try{if(cur===b)renderDetail(b);renderList();pushData();}catch(e){}
+  toast('Found data restored');
+};
+STATIC.push(['#hContact',0,'Contact details'],['#contactNote',0,'Pre-filled with what was found. Paste the right data (e.g. from Google Maps) and the preview updates by itself.'],['#lblCPhone',0,'Phone'],['#lblCWa',0,'WhatsApp'],['#lblCFb',0,'Facebook'],['#lblCIg',0,'Instagram'],['#lblCMail',0,'Email'],['#lblCWeb',0,'Website'],['#lblCAddr',0,'Address'],['#cReset',0,'↺ Restore found data']);
+Object.assign(ES,{'Contact details':'Datos de contacto','Pre-filled with what was found. Paste the right data (e.g. from Google Maps) and the preview updates by itself.':'Rellenado con lo que se encontró. Pega los datos correctos (p. ej. de Google Maps) y la maqueta se actualiza sola.','Phone':'Teléfono','Address':'Dirección','↺ Restore found data':'↺ Restaurar datos encontrados','Found data restored':'Datos encontrados restaurados','That phone number does not look right.':'Ese teléfono no parece correcto.','That WhatsApp number does not look right.':'Ese número de WhatsApp no parece correcto.','That Facebook link does not look right.':'Ese enlace de Facebook no parece correcto.','That Instagram link or @handle does not look right.':'Ese enlace o @usuario de Instagram no parece correcto.','That email does not look right.':'Ese email no parece correcto.','That website does not look right.':'Esa web no parece correcta.'});
+function renderFrame(){applyOvr(pvB);$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
 /* ===== Send the preview to the business by WhatsApp (outreach mode only) ===== */
 var sendLang=LANG,sendEdited=false,sendDrafts={},sendFound=false,sendModeLast='',sendView=null;   // the message follows the site language (EN/ES switch)
 var sendCh=store('elx_sendch')||'wa';if(!/^(wa|ig|fb|mail|sms)$/.test(sendCh))sendCh='wa';
