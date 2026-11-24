@@ -266,9 +266,10 @@ var CAT={};CATS.forEach(function(c){CAT[c.id]=c;});
 var GENERIC={id:'generic',label:'Local business',emoji:'🏪',group:'generic',tags:[],exTitle:'Examples hub',exUrl:CONFIG.SITE+'app/hub.html'};
 function catOf(b){return CAT[b.cat]||GENERIC;}
 
+var JUNK_SVC=/^(acerca\s+de|sobre\s+(nosotros|mi)|qui[eé]nes\s+somos|about(\s+us)?|contact(o|\s+us)?|cont[aá]ctanos|inicio|home|men[uú]|blog|ubicaci[oó]n|location|reservas?|book(ing|ings)?|galer[ií]a|gallery|aviso\s+legal|pol[ií]tica|privacidad|privacy|cookies|t[eé]rminos|terms|opiniones|reviews?|faq|preguntas)\b/i;
 function sharedBiz(o){
   var br=null,k=hex6(o.k);
-  if(k||o.l||(o.s&&o.s.length)||(o.i&&o.i.length))br={k:k,logo:safeUrl(o.l),s:(Array.isArray(o.s)?o.s:[]).slice(0,6).map(function(x){return String(x).slice(0,60);}),i:(Array.isArray(o.i)?o.i:[]).slice(0,3).map(safeUrl).filter(Boolean),h:''};
+  if(k||o.l||(o.s&&o.s.length)||(o.i&&o.i.length))br={k:k,logo:safeUrl(o.l),s:(Array.isArray(o.s)?o.s:[]).filter(function(x){return !JUNK_SVC.test(String(x).trim());}).slice(0,6).map(function(x){return String(x).slice(0,60);}),i:(Array.isArray(o.i)?o.i:[]).slice(0,5).map(safeUrl).filter(Boolean),h:''};
   return{id:'shared',name:String(o.n||'Your business').slice(0,80),cat:CAT[o.c]?o.c:'generic',addr:String(o.a||'').slice(0,160),phone:String(o.p||'').slice(0,40),hours:String(o.h||'').slice(0,160),lat:+o.la||0,lon:+o.lo||0,web:'',social:/^[\w.]{1,30}$/.test(String(o.ig||''))?'https://www.instagram.com/'+o.ig+'/':'',status:'noweb',wa:String(o.w||'').slice(0,20),brand:br,email:/^[^\s@<>"']+@[^\s@<>"']+\.[A-Za-z]{2,}$/.test(String(o.e||''))?String(o.e).slice(0,80):'',guess:{fb:/^[\w.\-\/?=%]{1,80}$/.test(String(o.f||''))?'https://www.facebook.com/'+o.f:'',u:safeUrl(o.u)}};
 }
 
@@ -436,7 +437,7 @@ function heroFor(b,c,cat){
   return{h:pl?T(h[0],pl):T(h[1]),s:h[2]?T(h[2]):c.s};
 }
 function pageHTML(b,t){
-  var c=copyFor(b),cat=catOf(b),br=brandOf(b)||{},photos=br.i||[],svcs=br.s||[],hero=photos[0]||'',gal=photos.slice(1,4);
+  var c=copyFor(b),cat=catOf(b),br=brandOf(b)||{},photos=br.i||[],svcs=(br.s||[]).filter(function(x){return !JUNK_SVC.test(String(x).trim());}),hero=photos[0]||'',gal=photos.slice(1,4);
   var wad=waDigits(b),bpx=bestPhone(b);
   var waUrl=wad?waLink(T('Hi! I would like more information about {0}.',b.name),wad):'';   // phones: WhatsApp app straight away; computers: WhatsApp Web (no wa.me page in between)
   var igH=igHandleOf(b),igUrl=igH?'https://www.instagram.com/'+igH+'/':'';
@@ -487,7 +488,7 @@ function pageHTML(b,t){
   '<section class="visit" id="visit"><h2>'+esc(T('Visit us'))+'</h2>'+(b.addr?'<p class="ln">'+ico('pin')+'<span>'+esc(b.addr)+'</span></p>':'')+(hoursHTML?'<p><b>'+esc(T('Opening hours'))+'</b></p>'+hoursHTML:'')+(b.phone?'<p class="ln">'+ico('phone')+'<span>'+esc(b.phone)+'</span></p>':'')+(emU?'<p class="ln">'+ico('mail')+'<a href="mailto:'+esc(emU)+'" style="color:inherit;font-weight:700">'+esc(emU)+'</a></p>':'')+
     '<div class="acts">'+(webUrl?'<a class="btn" href="'+esc(webUrl)+'">'+ico('web')+esc(T('Visit website'))+'</a>':'')+(waUrl?'<a class="btn wa" href="'+esc(waUrl)+'">'+ico('wa')+esc(T('Chat on WhatsApp'))+'</a>':'')+(igUrl?'<a class="btn o" href="'+esc(igUrl)+'">'+ico('ig')+'@'+esc(igH)+'</a>':'')+(fbU?'<a class="btn o" href="'+esc(fbU)+'">'+ico('fb')+esc(T('Facebook'))+'</a>':'')+(emU?'<a class="btn o" href="mailto:'+esc(emU)+'">'+ico('mail')+esc(T('Email us'))+'</a>':'')+'<a class="btn o" href="'+esc(map)+'">'+ico('pin')+esc(T('Open map'))+'</a></div></section>'+
   '<section class="cta"><h2>'+esc(T('Ready when you are'))+'</h2><a class="btn" href="'+esc(pri.href)+'">'+(pri.icon?ico(pri.icon):'')+esc(pri.label)+'</a></section>'+
-  '<footer>'+esc(T("This is a draft. The real version uses your own photos, prices and booking."))+' · <a href="'+CONFIG.SITE+'">EasyLandX</a></footer>'+
+  '<footer>'+esc(photos.length?T('Draft built from your current brand and content. Photos will be swapped for your final ones.'):T("This is a draft. The real version uses your own photos, prices and booking."))+' · <a href="'+CONFIG.SITE+'">EasyLandX</a></footer>'+
   (waUrl?'<a class="fwa" href="'+esc(waUrl)+'" aria-label="WhatsApp">'+ico('wa')+'<span>'+esc(T('Message us'))+'</span></a>':'')+
   '</body></html>';
 }
@@ -522,7 +523,7 @@ function zUnpack2(s){
   var ll=(f[6]||'0 0').split(' '),o={g:f[0]==='en'?'en':'es',n:f[1]||'',c:f[2]||'',a:f[3]||'',p:f[4]||'',h:f[5]||'',
     la:+((parseInt(ll[0],36)/1e5-90).toFixed(5)),lo:+((parseInt(ll[1],36)/1e5-180).toFixed(5))};
   if(f[7])o.t=f[7];if(f[8])o.ig=f[8];if(f[9])o.k='#'+f[9];if(f[10])o.l=f[10];if(f[11])o.s=f[11].split('\t');
-  if(f[12])o.w=f[12];if(f[13])o.e=f[13];if(f[14])o.f=f[14];if(f[15])o.u=f[15];
+  if(f[12])o.w=f[12];if(f[13])o.e=f[13];if(f[14])o.f=f[14];if(f[15])o.u=f[15];if(f[16])o.i=f[16].split('\t');
   return o;
 }
 function igHandleOf(b){var m=String((b&&b.ig)||(b&&/instagram\.com/i.test(b.social||'')&&b.social)||(b&&b.guess&&b.guess.ig)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
@@ -646,6 +647,7 @@ function hex6(h){h=String(h||'').trim();if(/^#[0-9a-f]{3}$/i.test(h))h='#'+h[1]+
 ES['Ask for your proposal']='Pide tu propuesta';
 ES['Sketch created for {0}']='Boceto creado para {0}';
 ES['Message us']='Escríbenos';
+ES['Draft built from your current brand and content. Photos will be swapped for your final ones.']='Boceto creado a partir de la identidad y los contenidos actuales de tu negocio. Las fotos se sustituirán por las definitivas.';
 ES['Tell us about your business and we will send you a free Web & App mockup, with the price.']='Cuéntanos sobre tu negocio y te enviaremos una maqueta gratuita de tu Web & App, con el precio.';
 ES['Hi! I would like a free Web & App proposal for my business. Could you send me the price and a mockup here?']='Hola! Me gustaría una propuesta gratuita de Web & App para mi negocio. ¿Me enviáis el precio y una maqueta por aquí?';
 ES['Web & App proposal request']='Solicitud de propuesta de Web & App';
@@ -684,12 +686,35 @@ function refreshUI(){
   if(pvB&&!$('mPrev').hidden)renderFrame();
 }
 function showAsk(){pvB=null;$('mPrev').hidden=true;$('mAR').hidden=true;$('ask').hidden=false;refreshUI();}
+function vetPhotos(urls){
+  function one(u){return new Promise(function(res){
+    var done=false;function fin(v){if(!done){done=true;res(v);}}
+    setTimeout(function(){fin(null);},7000);
+    function dark(area){
+      var sm=new Image();sm.crossOrigin='anonymous';
+      sm.onload=function(){try{var c=document.createElement('canvas');c.width=c.height=16;var x=c.getContext('2d');x.drawImage(sm,0,0,16,16);var d=x.getImageData(0,0,16,16).data,t=0,i;for(i=0;i<d.length;i+=4)t+=.2126*d[i]+.7152*d[i+1]+.0722*d[i+2];var a=t/(d.length/4);fin(a<22||a>248?null:{u:u,a:area});}catch(e){fin({u:u,a:area});}};
+      sm.onerror=function(){fin({u:u,a:area});};
+      sm.src=px(u,32,'png');
+    }
+    var im=new Image();
+    im.onload=function(){if(im.naturalWidth<500||im.naturalHeight<300)return fin(null);dark(im.naturalWidth*im.naturalHeight);};
+    im.onerror=function(){var p=new Image();p.onload=function(){dark(1);};p.onerror=function(){fin(null);};p.src=px(u,600);};
+    im.src=u;
+  });}
+  return Promise.all(urls.map(one)).then(function(r){
+    r=r.filter(Boolean);if(!r.length)return [];
+    var big=r.reduce(function(m,x){return x.a>m.a?x:m;});
+    return [big.u].concat(r.filter(function(x){return x!==big;}).map(function(x){return x.u;}));
+  });
+}
 function showPreview(o){
   if(o.g==='es'||o.g==='en')LANG=o.g;
   pvB=sharedBiz(o);pvT=themeById(o.t||'sun');
+  var me=pvB,cand=me.brand?me.brand.i.slice():[];if(me.brand)me.brand.i=[];
   $('pTitle').textContent=pvB.name;
   $('ask').hidden=true;$('mPrev').hidden=false;
   refreshUI();
+  if(cand.length)vetPhotos(cand).then(function(ok){if(pvB!==me||!ok.length)return;me.brand.i=ok.slice(0,3);if(!$('mPrev').hidden)renderFrame();});
 }
 function handleHash(){
   var h=location.hash;
