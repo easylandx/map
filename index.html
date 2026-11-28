@@ -298,6 +298,17 @@ form{padding:8px 16px 4px;display:grid;gap:8px}
 #chSeg{display:flex;flex-wrap:wrap;gap:3px}
 #chSeg button{flex:1 1 30%;min-width:0;white-space:nowrap;padding:8px 4px;font-size:.78rem}
 #sendBox .seg button.on{background:var(--teal);color:#fff;box-shadow:none}
+/* channel picker: one colour per channel; the main button takes the colour of the chosen one */
+#sendBox{--chc:#16a34a;background:#fff;border:2px solid var(--chc);transition:border-color .15s}
+#sendBox[data-ch=wa]{--chc:#16a34a}#sendBox[data-ch=ig]{--chc:#c13584}#sendBox[data-ch=fb]{--chc:#0a7cff}#sendBox[data-ch=mail]{--chc:#0f766e}#sendBox[data-ch=sms]{--chc:#ea580c}
+#sendBox h3{color:var(--chc)}
+#sendBox #chSeg{background:none;padding:0;gap:6px;margin-bottom:10px!important}
+#sendBox #chSeg button{--c:#16a34a;flex:1 1 auto;border:1.5px solid var(--c);color:var(--c);background:#fff;border-radius:99px;padding:8px 10px;font-size:.78rem;font-weight:800}
+#sendBox #chSeg #chWa{--c:#16a34a}#sendBox #chSeg #chIg{--c:#c13584}#sendBox #chSeg #chFb{--c:#0a7cff}#sendBox #chSeg #chMail{--c:#0f766e}#sendBox #chSeg #chSms{--c:#ea580c}
+#sendBox #chSeg button.on{background:var(--c);color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+#sendBox #sGo{background:var(--chc);color:#fff;font-size:1rem;padding:14px;margin-bottom:6px;box-shadow:0 8px 18px rgba(0,0,0,.2);transition:background .15s,transform .1s}
+#sendBox #sGo:active{transform:scale(.98)}
+#dSend{background:#16a34a!important;color:#fff;box-shadow:0 6px 16px rgba(22,163,74,.3)}
 #brandBox{margin-bottom:16px;padding:12px;border-radius:14px;background:#fff;border:1.5px solid var(--line)}
 #brandBox label{display:flex;align-items:flex-start;gap:8px;font-weight:700;font-size:.82rem;cursor:pointer}
 #brandBox .note{margin:6px 0 0}
@@ -626,6 +637,22 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
     <button class="phandle" id="pHandle" type="button" aria-label="Resize panel"><span id="pHandleTxt">Options</span></button>
     <div class="panel">
       <div id="findOneBox" hidden><button class="btn l sm" id="btnFindOne" type="button">🔎 Find data</button><p class="note" id="findOneNote"></p></div>
+      <div id="sendBox" data-ch="wa" hidden>
+        <h3>Send proposal</h3>
+        <div class="seg" id="chSeg"><button id="chWa" type="button">💬 WhatsApp</button><button id="chIg" type="button">📸 Instagram</button><button id="chFb" type="button">👍 Facebook</button><button id="chMail" type="button">✉️ Email</button><button id="chSms" type="button">📱 SMS</button></div>
+        <button class="btn p" id="sGo" type="button">💬 Open WhatsApp with this message</button>
+        <p id="sTo"></p>
+        <div id="sMailBox" hidden><input id="sMailTo" type="email" inputmode="email" placeholder="email@business.com" aria-label="Recipient email" autocapitalize="off" spellcheck="false"></div>
+        <div class="seg" id="langSeg"><button id="sEs" type="button">🇪🇸 Español</button><button id="sEn" type="button">🇬🇧 English</button></div>
+        <label id="sFoundBox" hidden><input type="checkbox" id="sFound"> <span id="sFoundLbl">Mention what I found (Instagram, website)</span></label>
+        <textarea id="sMsg" aria-label="Message"></textarea>
+        <div id="sCount" hidden></div>
+        <p class="modeDay" id="sDay" hidden></p>
+        <p class="modeNote" id="sModeNote"></p>
+        <div class="modeActs"><button class="btn l sm" id="sNo" type="button">🚫 Do not contact</button></div>
+        <button class="btn l sm" id="sTplBtn" type="button">✏️ Edit templates</button>
+        <p class="note">Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).</p>
+      </div>
       <h3>Device</h3>
       <div class="seg"><button id="dMob" class="on">📱 Phone</button><button id="dDesk">🖥️ Desktop</button></div>
       <div id="brandBox" hidden><label><input type="checkbox" id="brandOn" checked> <span id="brandLbl">Use brand (colours, logo, services)</span></label><label id="photosRow" hidden><input type="checkbox" id="photosOn"> <span id="photosLbl">Include photos in the proposal</span></label><p class="note" id="brandNote"></p></div>
@@ -648,22 +675,6 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
       <div class="sw" id="themes"></div>
       <div id="catRow"><h3 id="catLab">Business type</h3><select id="bizCat" aria-labelledby="catLab" style="width:100%;padding:9px;border-radius:10px;font:inherit"></select></div>
       <div id="phRow"><h3 id="phLab">Cover photo</h3><select id="phSel" aria-labelledby="phLab" style="width:100%;padding:9px;border-radius:10px;font:inherit"></select></div>
-      <div id="sendBox" hidden>
-        <h3>Send proposal</h3>
-        <p class="modeNote" id="sModeNote"></p>
-        <div class="modeActs"><button class="btn l sm" id="sNo" type="button">🚫 Do not contact</button></div>
-        <div class="seg" id="chSeg"><button id="chWa" type="button">WhatsApp</button><button id="chIg" type="button">Instagram</button><button id="chFb" type="button">Facebook</button><button id="chMail" type="button">Email</button><button id="chSms" type="button">SMS</button></div>
-        <div class="seg" id="langSeg"><button id="sEs" type="button">🇪🇸 Español</button><button id="sEn" type="button">🇬🇧 English</button></div>
-        <div id="sMailBox" hidden><input id="sMailTo" type="email" inputmode="email" placeholder="email@business.com" aria-label="Recipient email" autocapitalize="off" spellcheck="false"></div>
-        <label id="sFoundBox" hidden><input type="checkbox" id="sFound"> <span id="sFoundLbl">Mention what I found (Instagram, website)</span></label>
-        <textarea id="sMsg" aria-label="Message"></textarea>
-        <div id="sCount" hidden></div>
-        <p class="modeDay" id="sDay" hidden></p>
-        <p id="sTo"></p>
-        <button class="btn p sm" id="sGo" type="button">💬 Open WhatsApp with this message</button>
-        <button class="btn l sm" id="sTplBtn" type="button">✏️ Edit templates</button>
-        <p class="note">Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).</p>
-      </div>
       <h3>Your Web &amp; App</h3>
       <p>This is a draft of your Web &amp; App ✨ With an online presence, more customers find you, trust you and order from you on their phone.</p>
       <h3 id="hLang" style="margin-top:18px">Language</h3>
@@ -778,7 +789,24 @@ function waLink(t,ph){
 }
 function mailCc(to){var c=CONFIG.CC||'';return(c&&String(to||'').trim().toLowerCase()!==c.toLowerCase())?'&cc='+encodeURIComponent(c).replace(/%40/g,'@'):'';}
 function openExt(u){var a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.style.display='none';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},500);}
-function openWa(t,where){window.open(waLink(t),'_blank','noopener');}
+/* Opens WhatsApp straight away with the message ready, without asking anything:
+   computer -> WhatsApp Web (same tab every time, so it is not reloaded in a new tab for each business);
+   phone    -> the WhatsApp app through its own link (no "Continue to chat" page); if the app does not open, the web link is the fallback.
+   Without a phone number WhatsApp itself asks who to send it to, so nothing needs to be copied to the clipboard. */
+function waOpen(msg,ph){
+  var n=String(ph||'').replace(/\D/g,''),q=(n?'phone='+n+'&':'')+'text='+encodeURIComponent(msg);
+  if(isMobile()){
+    var gone=false,onv=function(){if(document.hidden)gone=true;};
+    document.addEventListener('visibilitychange',onv);
+    var a=document.createElement('a');a.href='whatsapp://send?'+q;a.style.display='none';document.body.appendChild(a);a.click();
+    setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},500);
+    setTimeout(function(){document.removeEventListener('visibilitychange',onv);if(!gone&&!document.hidden)window.open('https://api.whatsapp.com/send?'+q,'_blank','noopener');},1800);
+    return;
+  }
+  var w=window.open('https://web.whatsapp.com/send?'+q,'elx_whatsapp');
+  if(w){try{w.opener=null;}catch(e){}}else openExt('https://web.whatsapp.com/send?'+q);
+}
+function openWa(t,where){waOpen(t,CONFIG.WA);}
 
 var params=new URLSearchParams(location.search);
 if(params.get('outreach')==='1')store('elx_outreach','1');
@@ -1918,7 +1946,7 @@ $('btnClear').onclick=function(){
 var LSTAT=['new','sent','dnc'];
 var LLAB={new:'New',sent:'Proposal sent',dnc:'Do not contact'};
 var LORD={sent:3,new:5,dnc:7};
-Object.assign(ES,{'Send proposal':'Enviar propuesta','Proposal sent':'Propuesta enviada','Proposals sent today: {0}':'Propuestas enviadas hoy: {0}','🚀 One message with their own page ready to open.':'🚀 Un solo mensaje con su página lista para abrir.','Marked as "Proposal sent". You can change it in the lead tracker.':'Marcado como "Propuesta enviada". Puedes cambiarlo en el seguimiento.','Proposal sent again. The status stays as it is.':'Propuesta enviada de nuevo. El estado se queda como está.','Sends the proposal: opens WhatsApp to {0} with the link to their sample page and the example for their niche.':'Envía la propuesta: abre WhatsApp a {0} con el enlace a su página de muestra y el ejemplo de su sector.','Showing the first-contact message again (no demo link). Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de primer contacto (sin enlace a la demo). Pulsa el paso 2 para volver a la demo.','First-contact message sent again. The status stays as it is.':'Mensaje de primer contacto enviado de nuevo. El estado se queda como está.','First contact':'Primer contacto','Demo sent':'Demo enviada','Do not contact':'No contactar',
+Object.assign(ES,{'No phone listed: choose the chat in WhatsApp.':'Sin teléfono: elige el chat en WhatsApp.','💬 Send proposal WhatsApp':'💬 Enviar propuesta WhatsApp','📸 Send proposal Instagram':'📸 Enviar propuesta Instagram','👍 Send proposal Facebook':'👍 Enviar propuesta Facebook','✉️ Send proposal Email':'✉️ Enviar propuesta Email','📱 Send proposal SMS':'📱 Enviar propuesta SMS',' · The message is copied: paste it in the chat that opens.':' · El mensaje se copia: pégalo en el chat que se abre.','Send proposal':'Enviar propuesta','Proposal sent':'Propuesta enviada','Proposals sent today: {0}':'Propuestas enviadas hoy: {0}','🚀 One message with their own page ready to open.':'🚀 Un solo mensaje con su página lista para abrir.','Marked as "Proposal sent". You can change it in the lead tracker.':'Marcado como "Propuesta enviada". Puedes cambiarlo en el seguimiento.','Proposal sent again. The status stays as it is.':'Propuesta enviada de nuevo. El estado se queda como está.','Sends the proposal: opens WhatsApp to {0} with the link to their sample page and the example for their niche.':'Envía la propuesta: abre WhatsApp a {0} con el enlace a su página de muestra y el ejemplo de su sector.','Showing the first-contact message again (no demo link). Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de primer contacto (sin enlace a la demo). Pulsa el paso 2 para volver a la demo.','First-contact message sent again. The status stays as it is.':'Mensaje de primer contacto enviado de nuevo. El estado se queda como está.','First contact':'Primer contacto','Demo sent':'Demo enviada','Do not contact':'No contactar',
  '1 · First contact':'1 · Primer contacto','2 · Send demo':'2 · Enviar demo','🚫 Do not contact':'🚫 No contactar','↩ Allow contact again':'↩ Permitir contacto de nuevo',
  'Step 1: first contact. No demo link yet. The demo unlocks once you have sent it.':'Paso 1: primer contacto. Aún no incluye el enlace a la demo. La demo se desbloquea cuando lo hayas enviado.',
  'Higher risk for a first message: try Instagram or Facebook first.':'Más riesgo para un primer mensaje: prueba antes con Instagram o Facebook.',
@@ -2728,8 +2756,8 @@ function renderDetail(b){
       var md=sendModeOf(b,dView);if(!okToSend(b,md))return;
       var wk=waPick(b),n=wk?wk.d:'',msg=msgFor(b,'wa',sendLang,false,md);
       
-      if(!n){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(b,md);return;}
-      window.open(waLink(msg,n),'_blank','noopener');markSent(b,md);
+      if(!n)toast('No phone listed: choose the chat in WhatsApp.');
+      waOpen(msg,n);markSent(b,md);
     };
   }
   if(OUTREACH){
@@ -4173,7 +4201,7 @@ function addOptOut(t,lang){
 }
 function igHandleOf(b){var m=String((b&&b.ig)||(b&&/instagram\.com/i.test(b.social||'')&&b.social)||(b&&b.guess&&b.guess.ig)||'').match(/instagram\.com\/([\w.]+)/i);return m&&!/^(p|reel|reels|explore|stories|tv|accounts)$/i.test(m[1])?m[1]:'';}
 function splitMail(txt){var m=String(txt).match(/^\s*(?:Subject|Asunto)\s*:\s*(.*)\n+/i);return m?{subject:m[1].trim(),body:txt.slice(m[0].length)}:{subject:'',body:String(txt)};}
-var GO_LABEL={wa:'💬 Open WhatsApp with this message',ig:'📸 Copy message and open Instagram',fb:'💬 Copy message and open Facebook',mail:'✉️ Open email app',sms:'💬 Open SMS app'};
+var GO_LABEL={wa:'💬 Send proposal WhatsApp',ig:'📸 Send proposal Instagram',fb:'👍 Send proposal Facebook',mail:'✉️ Send proposal Email',sms:'📱 Send proposal SMS'};
 function refreshSend(force){
   var box=$('sendBox');
   if(!CANSEND||!pvB||pvB.id==='shared'){box.hidden=true;$('pSend').hidden=true;return;}
@@ -4195,7 +4223,7 @@ function refreshSend(force){
   $('sFoundBox').hidden=!foundLine(pvB,sendLang)||sendCh==='sms';$('sFound').checked=sendFound;
   $('sMsg').value=sendDrafts[sendCh]!=null?sendDrafts[sendCh]:buildChannelMsg(pvB,sendCh,sendLang,sendFound);
   $('sMsg').setAttribute('aria-label',T('Message'));
-  $('sGo').textContent=T(GO_LABEL[sendCh]);
+  $('sGo').textContent=T(GO_LABEL[sendCh]);$('sendBox').dataset.ch=sendCh;
   $('sMailBox').hidden=sendCh!=='mail';
   if(sendCh==='mail'&&!$('sMailTo').value&&(pvB.email||(pvB.guess&&pvB.guess.e)))$('sMailTo').value=pvB.email||pvB.guess.e;
   var bp=sendCh==='wa'?waPick(pvB):bestPhone(pvB),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m,to='';
@@ -4208,6 +4236,7 @@ function refreshSend(force){
   }else{
     to=T('Opens your email app with the subject and message filled in.');
   }
+  if(sendCh==='ig'||sendCh==='fb')to+=T(' · The message is copied: paste it in the chat that opens.');
   $('sTo').textContent=to;
   var ct=$('sCount');ct.hidden=sendCh!=='sms'&&sendCh!=='ig'&&sendCh!=='fb';
   if(!ct.hidden)updSendCount();
@@ -4238,9 +4267,8 @@ $('sGo').onclick=function(){
   
   var sent=function(){markSent(pvB,md);};
   if(sendCh==='wa'){
-    var wn=n;
-    if(!wn){copyText(msg);toast('No phone listed. Message copied: paste it in their WhatsApp chat.');markSent(pvB,md);return;}
-    window.open(waLink(msg,wn),'_blank','noopener');sent();return;
+    if(!n)toast('No phone listed: choose the chat in WhatsApp.');
+    waOpen(msg,n);sent();return;
   }
   if(sendCh==='ig'){
     var h=igHandleOf(pvB);copyText(msg);
