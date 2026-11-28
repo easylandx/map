@@ -649,8 +649,7 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
       <div id="catRow"><h3 id="catLab">Business type</h3><select id="bizCat" aria-labelledby="catLab" style="width:100%;padding:9px;border-radius:10px;font:inherit"></select></div>
       <div id="phRow"><h3 id="phLab">Cover photo</h3><select id="phSel" aria-labelledby="phLab" style="width:100%;padding:9px;border-radius:10px;font:inherit"></select></div>
       <div id="sendBox" hidden>
-        <h3>Send to this business</h3>
-        <div class="seg" id="modeSeg"><button id="sModeAsk" type="button">1 · First contact</button><button id="sModeDemo" type="button">2 · Send demo</button></div>
+        <h3>Send proposal</h3>
         <p class="modeNote" id="sModeNote"></p>
         <div class="modeActs"><button class="btn l sm" id="sNo" type="button">🚫 Do not contact</button></div>
         <div class="seg" id="chSeg"><button id="chWa" type="button">WhatsApp</button><button id="chIg" type="button">Instagram</button><button id="chFb" type="button">Facebook</button><button id="chMail" type="button">Email</button><button id="chSms" type="button">SMS</button></div>
@@ -743,7 +742,7 @@ var STATIC=[
 ['#pFrame','title','Concept preview'],
 ['.panel>h3:nth-of-type(1)',0,'Device'],['.panel>h3:nth-of-type(2)',0,'Colors'],['.panel>h3:nth-of-type(3)',0,'Your Web & App'],['#hLang',0,'Language'],
 ['#dMob',0,'📱 Phone'],['#dDesk',0,'🖥️ Desktop'],
-['#btnClear',0,'🗑 Clear all'],['#brandLbl',0,'Use brand (colours, logo, services)'],['#photosLbl',0,'Include photos in the proposal'],['#sFoundLbl',0,'Mention what I found (Instagram, website)'],['#sendBox h3',0,'Send to this business'],['#sMsg','aria-label','Message'],['#sGo',0,'💬 Open WhatsApp with this message'],['#sTplBtn',0,'✏️ Edit templates'],['#sMailTo','placeholder','email@business.com'],['#tplT',0,'Message templates'],['#tplHint',0,'Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.'],['label[for=tplCat]',0,'Category'],['#tplReset',0,'Reset'],['#tplSave',0,'Save'],['#tplClose',0,'Close'],
+['#btnClear',0,'🗑 Clear all'],['#brandLbl',0,'Use brand (colours, logo, services)'],['#photosLbl',0,'Include photos in the proposal'],['#sFoundLbl',0,'Mention what I found (Instagram, website)'],['#sendBox h3',0,'Send proposal'],['#sMsg','aria-label','Message'],['#sGo',0,'💬 Open WhatsApp with this message'],['#sTplBtn',0,'✏️ Edit templates'],['#sMailTo','placeholder','email@business.com'],['#tplT',0,'Message templates'],['#tplHint',0,'Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.'],['label[for=tplCat]',0,'Category'],['#tplReset',0,'Reset'],['#tplSave',0,'Save'],['#tplClose',0,'Close'],
 ['#sendBox .note',0,'Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).'],
 ['.panel>p',0,"This is a draft of your Web & App ✨ With an online presence, more customers find you, trust you and order from you on their phone."],
 ['#aBack',0,'← Back to preview'],['#arT',0,'Your site in 3D, in your shop'],['#arS',0,'Place the page on your counter'],
@@ -1916,10 +1915,10 @@ $('btnClear').onclick=function(){
 /* ================= LEAD TRACKER =================
    Remembers who you already contacted. Status (new / first contact / demo sent), notes and a follow-up date
    per business, saved in this browser (localStorage 'elx_leads'). CSV export doubles as a backup. */
-var LSTAT=['new','ask','sent','dnc'];
-var LLAB={new:'New',ask:'First contact',sent:'Demo sent',dnc:'Do not contact'};
-var LORD={ask:3,sent:4,new:5,dnc:7};
-Object.assign(ES,{'Showing the first-contact message again (no demo link). Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de primer contacto (sin enlace a la demo). Pulsa el paso 2 para volver a la demo.','First-contact message sent again. The status stays as it is.':'Mensaje de primer contacto enviado de nuevo. El estado se queda como está.','First contact':'Primer contacto','Demo sent':'Demo enviada','Do not contact':'No contactar',
+var LSTAT=['new','sent','dnc'];
+var LLAB={new:'New',sent:'Proposal sent',dnc:'Do not contact'};
+var LORD={sent:3,new:5,dnc:7};
+Object.assign(ES,{'Send proposal':'Enviar propuesta','Proposal sent':'Propuesta enviada','Proposals sent today: {0}':'Propuestas enviadas hoy: {0}','🚀 One message with their own page ready to open.':'🚀 Un solo mensaje con su página lista para abrir.','Marked as "Proposal sent". You can change it in the lead tracker.':'Marcado como "Propuesta enviada". Puedes cambiarlo en el seguimiento.','Proposal sent again. The status stays as it is.':'Propuesta enviada de nuevo. El estado se queda como está.','Sends the proposal: opens WhatsApp to {0} with the link to their sample page and the example for their niche.':'Envía la propuesta: abre WhatsApp a {0} con el enlace a su página de muestra y el ejemplo de su sector.','Showing the first-contact message again (no demo link). Press step 2 to go back to the demo.':'Mostrando de nuevo el mensaje de primer contacto (sin enlace a la demo). Pulsa el paso 2 para volver a la demo.','First-contact message sent again. The status stays as it is.':'Mensaje de primer contacto enviado de nuevo. El estado se queda como está.','First contact':'Primer contacto','Demo sent':'Demo enviada','Do not contact':'No contactar',
  '1 · First contact':'1 · Primer contacto','2 · Send demo':'2 · Enviar demo','🚫 Do not contact':'🚫 No contactar','↩ Allow contact again':'↩ Permitir contacto de nuevo',
  'Step 1: first contact. No demo link yet. The demo unlocks once you have sent it.':'Paso 1: primer contacto. Aún no incluye el enlace a la demo. La demo se desbloquea cuando lo hayas enviado.',
  'Higher risk for a first message: try Instagram or Facebook first.':'Más riesgo para un primer mensaje: prueba antes con Instagram o Facebook.',
@@ -1935,7 +1934,7 @@ Object.assign(ES,{'Showing the first-contact message again (no demo link). Press
  'You made first contact on {0}. The demo is unlocked.':'Hiciste el primer contacto el {0}. La demo está desbloqueada.',
  'Do not contact. Sending is blocked for this business.':'No contactar. El envío está bloqueado para este negocio.'});
 var LEADS={};try{LEADS=JSON.parse(store('elx_leads')||'{}')||{};}catch(e){LEADS={};}
-for(var _lk in LEADS){if(!LEADS[_lk])continue;var _s=LEADS[_lk].st;if(_s==='ok')LEADS[_lk].st='ask';else if(_s==='replied'||_s==='sold')LEADS[_lk].st='sent';}   // old statuses: "Permission given" = first contact, "Replied"/"Sold" = demo sent
+for(var _lk in LEADS){if(!LEADS[_lk])continue;var _s=LEADS[_lk].st;if(_s==='ok'||_s==='ask'||_s==='replied'||_s==='sold')LEADS[_lk].st='sent';}   // old statuses: "First contact" / "Permission given" / "Replied" / "Sold" now all count as "Proposal sent"
 var LIX=null,showLeads=false,leadFilter='all';
 (function(){var X={
  'Lead tracker':'Seguimiento de contactos','Lead status':'Estado','Status':'Estado','New':'Nuevo','Sent':'Enviado',
@@ -2058,7 +2057,7 @@ function clearLeads(rows){
 function renderLeadbar(){
   var el=$('leadbar');if(!el)return;
   var n=Object.keys(LEADS).length,due=0;Object.keys(LEADS).forEach(function(k){if(isDue(LEADS[k]))due++;});
-  var opts=[['all','All statuses'],['new','Not contacted yet'],['ask','First contact'],['sent','Demo sent'],['dnc','Do not contact'],['due','Follow-up due']];
+  var opts=[['all','All statuses'],['new','Not contacted yet'],['sent','Proposal sent'],['dnc','Do not contact'],['due','Follow-up due']];
   var h='<button type="button" class="lb'+(showLeads?' on':'')+'" id="btnLeads">'+(showLeads?'✕ '+esc(T('Close leads')):'📋 '+esc(T('Leads')))+' ('+n+')</button>';
   if(due)h+='<button type="button" class="lb due" id="btnDue">📅 '+esc(T('{0} due',due))+'</button>';
   h+='<select id="fLead" aria-label="'+esc(T('Filter by status'))+'">'+opts.map(function(o){return '<option value="'+o[0]+'"'+(leadFilter===o[0]?' selected':'')+'>'+esc(T(o[1]))+'</option>';}).join('')+'</select>';
@@ -2087,7 +2086,6 @@ function fitLeads(){
 function leadWarnText(l){
   if(!l||l.st==='new')return '';
   var d=fmtDate(l.at||l.upd);
-  if(l.st==='ask')return T('You made first contact on {0}. The demo is unlocked.',d);
   if(l.st==='dnc')return T('Do not contact. Sending is blocked for this business.');
   if(l.st==='sent')return T('You messaged this business on {0}. Only message again as a planned follow-up.',d);
   return '';
@@ -2106,7 +2104,7 @@ function refreshLeadBox(b){
   var box=$('leadBox');if(!box)return;
   var l=leadOf(b),st=l?l.st:'new';
   [].forEach.call(box.querySelectorAll('.lseg button'),function(x){x.classList.toggle('on',x.dataset.s===st);});
-  var w=$('leadWarn'),t=leadWarnText(l);w.hidden=!t;w.textContent=t;w.classList.toggle('ok',st==='ask');w.classList.toggle('bad',st==='dnc');
+  var w=$('leadWarn'),t=leadWarnText(l);w.hidden=!t;w.textContent=t;w.classList.toggle('ok',false);w.classList.toggle('bad',st==='dnc');
   $('leadFuBox').classList.toggle('due',isDue(l));
   $('leadUpd').textContent=l&&l.upd?T('Updated {0}',fmtDate(l.upd)):'';
 }
@@ -2121,9 +2119,9 @@ function wireLeadBox(b){
   ta.onchange=function(){clearTimeout(tm);setLead(b,{notes:ta.value});};
 }
 // Before sending: warn if this business was already contacted. After sending: mark it as "sent".
-function canDemo(b){var x=stOf(b);return x==='ask'||x==='sent';}
-// One rule for both panels: 'dnc' blocks sending; otherwise the person's explicit choice wins ('ask' = first contact without link, 'demo' = message with the demo link); with no choice, demo once first contact is done, else first contact.
-function sendModeOf(b,view){if(isDnc(b))return 'dnc';if(view==='demo')return 'demo';if(view==='ask')return 'ask';return canDemo(b)?'demo':'ask';}
+function canDemo(b){return true;}
+// One rule for both panels: 'dnc' blocks sending; everything else is the proposal (one message with their preview link).
+function sendModeOf(b,view){return isDnc(b)?'dnc':'demo';}
 function isDnc(b){return stOf(b)==='dnc';}
 var dsRefresh=null,dView=null,dViewFor=null;   // dView: first-contact / demo choice in the detail panel (same idea as sendView in the preview panel)
 function askCount(){try{var o=JSON.parse(store('elx_askday')||'{}');return o.d===todayStr()?(o.n||0):0;}catch(e){return 0;}}
@@ -2134,17 +2132,17 @@ function okToSend(b,mode){
   if(st==='dnc'){toast('Do not contact: sending is blocked for this business.');return false;}
   if(st==='new')return true;
   mode=mode||sendModeOf(b,null);
-  if(st==='ask'&&mode==='demo')return true;   // demo after first contact: no warning
   return confirm(T('You already contacted {0} on {1} (status: {2}). Send another message?',b.name,fmtDate(l.at||l.upd),T(LLAB[st])));
 }
-// After sending: first message (no link) -> "First contact"; demo message -> "Demo sent". Shows its own toast.
+// After sending: the lead becomes "Proposal sent" (a repeated send keeps its status). Counts today's proposals to protect the sender's accounts.
 function markSent(b,mode){
   if(!b||b.id==='shared')return;
   var st=stOf(b);mode=mode||sendModeOf(b,null);
   if(mode==='dnc')return false;
-  if(mode==='ask'&&st!=='new'){askBump();toast('First-contact message sent again. The status stays as it is.');}   // first-contact message repeated: status stays
-  else if(mode==='ask'){setLead(b,{st:'ask'});askBump();toast('Marked as "First contact". The demo is unlocked.');dView=null;}
-  else if(st==='new'||st==='ask'){setLead(b,{st:'sent'});toast('Marked as "Demo sent". You can change it in the lead tracker.');dView=null;}   // demo sent (also straight away, without a first contact)
+  askBump();
+  if(st==='new'){setLead(b,{st:'sent'});toast('Marked as \"Proposal sent\". You can change it in the lead tracker.');}
+  else toast('Proposal sent again. The status stays as it is.');
+  dView=null;
   if($('leadBox')&&cur)refreshLeadBox(cur);
   if(dsRefresh)dsRefresh();
   if(pvB&&pvB.id===b.id&&!$('mPrev').hidden)refreshSend();
@@ -2672,7 +2670,7 @@ function renderDetail(b){
   var h=nav+
    '<div class="dhead"><span class="ico">'+c.emoji+'</span><div><h2>'+esc(b.name)+'</h2><p>'+esc(lbl(c))+'</p></div></div>'+stat+
    '<div class="facts">'+facts+'</div>'+(b.gsrc?'<p class="note">'+T('Details completed with Google Maps')+'</p>':'')+
-   (CANSEND?'<div class="seg" id="dModeSeg" role="group"><button type="button" id="dModeAsk">'+T('1 · First contact')+'</button><button type="button" id="dModeDemo">'+T('2 · Send demo')+'</button></div><div class="row"><div style="flex:1;display:flex;gap:3px;min-width:0;margin-bottom:8px"><button class="btn p" id="dSend" style="flex:1;margin:0;border-radius:14px 5px 5px 14px;white-space:nowrap">'+T('💬 WhatsApp')+'</button><button class="btn t" id="dSendMail" style="flex:1;margin:0;border-radius:5px 14px 14px 5px;white-space:nowrap">'+T('✉️ Email')+'</button></div><button class="btn l" id="dLang" style="width:64px;flex:none;margin-bottom:8px" title="'+T('Message language')+'"></button></div>'+socRowHTML(b)+'<p class="note" id="dSendTo"></p>':'')+
+   (CANSEND?'<div class="row"><div style="flex:1;display:flex;gap:3px;min-width:0;margin-bottom:8px"><button class="btn p" id="dSend" style="flex:1;margin:0;border-radius:14px 5px 5px 14px;white-space:nowrap">'+T('💬 WhatsApp')+'</button><button class="btn t" id="dSendMail" style="flex:1;margin:0;border-radius:5px 14px 14px 5px;white-space:nowrap">'+T('✉️ Email')+'</button></div><button class="btn l" id="dLang" style="width:64px;flex:none;margin-bottom:8px" title="'+T('Message language')+'"></button></div>'+socRowHTML(b)+'<p class="note" id="dSendTo"></p>':'')+
    '<button class="btn p" id="dPrev">'+T('✨ Preview a page for this business')+'</button>'+
    '<button class="btn t" id="dMine">'+T('Request a proposal')+'</button>'+
    '<div class="ex"><span>'+esc(T('See what we built for {0}',lbl(c).toLowerCase()))+'</span><button id="dEx">'+T('Open ↗')+'</button></div>';
@@ -2693,23 +2691,18 @@ function renderDetail(b){
     if(dViewFor!==b.id){dView=null;dViewFor=b.id;}
     enrichBrand(b);   // read their page / Instagram in the background so the link carries their real brand
     var refreshDSend=function(){
-      if(!$('dModeAsk')||!$('dSendTo'))return;
+      if(!$('dSendTo'))return;
       var bp=waPick(b),n=bp?bp.d:'',ph=bp?bp.raw:'',land=!!bp&&!bp.m;
       $('dLang').textContent=sendLang.toUpperCase();
-      $('dSendTo').textContent=n?(T('Opens WhatsApp to {0} with the link to their sample page and the example for their niche.',ph)+(land?T(' This looks like a landline, so WhatsApp may not reach it.'):'')):T('No phone listed for this business: the message will be copied so you can paste it in their chat.');
+      $('dSendTo').textContent=n?(T('Sends the proposal: opens WhatsApp to {0} with the link to their sample page and the example for their niche.',ph)+(land?T(' This looks like a landline, so WhatsApp may not reach it.'):'')):T('No phone listed for this business: the message will be copied so you can paste it in their chat.');
       var emN=emailOf(b);$('dSendTo').textContent+=' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
-      var md=sendModeOf(b,dView),dnc=md==='dnc',ask=md==='ask';
-      $('dModeAsk').classList.toggle('on',ask);$('dModeAsk').setAttribute('aria-pressed',ask);$('dModeDemo').classList.toggle('on',md==='demo');$('dModeDemo').setAttribute('aria-pressed',md==='demo');
-      $('dModeAsk').disabled=$('dModeDemo').disabled=dnc;
+      var md=sendModeOf(b,dView),dnc=md==='dnc';
       if(dnc)$('dSendTo').textContent=T('Do not contact: sending is blocked for this business.');
-      else if(ask)$('dSendTo').textContent=T(canDemo(b)?'Showing the first-contact message again (no demo link). Press step 2 to go back to the demo.':'Step 1: these buttons send a short first message with no link. The demo unlocks once you have sent it.')+' '+(n?T('To: {0}',ph):T('No phone number listed for this business. The message will be copied so you can paste it in their chat.'))+' '+(emN?T('Email: {0}',emN):T('No email known: the email app opens without a recipient.'));
       ['dSend','dSendMail','dSendIg','dSendFb'].forEach(function(id){var e=$(id);if(e)e.disabled=dnc;});
     };
     refreshDSend();dsRefresh=refreshDSend;
     enrichBrand(b).then(function(){if(cur&&cur.id===b.id&&$('dSendTo'))refreshDSend();});
     $('dLang').onclick=function(){sendLang=sendLang==='es'?'en':'es';store('elx_sendlang',sendLang);refreshDSend();};
-    $('dModeAsk').onclick=function(){if(isDnc(b))return;dView='ask';refreshDSend();};
-    $('dModeDemo').onclick=function(){if(isDnc(b))return;dView='demo';refreshDSend();};
     $('dSendMail').onclick=function(){
       var md=sendModeOf(b,dView);if(!okToSend(b,md))return;
       var to=emailOf(b),m=splitMail(msgFor(b,'mail',sendLang,false,md));
@@ -4170,21 +4163,7 @@ function buildChannelMsg(b,ch,lang,found){
   return msg;
 }
 function buildMsg(b,lang){return buildChannelMsg(b,'wa',lang);}
-// ---- Step 1 messages: first contact, no demo link, one simple question
-var TPL_ASK={
- wa:{
-  es:'Hola 👋 He preparado una idea de Web & App para {name}, sin compromiso. ¿Quieres que te la envíe por aquí?\n\nSi prefieres no recibir más mensajes, dímelo y no volveré a contactarte.\n@EasyLandX',
-  en:'Hi! This is EasyLandX 👋 I\'m writing to offer you a Web & App concept for {name}, no commitment. Shall I send it here?\n\nIf you would rather not hear from me, just tell me and I will not contact you again.\n@EasyLandX'},
- mail:{
-  es:'Asunto: Una idea de Web & App para {name}\n\nHola,\n\nHe preparado una idea de Web & App para {name}, sin compromiso. ¿Quieres que te la envíe?\n\nSi prefieres no recibir más mensajes, escribe a {mail} y no volveré a contactarte.\n\n@EasyLandX',
-  en:'Subject: Web & App concept for {name}\n\nHi,\n\nThis is EasyLandX. I made a visual concept of the Web & App for {name}, no commitment. Shall I send it?\n\nTo stop receiving messages, write to {mail} and I will not contact you again.\n\n@EasyLandX'},
- sms:{
-  es:'EasyLandX: tengo una idea de Web & App para {name}, sin compromiso. ¿Te la envío? Si no quieres más mensajes, no volveré a contactarte. Baja: {mail}',
-  en:'This is EasyLandX. Web & App concept for {name}, no commitment. Shall I send it? If not, I will not contact you again. Opt out: {mail}'}
-};
-TPL_ASK.ig=TPL_ASK.wa;TPL_ASK.fb=TPL_ASK.wa;
-function buildAskMsg(b,ch,lang){return fillTpl((TPL_ASK[ch]||TPL_ASK.wa)[lang]||TPL_ASK.wa.en,b,lang,'');}
-function msgFor(b,ch,lang,found,mode){mode=mode||sendModeOf(b,null);return mode==='demo'?buildChannelMsg(b,ch,lang,found):buildAskMsg(b,ch,lang);}
+function msgFor(b,ch,lang,found,mode){mode=mode||sendModeOf(b,null);return buildChannelMsg(b,ch,lang,found);}
 // Demo messages also carry the sender and an easy way to say no
 function addOptOut(t,lang){
   var o=lang==='es'?'Si prefieres no recibir más mensajes, dímelo o escribe a '+CONFIG.MAIL+' y no volveré a contactarte.':"If you would rather not hear from us again, just tell me or write to "+CONFIG.MAIL+" and I will not contact you again.";
@@ -4200,25 +4179,21 @@ function refreshSend(force){
   if(!CANSEND||!pvB||pvB.id==='shared'){box.hidden=true;$('pSend').hidden=true;return;}
   $('pSend').hidden=false;
   var hasIg=!!igHandleOf(pvB),hasFb=!!fbOf(pvB);
-  var dnc0=isDnc(pvB),dm=canDemo(pvB),md=dnc0?'dnc':(sendView==='demo'?'demo':(!dm||sendView==='ask'?'ask':'demo'));
+  var dnc0=isDnc(pvB),md=dnc0?'dnc':'demo';
   $('pSendIg').disabled=!hasIg||dnc0;$('pSendFb').disabled=!hasFb||dnc0;$('pSendWa').disabled=dnc0;$('pSendMail').disabled=dnc0;$('sGo').disabled=dnc0;
   box.hidden=false;
   if(md!==sendModeLast){sendDrafts={};sendEdited=false;sendModeLast=md;}
   if(force){sendDrafts={};sendEdited=false;}
-  $('sModeAsk').classList.toggle('on',md==='ask');$('sModeAsk').setAttribute('aria-pressed',md==='ask');$('sModeDemo').classList.toggle('on',md==='demo');$('sModeDemo').classList.remove('lock');
-  $('sModeAsk').textContent=T('1 · First contact');$('sModeDemo').textContent=T('2 · Send demo');
   var mn=$('sModeNote'),tx='';
   if(md==='dnc')tx=T('Do not contact: this business asked not to be contacted. Sending is blocked.');
-  else if(md==='ask'&&dm)tx=T('Showing the first-contact message again (no demo link). Press step 2 to go back to the demo.');
-  else if(md==='ask')tx=T('👋 A short hello to open the conversation.');
-  else tx=T(dm?'Step 2: first contact is done, so this message includes the demo link.':'🚀 Send the demo straight away: they see their page right away.');
+  else tx=T('🚀 One message with their own page ready to open.');
   mn.textContent=tx;mn.className='modeNote '+(md==='dnc'?'bad':'ok');
   $('sNo').textContent=T(dnc0?'↩ Allow contact again':'🚫 Do not contact');
-  var sd=$('sDay');sd.hidden=md!=='ask';if(!sd.hidden){var ac=askCount();sd.textContent=T('First contacts today: {0}',ac)+(ac>=15?' · '+T('That is a lot for one day. Slow down to protect your accounts.'):'');}
+  var sd=$('sDay');sd.hidden=md==='dnc'||askCount()<1;if(!sd.hidden){var ac=askCount();sd.textContent=T('Proposals sent today: {0}',ac)+(ac>=15?' · '+T('That is a lot for one day. Slow down to protect your accounts.'):'');}
   $('sEs').classList.toggle('on',sendLang==='es');$('sEn').classList.toggle('on',sendLang==='en');
   CHANNELS.forEach(function(c){$('ch'+({wa:'Wa',ig:'Ig',fb:'Fb',mail:'Mail',sms:'Sms'}[c])).classList.toggle('on',sendCh===c);});
   $('sFoundBox').hidden=!foundLine(pvB,sendLang)||sendCh==='sms';$('sFound').checked=sendFound;
-  $('sMsg').value=sendDrafts[sendCh]!=null?sendDrafts[sendCh]:(md==='ask'?buildAskMsg(pvB,sendCh,sendLang):buildChannelMsg(pvB,sendCh,sendLang,sendFound));
+  $('sMsg').value=sendDrafts[sendCh]!=null?sendDrafts[sendCh]:buildChannelMsg(pvB,sendCh,sendLang,sendFound);
   $('sMsg').setAttribute('aria-label',T('Message'));
   $('sGo').textContent=T(GO_LABEL[sendCh]);
   $('sMailBox').hidden=sendCh!=='mail';
@@ -4248,8 +4223,6 @@ function setSendCh(c){
 }
 $('chWa').onclick=function(){setSendCh('wa');};$('chIg').onclick=function(){setSendCh('ig');};$('chFb').onclick=function(){setSendCh('fb');};$('chMail').onclick=function(){setSendCh('mail');};$('chSms').onclick=function(){setSendCh('sms');};
 $('sFound').onchange=function(){sendFound=this.checked;sendDrafts={};sendEdited=false;refreshSend();};
-$('sModeDemo').onclick=function(){if(!pvB||isDnc(pvB))return;sendView='demo';refreshSend(true);};
-$('sModeAsk').onclick=function(){if(!pvB||isDnc(pvB))return;sendView='ask';refreshSend(true);};
 $('sNo').onclick=function(){if(!pvB)return;var was=isDnc(pvB);setLead(pvB,{st:was?'new':'dnc'});if($('leadBox')&&cur)refreshLeadBox(cur);if(dsRefresh)dsRefresh();refreshSend(true);if(!was)toast('Marked as "Do not contact". Sending is blocked.');};
 $('sEs').onclick=function(){sendLang='es';store('elx_sendlang','es');refreshSend(true);};
 $('sEn').onclick=function(){sendLang='en';store('elx_sendlang','en');refreshSend(true);};
@@ -4259,7 +4232,7 @@ $('pSendIg').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='ig')s
 $('pSendFb').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='fb')setSendCh('fb');$('sGo').click();};
 $('pSendMail').onclick=function(){if($('sendBox').hidden)return;if(sendCh!=='mail')setSendCh('mail');$('sGo').click();};
 $('sGo').onclick=function(){
-  var md=pvB?sendModeOf(pvB,sendView):'ask';
+  var md=pvB?sendModeOf(pvB,sendView):'demo';
   if(pvB&&!okToSend(pvB,md))return;
   var msg=$('sMsg').value,bp=sendCh==='wa'?waPick(pvB):bestPhone(pvB),n=bp?bp.d:'';
   
