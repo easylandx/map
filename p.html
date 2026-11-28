@@ -1159,7 +1159,7 @@ function exampleUrlFor(b){
 function openViewer(url,title){$('vTitle').textContent=title;$('vTab').href=url;$('vFrame').src=url;$('viewer').hidden=false;}
 function closeViewer(){$('viewer').hidden=true;$('vFrame').src='about:blank';}
 $('vBack').onclick=closeViewer;
-$('pEx').onclick=function(){if(!pvB)return;var c=catOf(pvB);openViewer(exampleUrlFor(pvB),T(c.exTitle));};
+$('pEx').onclick=function(){if(!pvB)return;openExt(exampleUrlFor(pvB));};
 $('dMob').onclick=function(){$('device').classList.remove('desk');$('dMob').classList.add('on');$('dDesk').classList.remove('on');};
 $('dDesk').onclick=function(){$('device').classList.add('desk');$('dDesk').classList.add('on');$('dMob').classList.remove('on');};
 $('pAR').onclick=openAR;
