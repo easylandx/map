@@ -3096,9 +3096,10 @@ Object.assign(ELX_CATX,{nails:'Salón de uñas y manicura',lashes:'Cejas, pesta�
 var ELX_PHN={fuji:["Foto Genérica","Generic photo"],gprep:["Preparación al aire libre", "Preparedness"],gcalma:["Sala de bienestar", "Wellbeing room"],gvet:["Veterinaria", "Veterinary"],gbanda:["Músicos y bandas", "Musicians and bands"],gcultura:["Arte en la calle", "Street art"],gtecnico:["Técnico a domicilio", "Home technician"],gvehiculo:["Vehículos", "Vehicles"],gasesoria:["Asesoría", "Consulting"],ghuerto:["Huerto", "Garden harvest"],belleza:['Belleza','Beauty'],hosteleria:['Hostelería','Food and drink'],fitness:['Fitness','Fitness'],profesionales:['Despacho','Office'],bienestar:['Bienestar','Wellbeing'],mascotas:['Mascotas','Pets'],panaderia:['Panadería y dulces','Bakery'],eventos:['Eventos','Events'],creacion:['Artesanía','Crafts'],educacion:['Educación','Education'],hogar:['Hogar y jardín','Home and garden'],auto:['Automoción','Automotive'],comercio:['Comercio local','Local shop'],turismo:['Turismo rural','Rural stay'],servicios:['Reparación electrónica','Electronics repair'],negocio:['Negocio local','Local business'],nails:['Uñas y manicura','Nails'],health:['Consulta médica','Medical practice'],camping:['Camping y glamping','Camping and glamping'],escape:['Escape room','Escape room'],music:['Escuela de música','Music school'],yoga:['Yoga','Yoga'],wellness:['Masajes y bienestar','Massage and wellness'],dance:['Escuela de baile','Dance school'],tattoo:['Estudio de tatuajes','Tattoo studio'],physio:['Fisioterapia','Physiotherapy'],nutrition:['Nutrición','Nutrition'],art:['Taller de arte','Art studio'],trades:['Reformas y obras','Renovation and building'],laundry:['Lavandería','Laundry'],electrician:['Electricistas','Electricians'],florist:['Floristería','Florist'],jewelry:['Joyería','Jewellery'],bike:['Taller de bicicletas','Bike shop'],pilates:['Pilates','Pilates'],outdoor:['Aire libre y aventura','Outdoor and adventure'],choc:['Chocolatería','Chocolate shop'],garden:['Jardín y plantas','Garden and plants'],dentist:['Clínica dental','Dental clinic'],cheese:['Quesería','Cheese shop'],photo:['Fotógrafo','Photographer'],beauty:['Belleza y cuidado de la piel','Beauty and skincare'],podiatry:['Podología','Podiatry'],toys:['Juguetería','Toy shop'],optician:['Óptica','Optician'],locksmith:['Cerrajería','Locksmith'],photobooth:['Fotomatón y eventos','Photo booth'],plumber:['Fontaneros','Plumbers'],makeup:['Maquillaje','Makeup artist'],lashes:['Pestañas y cejas','Lashes and brows'],coworking:['Coworking','Coworking'],driving:['Autoescuela','Driving school'],zerowaste:['Zero-waste y granel','Zero-waste shop'],tailor:['Sastrería y arreglos','Tailor'],luthier:['Luthier','Luthier']};
 /* a sample photo is used only where it shows that kind of business; the rest get the illustrated design */
 var ELX_AUTO={hair:'belleza',restaurant:'hosteleria',cafe:'hosteleria',bakery:'panaderia',pastry:'panaderia',fitness:'fitness',lawyer:'profesionales',finance:'profesionales',therapy:'bienestar',pets:'mascotas',party:'eventos',pottery:'creacion',language:'educacion',realestate:'hogar',interior:'hogar',carrepair:'auto',boutique:'comercio',gift:'comercio',stay:'turismo',herbal:'negocio',generic:'negocio',nails:'nails',health:'health',camping:'camping',escape:'escape',music:'music',yoga:'yoga',wellness:'wellness',dance:'dance',tattoo:'tattoo',physio:'physio',nutrition:'nutrition',art:'art',trades:'trades',laundry:'laundry',electrician:'electrician',florist:'florist',jewelry:'jewelry',bike:'bike',pilates:'pilates',outdoor:'outdoor',choc:'choc',garden:'garden',dentist:'dentist',cheese:'cheese',photo:'photo',beauty:'beauty',podiatry:'podiatry',toys:'toys',optician:'optician',locksmith:'locksmith',photobooth:'photobooth',plumber:'plumber',makeup:'makeup',lashes:'lashes',coworking:'coworking',driving:'driving',zerowaste:'zerowaste',tailor:'tailor',luthier:'luthier'};
-var ELX_LAYOUT={revista:'hair beauty tattoo pottery art jewelry photo pets florist nails lashes makeup mural',carta:'restaurant cafe bakery pastry choc cheese',horario:'fitness yoga pilates dance music language driving meditation sound firstaid foodstore selfdefense',consulta:'lawyer finance realestate therapy wellness health carrepair trades locksmith tailor laundry interior garden bike nutrition wellcoach tarot holistic hypnosis reiki physio podiatry dentist vet plumber electrician hvac windows cleaning moving detailing linkedin leadership organizer emergency prepper',escaparate:'boutique gift books toys herbal generic optician luthier zerowaste bugout water solar',escapada:'stay outdoor party escape coworking photobooth band magic ski bees horse camping offgrid homestead permaculture'};
+var ELX_LAYOUT={general:'generic',revista:'hair beauty tattoo pottery art jewelry photo pets florist nails lashes makeup mural',carta:'restaurant cafe bakery pastry choc cheese',horario:'fitness yoga pilates dance music language driving meditation sound firstaid foodstore selfdefense',consulta:'lawyer finance realestate therapy wellness health carrepair trades locksmith tailor laundry interior garden bike nutrition wellcoach tarot holistic hypnosis reiki physio podiatry dentist vet plumber electrician hvac windows cleaning moving detailing linkedin leadership organizer emergency prepper',escaparate:'boutique gift books toys herbal generic optician luthier zerowaste bugout water solar',escapada:'stay outdoor party escape coworking photobooth band magic ski bees horse camping offgrid homestead permaculture'};
 /* palette: background, card, text, accent, text on accent, soft band */
 var ELX_PAL=[
+ ['generic',['#f5f6f7','#ffffff','#1d2733','#0f766e','#ffffff','#e1ebea']],
  ['hair',['#f3f4ee','#ffffff','#1f2a22','#4f6b4a','#ffffff','#dfe6d5']],
  ['beauty nails lashes makeup',['#fbf3f1','#ffffff','#3b1f2b','#9d3d62','#ffffff','#f3dcdf']],
  ['tattoo',['#141211','#221e1c','#f4ece2','#d9a15b','#1b130a','#2b2522']],
@@ -3118,12 +3119,91 @@ var ELX_PAL=[
  ['carrepair trades locksmith tailor laundry bike plumber electrician hvac windows cleaning moving detailing',['#eef0f2','#ffffff','#1c242c','#c0362c','#ffffff','#dde1e6']],
  ['boutique gift toys',['#faf5ef','#ffffff','#33271f','#b5543a','#ffffff','#efe2d3']],
  ['books coworking',['#f6f3ea','#ffffff','#23271f','#7a5c12','#ffffff','#ebe4cc']],
- ['herbal generic emergency prepper bugout water solar firstaid foodstore selfdefense',['#f2f6f9','#ffffff','#182c3c','#22638f','#ffffff','#dde9f2']],
+ ['herbal emergency prepper bugout water solar firstaid foodstore selfdefense',['#f2f6f9','#ffffff','#182c3c','#22638f','#ffffff','#dde9f2']],
  ['stay outdoor ski bees horse camping offgrid homestead permaculture',['#f3efe6','#fffdf8','#25301f','#566b2f','#ffffff','#e3ddc9']],
  ['party escape photobooth band magic',['#13213a','#1d2e4d','#f4f7ff','#ff7d6b','#240600','#283c62']]
 ];
+/* hero title for every category (Revista and Carta keep the business name as title). Spanish | English */
+var ELX_HEAD={
+garden:['Un jardín que da gusto vivir','A garden worth living in'],
+fitness:['Entrena a tu ritmo','Train at your pace'],
+yoga:['Respira, estira, vuelve a ti','Breathe, stretch, come back to you'],
+pilates:['Fuerza y equilibrio desde el centro','Strength and balance from your core'],
+dance:['Ven a bailar','Come and dance'],
+music:['Haz sonar tu música','Make your music'],
+therapy:['Un espacio para ti','A space just for you'],
+wellness:['Dedícate un rato','Take a moment for yourself'],
+health:['Atención cercana, cuando la necesitas','Caring attention, when you need it'],
+lawyer:['Tu caso, explicado con claridad','Your case, clearly explained'],
+finance:['Tus números, en orden','Your numbers, in order'],
+realestate:['Tu próxima casa empieza aquí','Your next home starts here'],
+stay:['Tu escapada empieza aquí','Your getaway starts here'],
+outdoor:['Tu próxima aventura te espera','Your next adventure awaits'],
+party:['Celébralo a lo grande','Celebrate in style'],
+carrepair:['Tu coche, a punto','Your car, ready to go'],
+bike:['Pedalea sin preocupaciones','Ride without a worry'],
+driving:['Tu carné, paso a paso','Your licence, step by step'],
+boutique:['Looks con personalidad','Looks with personality'],
+gift:['El detalle perfecto, a tu medida','The perfect gift, made for them'],
+local:['Tu tienda de siempre, a un mensaje','Your local shop, one message away'],
+books:['Tu próxima lectura está aquí','Your next read is here'],
+toys:['Juegos para toda la familia','Play for the whole family'],
+interior:['Tu casa, a tu manera','Your home, your way'],
+trades:['Reformas sin sustos','Renovations without the stress'],
+locksmith:['Abrimos tu puerta, rápido','Back through your door, fast'],
+tailor:['A tu medida, hasta el último punto','Tailored to you, down to the last stitch'],
+laundry:['Ropa limpia, tiempo para ti','Clean clothes, more time for you'],
+language:['Habla con confianza','Speak with confidence'],
+coworking:['Tu sitio para trabajar','Your place to work'],
+herbal:['Naturaleza para cuidarte cada día','Nature to look after you every day'],
+escape:['¿Jugamos?','Ready to play?'],
+nutrition:['Come bien, sin complicarte','Eat well, without the fuss'],
+wellcoach:['Pequeños hábitos, grandes cambios','Small habits, big changes'],
+tarot:['Las estrellas tienen algo que decirte','The stars have something to tell you'],
+holistic:['Cuerpo y mente, en equilibrio','Body and mind, in balance'],
+meditation:['Haz una pausa y respira','Pause and breathe'],
+hypnosis:['Cambia lo que te frena','Change what holds you back'],
+sound:['Deja que el sonido te relaje','Let sound slow you down'],
+reiki:['Energía en calma, bienestar en ti','Calm energy, wellbeing within'],
+physio:['Muévete sin dolor','Move without pain'],
+podiatry:['Pies sanos, pasos seguros','Healthy feet, confident steps'],
+dentist:['Tu sonrisa, en buenas manos','Your smile, in good hands'],
+optician:['Ve y oye mejor','See and hear better'],
+vet:['Cuidamos de quien te quiere','Caring for the ones who love you'],
+photobooth:['Recuerdos que se quedan','Memories that last'],
+band:['Música en directo para tu evento','Live music for your event'],
+magic:['Prepárate para quedarte boquiabierto','Prepare to be amazed'],
+luthier:['Instrumentos con alma','Instruments with soul'],
+zerowaste:['Compra bien, tira menos','Buy better, waste less'],
+plumber:['Sin fugas, sin esperas','No leaks, no waiting'],
+electrician:['La luz vuelve enseguida','Lights back on, fast'],
+hvac:['Confort en cada estación','Comfort in every season'],
+windows:['Ventanas que cuidan tu casa','Windows that look after your home'],
+cleaning:['Todo limpio, sin que muevas un dedo','Spotless, without lifting a finger'],
+moving:['Tu mudanza, sin cargas','Your move, without the heavy lifting'],
+detailing:['Tu coche como el primer día','Your car, like new again'],
+ski:['Tu mejor día en la nieve','Your best day on the snow'],
+bees:['Aprende el oficio de las abejas','Learn the craft of beekeeping'],
+horse:['Caballos que sanan, cuidados que cuentan','Horses that heal, care that counts'],
+camping:['Duerme bajo las estrellas','Sleep under the stars'],
+linkedin:['Tu perfil, trabajando para ti','Your profile, working for you'],
+leadership:['Lidera con claridad','Lead with clarity'],
+organizer:['Menos desorden, más calma','Less clutter, more calm'],
+emergency:['Prepárate antes de que haga falta','Be ready before you need to be'],
+prepper:['Tranquilidad para lo imprevisto','Peace of mind for the unexpected'],
+bugout:['La mochila lista para salir','Your bag, packed and ready'],
+water:['Agua segura, estés donde estés','Safe water, wherever you are'],
+solar:['Tu propia energía, sin depender de nadie','Your own energy, on your own terms'],
+firstaid:['Sabe qué hacer cuando importa','Know what to do when it matters'],
+foodstore:['Despensa a prueba de todo','A pantry ready for anything'],
+selfdefense:['Seguridad que se aprende','Safety you can learn'],
+offgrid:['Vive a tu ritmo, fuera de la red','Live on your terms, off the grid'],
+homestead:['Vuelve a la tierra','Back to the land'],
+permaculture:['Cultiva un jardín que se cuida solo','Grow a garden that looks after itself']
+};
 /* sample services (never with prices): Spanish | English */
 var ELX_SV={
+neutral:['Información general;Presupuesto;Pedir cita;Otra consulta','General information;Quote;Book a visit;Other enquiry'],
 nails:['Manicura clásica;Esmaltado semipermanente;Uñas de gel;Pedicura','Classic manicure;Semi-permanent polish;Gel nails;Pedicure'],
 lashes:['Lifting de pestañas;Diseño de cejas;Microblading;Micropigmentación','Lash lift;Brow design;Microblading;Permanent makeup'],
 makeup:['Maquillaje de novia;Maquillaje de evento;Clase de automaquillaje;Sesión de fotos','Bridal makeup;Event makeup;Self-makeup class;Photo shoot makeup'],
@@ -3302,7 +3382,7 @@ function elxRun(C){
 }
 function pageHTML(b,t){
   var es=LANG==='es';function L(a,c){return es?a:c;}
-  var cat=catOf(b),id=ELX_SV[cat.id]?cat.id:'generic',lay=elxLayout(cat.id),br=brandOf(b)||{},photos=br.i||[];
+  var cat=catOf(b),id=cat.id==='generic'?'neutral':ELX_SV[cat.id]?cat.id:'generic',lay=elxLayout(cat.id),br=brandOf(b)||{},photos=br.i||[];
   var P=elxPal(cat.id,t),bg=P[0],card=P[1],ink=P[2],acc=P[3],on=P[4],soft=P[5];
   var realSv=(br.s||[]).filter(function(x){return !JUNK_SVC.test(String(x).trim());});
   var sv=realSv.length>=2?realSv.slice(0,6):ELX_SV[id][es?0:1].split(';'),svEx=realSv.length<2;
@@ -3311,11 +3391,12 @@ function pageHTML(b,t){
   var em=emailOf(b),fb=fbOf(b),map=gMapsUrl(b),place=placeOf(b.addr),inPl=place?L(' en ',' in ')+place:'';
   var picked=b.ph==='none'||Object.prototype.hasOwnProperty.call(ELX_PH,b.ph||''),real=photos[0]&&!picked?px(photos[0],1100):'',pk=real?'':elxPhotoKey(b),src=real||(pk?ELX_PH[pk]:(b.ph==='none'?'':ELX_PH.fuji));
   var logo=br.logo?'<img class="lg" alt="" src="'+esc(px(br.logo,96,'png'))+'" onerror="this.remove()">':'';
+  var emo=cat.id==='generic'?'✨':cat.emoji;
   function tag(x){return '<span class="tag">'+esc(x)+'</span>';}
   var exTag=tag(L('ejemplo','sample'));
   function art(){
     var ini=String(b.name).split(/\s+/).filter(function(w){return w.length>2;}).slice(0,2).map(function(w){return w.charAt(0);}).join('').toUpperCase()||String(b.name).charAt(0).toUpperCase();
-    return '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="'+esc(L('Ilustración','Illustration'))+'"><rect width="400" height="300" fill="'+soft+'"/><circle cx="318" cy="62" r="96" fill="'+acc+'" opacity=".22"/><circle cx="66" cy="262" r="118" fill="'+acc+'" opacity=".14"/><path d="M0 232Q100 178 204 224T400 204V300H0Z" fill="'+acc+'" opacity=".3"/><circle cx="200" cy="142" r="72" fill="'+card+'"/><text x="200" y="163" text-anchor="middle" font-size="58" font-weight="700" fill="'+ink+'" font-family="Georgia,serif">'+esc(ini)+'</text><text x="316" y="76" text-anchor="middle" font-size="46">'+cat.emoji+'</text></svg>';
+    return '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="'+esc(L('Ilustración','Illustration'))+'"><rect width="400" height="300" fill="'+soft+'"/><circle cx="318" cy="62" r="96" fill="'+acc+'" opacity=".22"/><circle cx="66" cy="262" r="118" fill="'+acc+'" opacity=".14"/><path d="M0 232Q100 178 204 224T400 204V300H0Z" fill="'+acc+'" opacity=".3"/><circle cx="200" cy="142" r="72" fill="'+card+'"/><text x="200" y="163" text-anchor="middle" font-size="58" font-weight="700" fill="'+ink+'" font-family="Georgia,serif">'+esc(ini)+'</text><text x="316" y="76" text-anchor="middle" font-size="46">'+emo+'</text></svg>';
   }
   var fbJs="this.onerror=this.onload=null;this.src=this.getAttribute('data-fb');this.nextElementSibling.hidden=false";
   var pic='<figure class="pic">'+(src?'<img alt="" src="'+esc(src)+'"'+(real?' data-fb="'+ELX_PH.fuji+'" onerror="'+fbJs+'" onload="if(this.naturalWidth&lt;200){'+fbJs+'}"':'')+'>':art())+(src?'<figcaption'+(real?' hidden':'')+'>'+esc(L('Foto de muestra','Sample photo'))+'</figcaption>':'')+'</figure>';
@@ -3367,6 +3448,11 @@ function pageHTML(b,t){
     S=b.name+inPl+'. '+L('Escríbenos en menos de un minuto.','Get in touch in under a minute.');CTA=L('Empezar consulta','Start your enquiry');
     main=box(L('¿Qué necesitas?','What do you need?'),(svEx?'<p>'+exTag+' '+esc(L('Opciones orientativas','Illustrative options'))+'</p>':'')+chips('sv',L('Motivo','Topic'),sv,sv[0])+chips('how',L('Prefiero','I prefer'),es?['Cita presencial','Llamada','Mensaje']:['In person','Phone call','Message'],es?'Cita presencial':'In person')+chips('slot',L('Mejor momento','Best time'),slots,slots[0]));
     main+='<section class="wrap"><h2>'+esc(L('Así de fácil','As easy as this'))+'</h2><ol class="way"><li><b>'+esc(L('Cuéntanos','Tell us'))+'</b>'+esc(L('Elige el motivo de tu consulta.','Choose the topic of your enquiry.'))+'</li><li><b>'+esc(L('Envía','Send'))+'</b>'+esc(L('El mensaje llega ya ordenado.','Your message arrives neatly organised.'))+'</li><li><b>'+esc(L('Acordamos la cita','We agree a time'))+'</b>'+esc(L('En el momento que mejor te venga.','Whenever suits you best.'))+'</li></ol></section>';
+  }else if(lay==='general'){
+    H=L('Todo lo que necesitas saber, en un solo lugar','Everything you need to know, in one place');S=b.name+inPl+'. '+L('Escríbenos y te respondemos lo antes posible.','Write to us and we will reply as soon as we can.');CTA=L('Ponte en contacto','Get in touch');
+    var gi=es?[['👋','Quiénes somos','Un equipo cercano, con ganas de ayudarte y de hacerlo bien.'],['🧭','Qué hacemos','Te explicamos qué ofrecemos con claridad y sin letra pequeña.'],['💬','Cómo trabajamos','Nos escribes, te respondemos rápido y acordamos lo que necesitas.']]:[['👋','Who we are','A friendly team that wants to help and do things right.'],['🧭','What we do','We explain what we offer clearly, with no small print.'],['💬','How we work','You write to us, we reply quickly and agree on what you need.']];
+    main='<section class="wrap"><h2>'+esc(L('Conócenos','Get to know us'))+' '+exTag+'</h2><div class="info">'+gi.map(function(x){return '<div><i>'+x[0]+'</i><b>'+esc(x[1])+'</b><p>'+esc(x[2])+'</p></div>';}).join('')+'</div></section>';
+    main+=box(L('Escríbenos','Write to us'),(svEx?'<p>'+exTag+' '+esc(L('Opciones orientativas','Illustrative options'))+'</p>':'')+chips('sv',L('Motivo','Topic'),sv,sv[0])+chips('how',L('Prefiero','I prefer'),es?['Mensaje','Llamada','Visita']:['Message','Phone call','Visit'],es?'Mensaje':'Message')+chips('slot',L('Mejor momento','Best time'),slots,slots[0]));
   }else if(lay==='escaparate'){
     H=L('Tu tienda de siempre, a un mensaje','Your local shop, one message away');S=b.name+inPl;CTA=L('Ver el escaparate','See the shop window');
     var ic=['✦','◐','▲','●','■','✿'];
@@ -3380,22 +3466,23 @@ function pageHTML(b,t){
     main=box(st?L('Consulta disponibilidad','Check availability'):L('Prepara tu plan','Plan it'),'<div class="two">'+date('date',st?L('Llegada','Arrival'):L('Fecha','Date'))+(st?date('date2',L('Salida','Departure')):'')+'</div>'+people(st?L('Huéspedes','Guests'):L('Personas','People'))+(st?'':chips('sv',L('Plan','Plan'),sv,sv[0])));
     main+='<section class="wrap">'+svHead(st?L('Tu estancia','Your stay'):pt?L('Ideas para tu fiesta','Ideas for your party'):L('Propuestas','Ideas'))+'<div class="rail">'+sv.map(function(x){return '<div>'+esc(x)+'</div>';}).join('')+'</div></section>';
   }
+  if(ELX_HEAD[cat.id]&&lay!=='revista'&&lay!=='carta')H=ELX_HEAD[cat.id][es?0:1];
   /* ---- Instagram: the real one when known; otherwise a clearly invented sample that links nowhere ---- */
   var slug=String(b.name).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'').slice(0,18)||'tunegocio';
-  var tiles='';[0,1,2].forEach(function(i){tiles+=src?'<span style="background-position:'+['15% 50%','55% 35%','88% 60%'][i]+'" class="ph"></span>':'<span>'+[cat.emoji,'✨','📍'][i]+'</span>';});
+  var tiles='';[0,1,2].forEach(function(i){tiles+=src?'<span style="background-position:'+['15% 50%','55% 35%','88% 60%'][i]+'" class="ph"></span>':'<span>'+[emo,'🙂','📍'][i]+'</span>';});
   var insta='<section class="insta"><p class="ih">'+ico('ig')+'<b>@'+esc(igH||slug+(es?'_ejemplo':'_sample'))+'</b>'+(igH?'':' '+tag(L('Instagram de ejemplo, inventado','sample Instagram, made up')))+'</p><div class="grid">'+tiles+'</div>'+(igH?'<a class="btn o" href="'+esc(igUrl)+'">'+ico('ig')+esc(L('Ver Instagram','View Instagram'))+'</a>':'<p class="hint">'+esc(L('Aquí irá tu perfil real.','Your real profile goes here.'))+'</p>')+'</section>';
   var gal=photos.slice(1,4);
   var galH=gal.length?'<section class="gal">'+gal.map(function(u){return '<img alt="" src="'+esc(px(u,500))+'" onerror="this.remove()">';}).join('')+'</section>':'';
   var rows2=parseHours(b.hours,LANG),hrs=b.hours||br.h||'';
   var hoursH=rows2?'<table>'+rows2.map(function(r){return '<tr><th>'+esc(r[0])+'</th><td>'+esc(r[1])+'</td></tr>';}).join('')+'</table>':(hrs?'<p>'+esc(hrs)+'</p>':'');
   function row(i,h){return '<p class="ln">'+ico(i)+'<span>'+h+'</span></p>';}
-  var visit='<section class="visit"><h2>'+esc(L('Dónde estamos','Where we are'))+'</h2>'+(b.addr?row('pin',esc(b.addr)):'')+(b.phone?row('phone',bp?'<a href="tel:+'+bp.d+'">'+esc(b.phone)+'</a>':esc(b.phone)):'')+(em?row('mail','<a href="mailto:'+esc(em)+'">'+esc(em)+'</a>'):'')+(hoursH?'<h3>'+esc(L('Horario','Opening hours'))+'</h3>'+hoursH:'')+'<div class="acts"><a class="btn" href="'+esc(map)+'">'+ico('pin')+esc(L('Cómo llegar','Get directions'))+'</a>'+(web?'<a class="btn o" href="'+esc(web)+'">'+ico('web')+esc(L('Web actual','Current website'))+'</a>':'')+(fb?'<a class="btn o" href="'+esc(fb)+'">'+ico('fb')+'Facebook</a>':'')+'</div></section>';
+  var visit='<section class="visit" id="donde"><h2>'+esc(L('Dónde estamos','Where we are'))+'</h2>'+(b.addr?row('pin',esc(b.addr)):'')+(b.phone?row('phone',bp?'<a href="tel:+'+bp.d+'">'+esc(b.phone)+'</a>':esc(b.phone)):'')+(em?row('mail','<a href="mailto:'+esc(em)+'">'+esc(em)+'</a>'):'')+(hoursH?'<h3>'+esc(L('Horario','Opening hours'))+'</h3>'+hoursH:'')+'<div class="acts"><a class="btn" href="'+esc(map)+'">'+ico('pin')+esc(L('Cómo llegar','Get directions'))+'</a>'+(web?'<a class="btn o" href="'+esc(web)+'">'+ico('web')+esc(L('Web actual','Current website'))+'</a>':'')+(fb?'<a class="btn o" href="'+esc(fb)+'">'+ico('fb')+'Facebook</a>':'')+'</div></section>';
   var jump=(lay==='horario'||lay==='escaparate')?'agenda':'pide';
-  var copy='<div class="copy"><p class="kick">'+cat.emoji+' '+esc(es?(ELX_CATX[cat.id]||ELX_CATES[cat.id]||cat.label):cat.label)+'</p><h1>'+esc(H)+'</h1><p class="sub">'+esc(S)+'</p><a class="btn" data-go="'+jump+'" href="#'+jump+'" target="_self">'+esc(CTA)+'</a></div>';
+  var copy='<div class="copy"><p class="kick">'+emo+' '+esc(cat.id==='generic'?L('Bienvenido','Welcome'):es?(ELX_CATX[cat.id]||ELX_CATES[cat.id]||cat.label):cat.label)+'</p><h1>'+esc(H)+'</h1><p class="sub">'+esc(S)+'</p><a class="btn" data-go="'+jump+'" href="#'+jump+'" target="_self">'+esc(CTA)+'</a>'+(lay==='general'?' <a class="btn o" data-go="donde" href="#donde" target="_self">'+esc(L('Dónde estamos','Where we are'))+'</a>':'')+'</div>';
   var hero='<header class="hero">'+(lay==='revista'?copy+pic:pic+copy)+'</header>';
-  var fontQ={revista:'Fraunces:wght@500;700&family=Manrope:wght@400;700;800',carta:'Playfair+Display:wght@600;700&family=Lato:wght@400;700',horario:'Oswald:wght@500;700&family=Archivo:wght@400;700',consulta:'Source+Serif+4:wght@600;700&family=IBM+Plex+Sans:wght@400;600;700',escaparate:'DM+Serif+Display&family=DM+Sans:wght@400;700',escapada:'Cormorant+Garamond:wght@600;700&family=Nunito+Sans:wght@400;700;800'}[lay];
+  var fontQ={revista:'Fraunces:wght@500;700&family=Manrope:wght@400;700;800',carta:'Playfair+Display:wght@600;700&family=Lato:wght@400;700',horario:'Oswald:wght@500;700&family=Archivo:wght@400;700',consulta:'Source+Serif+4:wght@600;700&family=IBM+Plex+Sans:wght@400;600;700',escaparate:'DM+Serif+Display&family=DM+Sans:wght@400;700',escapada:'Cormorant+Garamond:wght@600;700&family=Nunito+Sans:wght@400;700;800',general:'Plus+Jakarta+Sans:wght@600;800&family=Inter:wght@400;600;700'}[lay];
   var fam=fontQ.split('&family=').map(function(x){return "'"+x.split(':')[0].replace(/\+/g,' ')+"'";});
-  var F1=fam[0]+(lay==='horario'?",'Arial Narrow',sans-serif":',Georgia,serif'),F2=(fam[1]||"'DM Sans'")+',system-ui,sans-serif';
+  var F1=fam[0]+(lay==='horario'?",'Arial Narrow',sans-serif":lay==='general'?',system-ui,sans-serif':',Georgia,serif'),F2=(fam[1]||"'DM Sans'")+',system-ui,sans-serif';
   var css='*{box-sizing:border-box;margin:0;padding:0}[hidden]{display:none!important}html{scroll-behavior:smooth}body{background:'+bg+';color:'+ink+';font:16px/1.55 '+F2+';overflow-x:hidden;overflow-wrap:break-word}h1,h2,h3{font-family:'+F1+';line-height:1.1}h2{font-size:27px;margin-bottom:14px}img,svg{max-width:100%}a{color:inherit}button,input{font:inherit;color:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid '+acc+';outline-offset:2px}'+
   '.ban{background:#fff;color:#14212b;text-align:center;font-size:12.5px;font-weight:700;padding:9px 12px;border-bottom:3px solid '+acc+'}nav{display:flex;align-items:center;gap:10px;padding:13px 20px;font-weight:700;font-family:'+F1+';font-size:19px}.lg{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#fff}'+
   '.ic{width:18px;height:18px;flex:none}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:'+acc+';color:'+on+';text-decoration:none;font-weight:700;padding:13px 22px;border-radius:999px;text-align:center}.btn.o{background:transparent;color:inherit;box-shadow:inset 0 0 0 2px '+acc+'}.btn.wide{width:100%}'+
@@ -3413,6 +3500,7 @@ function pageHTML(b,t){
   carta:'nav{justify-content:center;letter-spacing:.03em}.hero{position:relative;min-height:530px;display:flex;align-items:flex-end;justify-content:center;text-align:center;color:#fff}.hero .pic{position:absolute;inset:0}.hero .pic>img,.hero .pic>svg{aspect-ratio:auto}.hero .pic:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.05) 25%,rgba(0,0,0,.84))}.pic figcaption{top:10px;bottom:auto;z-index:2}.copy{position:relative;padding:40px 22px 34px}.hero h1{font-size:clamp(36px,10vw,66px)}.menu{max-width:640px;margin:26px auto;width:calc(100% - 28px);border:1px solid '+acc+';outline:1px solid '+acc+';outline-offset:5px;text-align:center}.menu .tabs{justify-content:center;margin-bottom:12px}.menu li button{width:100%;display:flex;align-items:baseline;gap:10px;background:none;border:0;padding:12px 2px;text-align:left;font:600 19px '+F1+'}.menu li b{flex:1;border-bottom:2px dotted '+acc+'}.menu li button:after{content:"+";color:'+acc+';font-size:22px}.menu li button[aria-pressed=true]:after{content:"✓"}',
   horario:'h1,h2,nav{text-transform:uppercase;letter-spacing:.01em}nav{background:'+card+'}.hero .pic{clip-path:polygon(0 0,100% 0,100% 88%,0 100%)}.copy{padding:18px 20px 8px;max-width:900px;margin:0 auto}.kick{display:inline-block;background:'+acc+';color:'+on+';padding:5px 10px}.hero h1{font-size:clamp(44px,13vw,92px);line-height:.98}.btn,.tabs button,.chips button{border-radius:4px!important}.tabs{margin-bottom:14px}.tt button{width:100%;display:grid;grid-template-columns:76px 1fr auto;align-items:center;gap:12px;background:'+card+';border:0;border-left:6px solid '+acc+';margin-bottom:8px;padding:12px;text-align:left}.tt time{font-size:12px;opacity:.85;display:flex;flex-direction:column}.tt time b{font:700 22px '+F1+'}.tt span{font-weight:700}.tt small{display:block;font-weight:400;opacity:.7}.tt em{font-style:normal;font-size:12px;font-weight:700;border:1.5px solid '+acc+';padding:6px 9px}.tt button[aria-pressed=true]{background:'+soft+'}.tt button[aria-pressed=true] em{background:'+acc+';color:'+on+'}.box{border-radius:6px}',
   consulta:'nav{background:'+card+';border-top:5px solid '+acc+'}.hero{display:flex;flex-direction:column}.copy{padding:34px 22px 28px;background:'+soft+'}.hero h1{font-size:clamp(33px,8.4vw,56px)}.pic>img,.pic>svg{aspect-ratio:16/10}.btn{border-radius:8px}.chips button{border-radius:8px}.box{margin-top:-18px;position:relative;border-radius:12px;border-top:5px solid '+acc+'}.way{counter-reset:s}.way li{counter-increment:s;position:relative;padding:2px 0 20px 54px}.way li:before{content:counter(s);position:absolute;left:0;top:0;width:36px;height:36px;border-radius:50%;background:'+acc+';color:'+on+';display:grid;place-items:center;font-weight:700}.way b{display:block}@media(min-width:760px){.hero{display:grid;grid-template-columns:1fr 1fr}.copy{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;order:0}.pic{order:1}.pic>img,.pic>svg{aspect-ratio:4/3}}',
+  general:'nav{background:'+card+';border-bottom:1px solid '+ink+'1f;justify-content:center}.hero{max-width:940px;margin:0 auto;padding:22px 18px 6px;display:flex;flex-direction:column-reverse;gap:20px}.copy{text-align:center;padding:6px 4px}.kick{display:inline-block;background:'+soft+';padding:6px 13px;border-radius:99px;margin-bottom:14px}.hero h1{font-size:clamp(31px,7.6vw,52px);font-weight:800;letter-spacing:-.02em}.copy .btn{margin:4px 3px}.pic{border-radius:22px}.pic>img,.pic>svg{aspect-ratio:16/9}.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.info div{background:'+card+';border-radius:18px;padding:20px 18px;box-shadow:0 6px 18px rgba(0,0,0,.07);border-top:4px solid '+acc+'}.info i{font-style:normal;font-size:28px;display:block;margin-bottom:8px}.info b{display:block;font:700 18px '+F1+';margin-bottom:4px}.info p{font-size:14.5px;opacity:.85}.box{border-radius:18px}',
   escaparate:'nav{justify-content:space-between;flex-direction:row-reverse;border-bottom:6px solid '+soft+'}.hero{max-width:940px;margin:0 auto;padding:16px}.pic{border-radius:24px}.copy{position:relative;background:'+card+';margin:-46px 14px 0;padding:24px 20px;border-radius:18px;box-shadow:0 12px 30px rgba(0,0,0,.12)}.pic figcaption{top:10px;bottom:auto}.hero h1{font-size:clamp(31px,8vw,52px);font-weight:400}.shelf{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(min-width:700px){.shelf{grid-template-columns:repeat(3,1fr)}}.shelf button{background:'+card+';border:2px solid transparent;border-radius:18px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:9px;box-shadow:0 6px 18px rgba(0,0,0,.07)}.shelf i{font-style:normal;font-size:38px;color:'+acc+';background:'+soft+';border-radius:12px;display:grid;place-items:center;aspect-ratio:4/3}.shelf span{font-weight:700}.shelf em:after{content:"+ Me interesa";font-style:normal;font-size:12.5px;font-weight:700;color:'+acc+'}.shelf button[aria-pressed=true]{border-color:'+acc+'}.shelf button[aria-pressed=true] em:after{content:"✓ Añadido"}'+(es?'':'.shelf em:after{content:"+ Interested"}.shelf button[aria-pressed=true] em:after{content:"✓ Added"}'),
   escapada:'nav{position:absolute;left:0;right:0;z-index:3;color:#fff;text-shadow:0 1px 8px #000}.heroWrap{position:relative}.hero{position:relative;min-height:600px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff}.hero .pic{position:absolute;inset:0}.hero .pic>img,.hero .pic>svg{aspect-ratio:auto}.hero .pic:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45)}.pic figcaption{z-index:2;bottom:62px}.copy{position:relative;padding:50px 22px}.hero h1{font-size:clamp(46px,13vw,88px);line-height:1}.box{margin-top:-46px;position:relative;z-index:3}.rail{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;scroll-snap-type:x mandatory}.rail div{flex:0 0 68%;max-width:240px;scroll-snap-align:start;min-height:160px;display:flex;align-items:flex-end;padding:16px;border-radius:120px 120px 16px 16px;background:'+soft+';font:700 23px/1.15 '+F1+'}'
   };
