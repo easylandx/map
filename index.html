@@ -2544,7 +2544,7 @@ function guessWeb(b,force){
         if(sc.ig)o.ig=sc.ig;if(sc.fb)o.fb=sc.fb;
         b.guess=(o.u||o.e||o.ig||o.fb||o.wa)?o:0;
         GUESS[key]=b.guess;saveGuess();
-        if(b.guess&&(b.guess.u||b.guess.ig)&&b.brand===null){b.brand=undefined;enrichBrand(b).then(function(){if(pvB===b&&!$('mPrev').hidden){brandNote(b);setBrandTheme(brandOf(b));buildThemes();renderFrame();}});}
+        if(b.guess&&(b.guess.u||b.guess.ig)&&b.brand===null){b.brand=undefined;enrichBrand(b).then(function(){if(pvB===b&&!$('mPrev').hidden){brandNote(b);setBrandTheme(brandOf(b));applyBrandTheme();buildThemes();renderFrame();}});}
         return true;
       });
     });
@@ -2621,7 +2621,7 @@ function findOne(){
         enrichBrand(b).then(function(){
           if(!b.brand&&oldBrand)b.brand=oldBrand;
           if(pvB!==b||$('mPrev').hidden)return;
-          brandNote(b);setBrandTheme(brandOf(b));if(!pvPicked)pvT=themeById('auto');buildThemes();renderFrame();
+          brandNote(b);setBrandTheme(brandOf(b));applyBrandTheme();buildThemes();renderFrame();
         });
       }else if(chData)brandNote(b);
     });
@@ -2861,10 +2861,19 @@ function lumHex(h){var c=hexRgb(h).map(function(v){v/=255;return v<=0.03928?v/12
 function themeFromColor(hex){
   var acc=hex6(hex)||'#2563eb',i=0;
   while(1.05/(lumHex(acc)+0.05)<3.2&&i++<12)acc=mixHex(acc,'#000000',0.12);   // keep white text readable on the brand colour
-  return{id:'brand',name:'Brand',c:acc,bg1:mixHex(acc,'#ffffff',0.88),bg2:mixHex(acc,'#ffffff',0.78),bg3:mixHex(acc,'#ffffff',0.95),acc:acc,ink:mixHex(acc,'#000000',0.75)};
+  return{id:'brandc',name:'Brand',c:acc,bg1:mixHex(acc,'#ffffff',0.88),bg2:mixHex(acc,'#ffffff',0.78),bg3:mixHex(acc,'#ffffff',0.95),acc:acc,ink:mixHex(acc,'#000000',0.75),on:'#ffffff'};
 }
-function hasBrandTheme(){return THEMES.length>0&&THEMES[THEMES.length-1].id==='brand';}
-function setBrandTheme(br){}   // the 'brand' slot is now a fixed neon yellow
+function hasBrandTheme(){return brandDefault()==='brandc';}
+/* The business's own colour is its own slot ('brandc', right after "Per sector"); the fixed neon-yellow slot keeps id 'brand'. */
+function setBrandTheme(br){
+  for(var i=THEMES.length-1;i>=0;i--)if(THEMES[i].id==='brandc')THEMES.splice(i,1);
+  if(br&&br.k&&hex6(br.k))THEMES.splice(1,0,themeFromColor(br.k));
+}
+function brandDefault(){return(THEMES[1]&&THEMES[1].id==='brandc')?'brandc':'auto';}
+function applyBrandTheme(){   // when the colour was not chosen by hand: their brand colour wins, otherwise leave the current colour
+  if(pvPicked)return;
+  var d=brandDefault();if(d==='brandc'||(pvT&&pvT.id==='brandc'))pvT=themeById(d);
+}
 // Dominant saturated colour of an image (logo / profile picture). The image goes through a CORS-friendly resizer so the canvas can be read.
 function sampleColor(url){
   return new Promise(function(res){
@@ -2986,7 +2995,7 @@ function enrichBrand(b){
 }
 function brandOf(b){if(!b||!b.brand)return null;if(b.id==='shared')return b.brand;return pvBrandOn?b.brand:null;}
 /* index.html only: the business's photos are left out unless "Include photos in the proposal" is ticked */
-var brandOfAll=brandOf;brandOf=function(b){var r=brandOfAll(b);if(r&&b&&b.id!=='shared'&&!pvPhotosOn&&r.i&&r.i.length)r=Object.assign({},r,{i:[]});return r;};
+/* (the preview always shows their photos; the box only decides whether they travel inside the proposal link, see previewLink) */
 function safeUrl(u){u=String(u||'');return /^https:\/\/[^\s"'<>()]+$/i.test(u)&&u.length<=600?u:'';}
 function px(u,w,fmt){return 'https://wsrv.nl/?url='+encodeURIComponent(u)+'&w='+w+'&fit=cover&output='+(fmt||'jpg');}
 function waDigits(b){var t=toIntl(b.wa);if(t)return t;var x=String(b.wa||'').replace(/\D/g,'');if(x.length>=8&&x.length<=15)return x;var bp=bestPhone(b);return bp&&bp.m?bp.d:(b.guess&&/^\d{8,15}$/.test(b.guess.wa||'')?b.guess.wa:'');}
@@ -3841,15 +3850,16 @@ function previewLink(b,l){
   if(br){
     if(br.k)o.k=br.k;if(safeUrl(br.logo))o.l=br.logo;
     if(br.s&&br.s.length)o.s=br.s.slice(0,6).map(function(x){return String(x).slice(0,40);});
-    var im=(br.i||[]).filter(safeUrl).slice(0,3);if(im.length)o.i=im;
+    var im=(b.id==='shared'||pvPhotosOn)?(br.i||[]).filter(safeUrl).slice(0,3):[];if(im.length)o.i=im;
   }
   if(b.wa)o.w=String(b.wa).slice(0,20);else if(b.guess&&/^\d{8,15}$/.test(b.guess.wa||''))o.w=b.guess.wa;
   var emL=emailOf(b);if(emL)o.e=emL;
   var fbL=fbOf(b);if(fbL)o.f=fbL.replace(/^https:\/\/(www\.)?facebook\.com\//i,'').slice(0,80);
   var wuL=b.web||(b.guess&&b.guess.u)||'';wuL=wuL?siteUrl(wuL):'';if(safeUrl(wuL)&&wuL.length<=120)o.u=wuL;
-  if(o.l&&o.l.length>120)delete o.l;   // photos are in the link only when "Include photos in the proposal" is ticked (o.i is empty otherwise)
+  if(o.l&&o.l.length>320)delete o.l;   // photos are in the link only when "Include photos in the proposal" is ticked (o.i is empty otherwise)
   var h=packLink(o);
   while(h.length>1400&&o.i&&o.i.length){o.i.pop();if(!o.i.length)delete o.i;h=packLink(o);}   // link too long: photos go first (gallery, then the main one)
+  if(o.l&&h.length>1900){delete o.l;h=packLink(o);}   // still too long: the logo goes last
   return location.origin+location.pathname.replace(/[^\/]*$/,'')+'p.html'+h;   // client page, no map code
 }
 function buildThemes(){
@@ -3875,7 +3885,7 @@ function openPreview(b,themeId){
   applyOvr(b);applyCat(b);pvB=b;sendView=null;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
   pvBrandOn=true;pvPicked=false;$('brandOn').checked=true;pvPhotosOn=false;$('photosOn').checked=false;$('photosOn').disabled=false;
   setBrandTheme(brandOf(b));
-  pvT=themeById(themeId||'auto');
+  pvT=themeById(themeId||brandDefault());
   $('pTitle').textContent=b.name;
   // Shared link (business owner): no way back to the map, the EasyLandX logo opens easylandx.github.io in a new tab instead
   var shared=b.id==='shared';
@@ -3888,7 +3898,7 @@ function openPreview(b,themeId){
     pr.then(function(){
       if(pvB!==b||$('mPrev').hidden)return;
       brandNote(b);setBrandTheme(brandOf(b));
-      if(!pvPicked)pvT=themeById('auto');
+      applyBrandTheme();
       buildThemes();renderFrame();refreshSend();
     });
   }
@@ -3910,7 +3920,8 @@ function stepPreview(d){
   var ti=0;for(var k=0;k<THEMES.length;k++)if(pvT&&THEMES[k].id===pvT.id)ti=k;
   var nt=THEMES[(ti+d+THEMES.length)%THEMES.length];   // next / previous colour as well
   select(nb.id,true);        // keeps the map and the detail panel in step with the preview
-  openPreview(nb,nt.id);pvPicked=true;buildThemes();
+  var hasK=nb.brand&&nb.brand.k;
+  openPreview(nb,hasK?'brandc':nt.id);pvPicked=!(nb.brand===undefined||hasK);buildThemes();
   
 }
 /* Auto-play: moves on to the next business every few seconds, stops at the end of the list */
@@ -3939,7 +3950,7 @@ $('photosOn').onchange=function(){pvPhotosOn=this.checked;renderFrame();};
 $('brandOn').onchange=function(){
   pvBrandOn=this.checked;pvPicked=false;$('photosOn').disabled=!this.checked;
   setBrandTheme(brandOf(pvB));
-  pvT=themeById('auto');
+  pvT=themeById(brandDefault());
   buildThemes();renderFrame();
 };
 /* ===== Editable contact details above the colours: paste the right data (Google Maps...) and the preview, link and messages update ===== */
@@ -4081,7 +4092,7 @@ function setBizCat(b,id){
   var o=catOvr();o[b.id]=id;store('elx_cat',JSON.stringify(o));b.cat=id;
   var all=elxPhAll();delete all[b.id];store('elx_ph',JSON.stringify(all));PH_MEM[b.id]='';b.ph='';
   try{if(LEADS[b.id]&&LEADS[b.id].b){LEADS[b.id].b.cat=id;saveLeads();}if(saved[b.id]){saved[b.id].cat=id;persistSaved();}}catch(e){}
-  if(!pvPicked)pvT=themeById('auto');
+  if(!pvPicked)pvT=themeById(brandDefault());
   buildThemes();renderFrame();
   try{if(cur===b)renderDetail(b);renderList();pushData();}catch(e){}
 }
