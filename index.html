@@ -791,16 +791,16 @@ function mailCc(to){var c=CONFIG.CC||'';return(c&&String(to||'').trim().toLowerC
 function openExt(u){var a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.style.display='none';document.body.appendChild(a);a.click();setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},500);}
 /* Opens WhatsApp straight away with the message ready, without asking anything:
    computer -> WhatsApp Web (same tab every time, so it is not reloaded in a new tab for each business);
-   phone    -> the WhatsApp app through its own link (no "Continue to chat" page); if the app does not open, the web link is the fallback.
+   phone    -> the WhatsApp app through its universal link (no "Continue to chat" page, no "Open WhatsApp?" question).
    Without a phone number WhatsApp itself asks who to send it to, so nothing needs to be copied to the clipboard. */
 function waOpen(msg,ph){
   var n=String(ph||'').replace(/\D/g,''),q=(n?'phone='+n+'&':'')+'text='+encodeURIComponent(msg);
   if(isMobile()){
-    var gone=false,onv=function(){if(document.hidden)gone=true;};
-    document.addEventListener('visibilitychange',onv);
-    var a=document.createElement('a');a.href='whatsapp://send?'+q;a.style.display='none';document.body.appendChild(a);a.click();
+    /* https://wa.me is a universal link: phones hand it to the WhatsApp app at once, in this same tab, with no "Open WhatsApp?" question
+       (the whatsapp:// address and links opened in a new tab are the ones that make the phone ask). */
+    var a=document.createElement('a');a.href='https://wa.me/'+n+'?text='+encodeURIComponent(msg);a.target='_self';a.rel='noopener';a.style.display='none';
+    document.body.appendChild(a);a.click();
     setTimeout(function(){if(a.parentNode)a.parentNode.removeChild(a);},500);
-    setTimeout(function(){document.removeEventListener('visibilitychange',onv);if(!gone&&!document.hidden)window.open('https://api.whatsapp.com/send?'+q,'_blank','noopener');},1800);
     return;
   }
   var w=window.open('https://web.whatsapp.com/send?'+q,'elx_whatsapp');
