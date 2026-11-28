@@ -646,7 +646,8 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
       </div>
       <h3>Colors</h3>
       <div class="sw" id="themes"></div>
-      <div id="phRow"><h3 id="phLab">Sample photo</h3><select id="phSel" aria-labelledby="phLab" style="width:100%;padding:9px;border-radius:10px;font:inherit"></select></div>
+      <div id="catRow"><h3 id="catLab">Business type</h3><select id="bizCat" aria-labelledby="catLab" style="width:100%;padding:9px;border-radius:10px;font:inherit"></select></div>
+      <div id="phRow"><h3 id="phLab">Cover photo</h3><select id="phSel" aria-labelledby="phLab" style="width:100%;padding:9px;border-radius:10px;font:inherit"></select></div>
       <div id="sendBox" hidden>
         <h3>Send to this business</h3>
         <div class="seg" id="modeSeg"><button id="sModeAsk" type="button">1 · First contact</button><button id="sModeDemo" type="button">2 · Send demo</button></div>
@@ -1349,7 +1350,11 @@ function normalize(els,forced){
   });
   return out;
 }
-function catOf(b){return CAT[b.cat]||GENERIC;}
+/* business type changed by hand in the preview (kept in this browser, 'elx_cat') */
+var CATOVR=null;
+function catOvr(){if(!CATOVR){try{CATOVR=JSON.parse(store('elx_cat')||'{}')||{};}catch(e){CATOVR={};}}return CATOVR;}
+function applyCat(b){if(b&&b.id&&b.id!=='shared'){var c=catOvr()[b.id];if(c)b.cat=c;}}
+function catOf(b){var o=b&&b.id&&b.id!=='shared'&&catOvr()[b.id];return CAT[o||b.cat]||GENERIC;}
 
 /* ================= MAP ================= */
 var map=null,results=[],selId=null,lastSearchBounds=null,styleOk=false;
@@ -3480,7 +3485,7 @@ function packLink(o){   // shortest of: compact (#q=), compressed (#pz=) or plai
 }
 function elxPhAll(){try{return JSON.parse(store('elx_ph')||'{}')||{};}catch(e){return {};}}
 var PH_MEM={};   // choice of this session, kept even if the browser cannot save it
-function elxPhLoad(b){if(b&&b.id!=='shared')b.ph=b.id in PH_MEM?PH_MEM[b.id]:(elxPhAll()[b.id]||'');}
+function elxPhLoad(b){applyCat(b);if(b&&b.id!=='shared')b.ph=b.id in PH_MEM?PH_MEM[b.id]:(elxPhAll()[b.id]||'');}
 function previewLink(b,l){
   elxPhLoad(b);
   var o={g:(l==='es'||l==='en')?l:LANG,n:b.name,c:b.cat,a:b.addr,p:b.phone,h:b.hours,la:+b.lat.toFixed(6),lo:+b.lon.toFixed(6),t:(pvT&&pvB&&pvB.id===b.id)?pvT.id:undefined};
@@ -3521,7 +3526,7 @@ function brandNote(b){
   if(prow)prow.hidden=!(br.i&&br.i.length);
 }
 function openPreview(b,themeId){
-  applyOvr(b);pvB=b;sendView=null;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
+  applyOvr(b);applyCat(b);pvB=b;sendView=null;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
   pvBrandOn=true;pvPicked=false;$('brandOn').checked=true;pvPhotosOn=false;$('photosOn').checked=false;$('photosOn').disabled=false;
   setBrandTheme(brandOf(b));
   pvT=themeById(themeId||'auto');
@@ -3716,11 +3721,30 @@ $('cReset').onclick=function(){
 };
 STATIC.push(['#hContact',0,'Contact details'],['#contactNote',0,'Pre-filled with what was found. Paste the right data (e.g. from Google Maps) and the preview updates by itself.'],['#lblCPhone',0,'Phone'],['#lblCWa',0,'WhatsApp'],['#lblCFb',0,'Facebook'],['#lblCIg',0,'Instagram'],['#lblCMail',0,'Email'],['#lblCWeb',0,'Website'],['#lblCAddr',0,'Address'],['#cReset',0,'↺ Restore found data']);
 Object.assign(ES,{'Contact details':'Datos de contacto','Pre-filled with what was found. Paste the right data (e.g. from Google Maps) and the preview updates by itself.':'Rellenado con lo que se encontró. Pega los datos correctos (p. ej. de Google Maps) y la maqueta se actualiza sola.','Phone':'Teléfono','Address':'Dirección','↺ Restore found data':'↺ Restaurar datos encontrados','Found data restored':'Datos encontrados restaurados','That phone number does not look right.':'Ese teléfono no parece correcto.','That WhatsApp number does not look right.':'Ese número de WhatsApp no parece correcto.','That Facebook link does not look right.':'Ese enlace de Facebook no parece correcto.','That Instagram link or @handle does not look right.':'Ese enlace o @usuario de Instagram no parece correcto.','That email does not look right.':'Ese email no parece correcto.','That website does not look right.':'Esa web no parece correcta.'});
+function elxCatUI(){
+  var sel=$('bizCat');if(!sel||!pvB)return;
+  var es=LANG==='es',loc=es?'es':'en',used={},opt=function(c){used[c.id]=1;return '<option value="'+c.id+'">'+esc(lbl(c))+'</option>';};
+  var h=opt(GENERIC),group=function(name,list){if(list.length)h+='<optgroup label="'+esc(name)+'">'+list.sort(function(x,y){return lbl(x).localeCompare(lbl(y),loc);}).map(opt).join('')+'</optgroup>';};
+  GROUPS.forEach(function(g){group(es?g.es:g.en,(g.m||[]).map(function(id){return CAT[id];}).filter(function(c){return c&&!used[c.id];}));});
+  group(es?'Otros':'Other',CATS.filter(function(c){return !used[c.id];}));
+  sel.innerHTML=h;sel.value=catOf(pvB).id;$('catLab').textContent=es?'Tipo de negocio':'Business type';$('catRow').hidden=pvB.id==='shared';
+  sel.onchange=function(){setBizCat(pvB,this.value);};
+}
+// New type: texts, design, colours (when automatic), cover photo and real example all follow it
+function setBizCat(b,id){
+  var o=catOvr();o[b.id]=id;store('elx_cat',JSON.stringify(o));b.cat=id;
+  var all=elxPhAll();delete all[b.id];store('elx_ph',JSON.stringify(all));PH_MEM[b.id]='';b.ph='';
+  try{if(LEADS[b.id]&&LEADS[b.id].b){LEADS[b.id].b.cat=id;saveLeads();}if(saved[b.id]){saved[b.id].cat=id;persistSaved();}}catch(e){}
+  if(!pvPicked)pvT=themeById('auto');
+  buildThemes();renderFrame();
+  try{if(cur===b)renderDetail(b);renderList();pushData();}catch(e){}
+}
 function elxPhUI(){
+  elxCatUI();
   var sel=$('phSel');if(!sel||!pvB)return;elxPhLoad(pvB);
   var es=LANG==='es',li=es?0:1,opt=function(k){return '<option value="'+k+'">'+esc(ELX_PHN[k][li])+'</option>';},h=opt('fuji')+'<option value="">'+(es?'Automática según el negocio':'Automatic for this business')+'</option><option value="none">'+(es?'Sin foto: diseño ilustrado':'No photo: illustrated design')+'</option>';
   Object.keys(ELX_PHN).filter(function(k){return k!=='fuji';}).sort(function(x,y){return ELX_PHN[x][li].localeCompare(ELX_PHN[y][li],es?'es':'en');}).forEach(function(k){h+=opt(k);});
-  sel.innerHTML=h;sel.value=pvB.ph||'';$('phLab').textContent=es?'Foto de muestra':'Sample photo';$('phRow').hidden=pvB.id==='shared';
+  sel.innerHTML=h;sel.value=pvB.ph||'';$('phLab').textContent=es?'Foto de portada':'Cover photo';$('phRow').hidden=pvB.id==='shared';
   sel.onchange=function(){var all=elxPhAll();if(this.value)all[pvB.id]=this.value;else delete all[pvB.id];store('elx_ph',JSON.stringify(all));PH_MEM[pvB.id]=this.value;pvB.ph=this.value;renderFrame();};
 }
 function renderFrame(){elxPhUI();applyOvr(pvB);$('pFrame').srcdoc=pageHTML(pvB,pvT);refreshSend();}
