@@ -473,7 +473,8 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
 #mPrev.shared .mbar .t{display:none!important}
 .mbar .pill.pLogo img{display:block;width:36px;height:36px;border-radius:10px;box-shadow:0 1px 3px rgba(29,43,42,.18)}
 #pAR .arShort{display:none}
-@media (max-width:820px){#pAR .arLong{display:none}#pAR .arShort{display:inline}}
+#pEx{background:#fff;color:var(--teal);border-color:var(--teal)}#pEx .exShort{display:none}
+@media (max-width:820px){#pAR .arLong{display:none}#pAR .arShort{display:inline}#pEx .exLong{display:none}#pEx .exShort{display:inline}}
 .phandle{display:none}
 @media (max-width:820px){
   .mbar{gap:6px;padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top))}
@@ -615,6 +616,7 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
     <button class="pill" id="pPrev" aria-label="Previous business">‹ Prev</button><span id="pPos" style="font-size:.78rem;font-weight:700;color:var(--mute);min-width:44px;text-align:center"></span><button class="pill" id="pNext" aria-label="Next business">Next ›</button><button class="pill play" id="pPlay" type="button" aria-pressed="false" aria-label="Auto-play businesses" hidden><span id="pPlayI">▶</span> <span id="pPlayTxt">Play</span></button>
     <div class="t"><span id="pTitle"></span></div>
     <button class="pill t" id="pAR"><span class="arLong">📱 See it in 3D at your shop</span><span class="arShort">📱 See it in 3D</span></button>
+    <button class="pill" id="pEx" type="button"><span class="exLong">🌐 See a real example ↗</span><span class="exShort">🌐 Real example ↗</span></button>
     <button class="pill" id="pCopy">🔗 Copy link</button>
     <span id="pSend" class="sendgrp" title="Send to business" hidden><button class="pill" id="pSendWa" type="button" style="background:var(--green);border-color:var(--green);color:#fff">💬 WhatsApp</button><button class="pill" id="pSendIg" type="button" style="background:#c13584;border-color:#c13584;color:#fff">📸 Instagram</button><button class="pill" id="pSendFb" type="button" style="background:#0a7cff;border-color:#0a7cff;color:#fff">👍 Facebook</button><button class="pill" id="pSendMail" type="button" style="background:var(--teal);border-color:var(--teal);color:#fff">✉️ Email</button></span>
     <button class="pill c" id="pWa">💬 Request a proposal</button>
@@ -664,7 +666,6 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
       </div>
       <h3>Your Web &amp; App</h3>
       <p>This is a draft of your Web &amp; App ✨ With an online presence, more customers find you, trust you and order from you on their phone.</p>
-      <button class="btn l sm" id="pEx">See a real EasyLandX example for this niche ↗</button>
       <h3 id="hLang" style="margin-top:18px">Language</h3>
       <div class="seg" id="pLangSeg"><button type="button" data-l="en">English</button><button type="button" data-l="es">Español</button></div>
     </div>
@@ -724,6 +725,7 @@ Object.assign(CAT_ES,{nails:'Salón de uñas y manicura',lashes:'Cejas, pestaña
 Object.assign(CAT_ES,{"carrepair": "Taller mecánico", "bike": "Tienda de bicicletas", "driving": "Autoescuela", "boutique": "Boutique y moda", "gift": "Regalos y decoración", "books": "Librería", "toys": "Juguetería", "interior": "Interiorismo y muebles", "trades": "Fontanería, electricidad y oficios", "locksmith": "Cerrajería", "tailor": "Sastrería y arreglos", "laundry": "Lavandería y tintorería", "language": "Academia de idiomas", "coworking": "Coworking", "herbal": "Herbolario y salud natural", "escape": "Escape room y experiencias"});
 ES['Sketch created for {0}']='Boceto creado para {0}';ES['Message us']='Escríbenos';
 ES['Draft built from your current brand and content. Photos will be swapped for your final ones.']='Boceto creado a partir de la identidad y los contenidos actuales de tu negocio. Las fotos se sustituirán por las definitivas.';
+ES['🌐 See a real example ↗']='🌐 Ver ejemplo real ↗';ES['🌐 Real example ↗']='🌐 Ejemplo real ↗';
 function T(k){var s=(LANG==='es'&&ES[k]!=null)?ES[k]:k;for(var i=1;i<arguments.length;i++)s=s.split('{'+(i-1)+'}').join(arguments[i]);return s;}
 function lbl(c){return LANG==='es'?(CAT_ES[c.id]||c.label):c.label;}
 var TITLE_EN=document.title,DESC_EN=(document.querySelector('meta[name=description]')||{getAttribute:function(){return '';}}).getAttribute('content');
@@ -743,13 +745,13 @@ var STATIC=[
 ['#btnClear',0,'🗑 Clear all'],['#brandLbl',0,'Use brand (colours, logo, services)'],['#photosLbl',0,'Include photos in the proposal'],['#sFoundLbl',0,'Mention what I found (Instagram, website)'],['#sendBox h3',0,'Send to this business'],['#sMsg','aria-label','Message'],['#sGo',0,'💬 Open WhatsApp with this message'],['#sTplBtn',0,'✏️ Edit templates'],['#sMailTo','placeholder','email@business.com'],['#tplT',0,'Message templates'],['#tplHint',0,'Edit the message for each channel and category. Tap a tag to insert it; it is replaced for every business.'],['label[for=tplCat]',0,'Category'],['#tplReset',0,'Reset'],['#tplSave',0,'Save'],['#tplClose',0,'Close'],
 ['#sendBox .note',0,'Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).'],
 ['.panel>p',0,"This is a draft of your Web & App ✨ With an online presence, more customers find you, trust you and order from you on their phone."],
-['#pEx',0,'See a real EasyLandX example for this niche ↗'],
 ['#aBack',0,'← Back to preview'],['#arT',0,'Your site in 3D, in your shop'],['#arS',0,'Place the page on your counter'],
 ['#vBack',0,'← Back'],['#vTab',0,'↗ New tab'],['#vFrame','title','Example page'],
 ['#btnAdd',0,'＋ Add'],['#addT',0,'Add a business'],['#addHint',0,'Type a business name, an Instagram @handle or a website link.'],['label[for=addIn]',0,'Name, @instagram or website'],['#addIn','placeholder','Café Sol, @cafesol or cafesol.es'],['label[for=addCat]',0,'Category'],['#addCancel',0,'Cancel'],['#tabOne',0,'One by one'],['#tabBulk',0,'Bulk list'],['label[for=bulkIn]',0,'Instagram handles or websites, one per line'],
 ['#btnImp',0,'📥 Import CSV'],['#btnImp','title','Choose a CSV file, or drop it here. Every business in it is added to the list. Recognised columns: name, category, phone, WhatsApp, website, Instagram, Facebook, email, address, latitude, longitude.'],['#impHint',0,'Drop a CSV here or tap the button. Useful columns: name, phone, website, @instagram, address.']
 ];
 function applyStatic(){
+  var pe=$('pEx');if(pe)pe.innerHTML='<span class="exLong">'+esc(T('🌐 See a real example ↗'))+'</span><span class="exShort">'+esc(T('🌐 Real example ↗'))+'</span>';
   var pa=$('pAR');if(pa)pa.innerHTML='<span class="arLong">'+esc(T('📱 See it in 3D at your shop'))+'</span><span class="arShort">'+esc(T('📱 See it in 3D'))+'</span>';
   STATIC.forEach(function(r){var el=document.querySelector(r[0]);if(!el)return;var v=T(r[2]);if(r[1])el.setAttribute(r[1],v);else el.textContent=v;});
   if(typeof updPlayBtn==='function')updPlayBtn();
