@@ -507,6 +507,13 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
   #mPrev .mbar #pSend[hidden]{display:none}
   #mPrev .mbar #pSend .pill{flex:1 1 0;min-width:0;padding:8px 4px;font-size:.72rem}
 }
+
+/* Example embedded under the nav bar */
+#exEmbed{position:absolute;left:0;right:0;bottom:0;top:0;z-index:5;background:#fff;display:flex}
+#exEmbed[hidden]{display:none}
+#exEmbed iframe{flex:1;border:0;width:100%;height:100%;background:#fff}
+#exBack{position:absolute;left:max(14px,env(safe-area-inset-left));bottom:max(18px,env(safe-area-inset-bottom));z-index:2;background:#ffd400;color:#1d2b2a;border:0;border-radius:999px;padding:12px 20px;font-family:inherit;font-weight:800;font-size:.95rem;line-height:1;box-shadow:0 6px 18px rgba(0,0,0,.28);cursor:pointer}
+#exBack:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -633,6 +640,7 @@ html,body,#side,.modal,.mbar,.stage,.panel,.phandle,#mAdd,#mTpl,#toast,#here,#to
     <span id="pSend" class="sendgrp" title="Send to business" hidden><button class="pill" id="pSendWa" type="button" style="background:var(--green);border-color:var(--green);color:#fff">💬 WhatsApp</button><button class="pill" id="pSendIg" type="button" style="background:#c13584;border-color:#c13584;color:#fff">📸 Instagram</button><button class="pill" id="pSendFb" type="button" style="background:#0a7cff;border-color:#0a7cff;color:#fff">👍 Facebook</button><button class="pill" id="pSendMail" type="button" style="background:var(--teal);border-color:var(--teal);color:#fff">✉️ Email</button></span>
     <button class="pill c" id="pWa">💬 Request a proposal</button>
   </div>
+  <div id="exEmbed" hidden><iframe id="exFrame" title="Example page" allow="fullscreen"></iframe><button type="button" id="exBack">← Back</button></div>
   <div class="stage">
     <div class="canvas"><div class="device" id="device"><iframe id="pFrame" title="Concept preview" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe></div></div>
     <button class="phandle" id="pHandle" type="button" aria-label="Resize panel"><span id="pHandleTxt">Options</span></button>
@@ -758,7 +766,7 @@ var STATIC=[
 ['#sendBox .note',0,'Nothing is sent automatically: you review the message and press send in WhatsApp. Contact businesses only through their public channels and follow local marketing rules (GDPR, LSSI in Spain).'],
 ['.panel>p',0,"This is a draft of your Web & App ✨ With an online presence, more customers find you, trust you and order from you on their phone."],
 ['#aBack',0,'← Back to preview'],['#arT',0,'Your site in 3D, in your shop'],['#arS',0,'Place the page on your counter'],
-['#vBack',0,'← Back'],['#vTab',0,'↗ New tab'],['#vFrame','title','Example page'],
+['#exBack',0,'← Back'],['#exFrame','title','Example page'],['#vBack',0,'← Back'],['#vTab',0,'↗ New tab'],['#vFrame','title','Example page'],
 ['#btnAdd',0,'＋ Add'],['#addT',0,'Add a business'],['#addHint',0,'Type a business name, an Instagram @handle or a website link.'],['label[for=addIn]',0,'Name, @instagram or website'],['#addIn','placeholder','Café Sol, @cafesol or cafesol.es'],['label[for=addCat]',0,'Category'],['#addCancel',0,'Cancel'],['#tabOne',0,'One by one'],['#tabBulk',0,'Bulk list'],['label[for=bulkIn]',0,'Instagram handles or websites, one per line'],
 ['#btnImp',0,'📥 Import CSV'],['#btnImp','title','Choose a CSV file, or drop it here. Every business in it is added to the list. Recognised columns: name, category, phone, WhatsApp, website, Instagram, Facebook, email, address, latitude, longitude.'],['#impHint',0,'Drop a CSV here or tap the button. Useful columns: name, phone, website, @instagram, address.']
 ];
@@ -3910,7 +3918,7 @@ function brandNote(b){
   if(prow)prow.hidden=!(br.i&&br.i.length);
 }
 function openPreview(b,themeId){
-  applyOvr(b);applyCat(b);pvB=b;sendView=null;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
+  closeEx();applyOvr(b);applyCat(b);pvB=b;sendView=null;sendEdited=false;sendDrafts={};sendFound=false;$('sMailTo').value=b.email||(b.guess&&b.guess.e)||'';
   pvBrandOn=true;pvPicked=false;$('brandOn').checked=true;pvPhotosOn=false;$('photosOn').checked=false;$('photosOn').disabled=false;
   setBrandTheme(brandOf(b));
   pvT=themeById(themeId||brandDefault());
@@ -4334,7 +4342,7 @@ $('tplReset').onclick=function(){
   store('elx_tpl',JSON.stringify(all));tplFill();toast('Template reset');
 };
 
-$('pBack').onclick=function(){pvPlayStop();$('mPrev').hidden=true;$('pFrame').srcdoc='';if(/^#(preview|pz|q|p)=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);};
+$('pBack').onclick=function(){closeEx();pvPlayStop();$('mPrev').hidden=true;$('pFrame').srcdoc='';if(/^#(preview|pz|q|p)=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);};
 $('dMob').onclick=function(){$('device').classList.remove('desk');$('dMob').classList.add('on');$('dDesk').classList.remove('on');fitDesk();};
 $('dDesk').onclick=function(){$('device').classList.add('desk');$('dDesk').classList.add('on');$('dMob').classList.remove('on');fitDesk();};
 /* Mobile: desktop view renders the page at 1100 px wide and scales it to fit */
@@ -4385,7 +4393,13 @@ function fitDesk(){
 })();
 $('pCopy').onclick=function(){copyText(previewLink(pvB));};
 $('pWa').onclick=function(){if(pvB)openReq(pvB,T('Hi! I saw the sample Web & App for "{0}" and I like it: I want the real one. Could you send me the price and a mockup here?\n{1}',pvB.name,previewLink(pvB)));};   // WhatsApp or email, same choice as in the detail panel
-$('pEx').onclick=function(){if(!pvB)return;openExt(exampleUrlFor(pvB));};
+var exOpen=false;
+function exSync(){var m=document.querySelector('#mPrev .mbar'),e=$('exEmbed');if(m&&e)e.style.top=m.offsetHeight+'px';}
+function openEx(){if(!pvB)return;exSync();var u=exampleUrlFor(pvB);$('exFrame').src=u;$('exEmbed').hidden=false;}
+function closeEx(){var e=$('exEmbed');if(!e||e.hidden)return;e.hidden=true;$('exFrame').src='about:blank';}
+$('exBack').onclick=closeEx;
+$('pEx').onclick=openEx;
+(function(){var m=document.querySelector('#mPrev .mbar');if(window.ResizeObserver&&m)new ResizeObserver(exSync).observe(m);window.addEventListener('resize',exSync);})();
 
 /* ================= AR ================= */
 var arLibs=null;
@@ -5337,11 +5351,11 @@ window.addEventListener('keydown',function(e){
   }
 });
 window.addEventListener('keydown',function(e){
-  if((e.key==='ArrowLeft'||e.key==='ArrowRight')&&!$('mPrev').hidden&&$('mAR').hidden&&$('viewer').hidden&&$('mTpl').hidden&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')){
+  if((e.key==='ArrowLeft'||e.key==='ArrowRight')&&!$('mPrev').hidden&&$('exEmbed').hidden&&$('mAR').hidden&&$('viewer').hidden&&$('mTpl').hidden&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')){
     var bt=$(e.key==='ArrowLeft'?'pPrev':'pNext');if(bt&&!bt.hidden&&!bt.disabled){e.preventDefault();bt.click();}
   }
 });
-window.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!$('mAR').hidden)$('mAR').hidden=true;else if(!$('viewer').hidden)$('vBack').click();else if(!$('mPrev').hidden&&!(pvB&&pvB.id==='shared'))$('pBack').click();}});
+window.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!$('mAR').hidden)$('mAR').hidden=true;else if(!$('exEmbed').hidden)closeEx();else if(!$('viewer').hidden)$('vBack').click();else if(!$('mPrev').hidden&&!(pvB&&pvB.id==='shared'))$('pBack').click();}});
 /* Stop accidental page zoom on phones (double-tap or pinch outside the map) */
 (function(){
   var lastEnd=0;

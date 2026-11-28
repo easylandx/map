@@ -127,6 +127,13 @@ html,body{overflow:hidden}
   .panel{border-left:0;border-top:1px solid var(--line);max-height:34vh;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
   #devBox{display:none}
 }
+
+/* Example embedded under the nav bar */
+#exEmbed{position:absolute;left:0;right:0;bottom:0;top:0;z-index:5;background:#fff;display:flex}
+#exEmbed[hidden]{display:none}
+#exEmbed iframe{flex:1;border:0;width:100%;height:100%;background:#fff}
+#exBack{position:absolute;left:max(14px,env(safe-area-inset-left));bottom:max(18px,env(safe-area-inset-bottom));z-index:2;background:#ffd400;color:#1d2b2a;border:0;border-radius:999px;padding:12px 20px;font-family:inherit;font-weight:800;font-size:.95rem;line-height:1;box-shadow:0 6px 18px rgba(0,0,0,.28);cursor:pointer}
+#exBack:active{transform:scale(.96)}
 </style>
 </head>
 <body>
@@ -151,6 +158,7 @@ html,body{overflow:hidden}
     <button class="pill" id="pEx" type="button"><span class="exLong">See a real example ↗</span><span class="exShort">Real example ↗</span><small>A finished site from your sector</small></button>
     <button class="pill c" id="pWa" type="button" data-ic="wa" data-t="💬 Request a proposal">💬 Request a proposal</button>
   </div>
+  <div id="exEmbed" hidden><iframe id="exFrame" title="Example page" allow="fullscreen"></iframe><button type="button" id="exBack" data-t="← Back">← Back</button></div>
   <div class="stage">
     <div class="canvas"><div class="device" id="device"><iframe id="pFrame" title="Concept preview" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"></iframe></div></div>
     <div class="panel">
@@ -1380,13 +1388,13 @@ function refreshUI(){
   document.title=T('Your Web & App proposal — EasyLandX');
   [].forEach.call(document.querySelectorAll('[data-t]'),function(e){var t=T(e.getAttribute('data-t')),ic=e.getAttribute('data-ic');if(ic)e.innerHTML=lab(ic,t);else e.textContent=t;});
   $('pEx').innerHTML=uic('eye')+'<span><span class="exLong">'+esc(T('See a real example ↗'))+'</span><span class="exShort">'+esc(T('Real example ↗'))+'</span><small>'+esc(T('A finished site from your sector'))+'</small></span>';
-  $('vFrame').title=T('Example page');
+  $('vFrame').title=T('Example page');$('exFrame').title=T('Example page');
   $('pAR').innerHTML=uic('cube')+'<span><span class="arLong">'+esc(noEmoji(T('📱 See it in 3D at your shop')))+'</span><span class="arShort">'+esc(noEmoji(T('📱 See it in 3D')))+'</span><small>'+esc(T('Place the page on your counter'))+'</small></span>';
   buildIncl();
   $('askWa').innerHTML=lab('wa',T('💬 WhatsApp'));$('askMail').innerHTML=lab('mail',T('✉️ Email')+' · '+CONFIG.MAIL);
   if(pvB&&!$('mPrev').hidden)renderFrame();
 }
-function showAsk(){pvB=null;$('mPrev').hidden=true;$('mAR').hidden=true;$('viewer').hidden=true;$('ask').hidden=false;refreshUI();}
+function showAsk(){closeEx();pvB=null;$('mPrev').hidden=true;$('mAR').hidden=true;$('viewer').hidden=true;$('ask').hidden=false;refreshUI();}
 function vetPhotos(urls){
   function one(u){return new Promise(function(res){
     var done=false;function fin(v){if(!done){done=true;res(v);}}
@@ -1409,6 +1417,7 @@ function vetPhotos(urls){
   });
 }
 function showPreview(o){
+  closeEx();
   if(o.g==='es'||o.g==='en')LANG=o.g;
   pvB=sharedBiz(o);pvT=themeById(o.t||'auto');
   if(pvB.brand&&pvB.brand.k&&(!o.t||o.t==='auto'||o.t==='brandc'))pvT=themeFromColor(pvB.brand.k);   // their own colour, unless a fixed colour was picked
@@ -1539,7 +1548,13 @@ function exampleUrlFor(b){
 function openViewer(url,title){$('vTitle').textContent=title;$('vTab').href=url;$('vFrame').src=url;$('viewer').hidden=false;}
 function closeViewer(){$('viewer').hidden=true;$('vFrame').src='about:blank';}
 $('vBack').onclick=closeViewer;
-$('pEx').onclick=function(){if(!pvB)return;openExt(exampleUrlFor(pvB));};
+var exOpen=false;
+function exSync(){var m=document.querySelector('#mPrev .mbar'),e=$('exEmbed');if(m&&e)e.style.top=m.offsetHeight+'px';}
+function openEx(){if(!pvB)return;exSync();var u=exampleUrlFor(pvB);$('exFrame').src=u;$('exEmbed').hidden=false;}
+function closeEx(){var e=$('exEmbed');if(!e||e.hidden)return;e.hidden=true;$('exFrame').src='about:blank';}
+$('exBack').onclick=closeEx;
+$('pEx').onclick=openEx;
+(function(){var m=document.querySelector('#mPrev .mbar');if(window.ResizeObserver&&m)new ResizeObserver(exSync).observe(m);window.addEventListener('resize',exSync);})();
 $('dMob').onclick=function(){$('device').classList.remove('desk');$('dMob').classList.add('on');$('dDesk').classList.remove('on');};
 $('dDesk').onclick=function(){$('device').classList.add('desk');$('dDesk').classList.add('on');$('dMob').classList.remove('on');};
 $('pAR').onclick=openAR;
